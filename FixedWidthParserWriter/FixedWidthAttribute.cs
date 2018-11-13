@@ -8,7 +8,7 @@ namespace FixedWidthParserWriter
         public virtual int Length { get; set; }
         public virtual string Format { get; set; }
 
-        public virtual char? Pad { get; set; }
+        public virtual char Pad { get; set; } = '\0';
         public virtual PadSide PadSide { get; set; }
 
         public virtual int StartIndex => Start - 1;

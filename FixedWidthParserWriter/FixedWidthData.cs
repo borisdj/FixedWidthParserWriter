@@ -12,10 +12,12 @@ namespace FixedWidthParserWriter
         public DefaultFormat Format { get; set; } = new DefaultFormat();
         public DefaultPad Pad { get; set; } = new DefaultPad();
 
-        public virtual void SetFormatAndPad() { } // to be overriden for custom format
+        public virtual void SetFormatAndPad() { } // to be overriden for setting custom Format on entire property type
 
         protected T ParseData<T>(List<string> lines, FieldType fieldType, int structureTypeId = 0) where T : class, new()
         {
+            SetFormatAndPad();
+
             var data = new T();
             var orderProperties = data.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthAttribute))).ToList();
 
@@ -28,78 +30,87 @@ namespace FixedWidthParserWriter
                 int lineIndex = 0;
                 if (fieldType == FieldType.LineField)
                 {
-                    field = property.GetCustomAttribute<FixedWidthLineFieldAttribute>();
+                    field = property.GetCustomAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == structureTypeId);
                 }
                 else if (fieldType == FieldType.FileField)
                 {
-                    field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().Where(a => a.StructureTypeId <= structureTypeId).OrderByDescending(a => a.StructureTypeId).FirstOrDefault();
-                    lineIndex = ((FixedWidthFileFieldAttribute)field).LineIndex;
+                    field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == structureTypeId);
+                    // Deprecated from when every StructureType had all Properties and those that did not had it's specific attribute took the one with higest StructureTypeId
+                    //field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().Where(a => a.StructureTypeId <= structureTypeId).OrderByDescending(a => a.StructureTypeId).FirstOrDefault();
+
+                    var fileField = (FixedWidthFileFieldAttribute)field;
+                    if (fileField.Line == 0)
+                        throw new InvalidOperationException("'Line' parameter of [FixedWidthFileFieldAttribute] can not be zero.");
+                    lineIndex = fileField.LineIndex;
                     if (lineIndex < 0) // line is counted from bottom
                     {
-                        lineIndex += lines.Count;
+                        lineIndex += lines.Count + 1;
                     }
                 }
-                string valueString = lines[lineIndex];
-
-                int startIndex = field.StartIndex;
-                int length = field.Length;
-                if (startIndex > 0 || length > 0) // Length = 0; means value is entire line
+                if (field != null)
                 {
-                    if (valueString.Length < startIndex + length)
+                    string valueString = lines[lineIndex];
+
+                    int startIndex = field.StartIndex;
+                    int length = field.Length;
+                    if (startIndex > 0 || length > 0) // Length = 0; means value is entire line
                     {
-                        throw new InvalidOperationException($"Property {property.Name}='{valueString}' with Length={valueString.Length} not enough for Substring(Start={startIndex + 1}, Length={length})");
+                        if (valueString.Length < startIndex + length)
+                        {
+                            throw new InvalidOperationException($"Property {property.Name}='{valueString}' with Length={valueString.Length} not enough for Substring(Start={startIndex + 1}, Length={length})");
+                        }
+                        valueString = (length == 0) ? valueString.Substring(startIndex) : valueString.Substring(startIndex, length);
                     }
-                    valueString = (length == 0) ? valueString.Substring(startIndex) : valueString.Substring(startIndex, length);
-                }
 
-                if (fieldType == FieldType.FileField)
-                {
-                    string separator = ((FixedWidthFileFieldAttribute)field).SplitSeparator;
-                    if (separator != null && valueString.Contains(separator))
-                        valueString = valueString.Split(new string[] { separator }, StringSplitOptions.None)[0];
-                }
-                valueString = valueString.Trim();
-
-                object value = null;
-                var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
-                string valueTypeName = underlyingType != null ? underlyingType.Name : property.PropertyType.Name;
-
-                if (valueTypeName == nameof(String))
-                {
-                    value = valueString;
-                }
-                else
-                {
-                    string format = field.Format;
-                    //format = format ?? DefaultFormat.GetFormat(valueTypeName); // using Dict created by Reflection to only one line: format = format ?? ...
-                    switch (valueTypeName)
+                    if (fieldType == FieldType.FileField)
                     {
-                        case nameof(DateTime):
-                            format = format ?? Format.DateTimeFormat;
-                            value = DateTime.ParseExact(valueString, format, CultureInfo.InvariantCulture);
-                            break;
-                        case nameof(Int32):
-                            format = format ?? Format.Int32Format;
-                            value = Int32.Parse(valueString);
-                            break;
-                        case nameof(Decimal):
-                            format = format ?? Format.DecimalFormat;
-                            value = Decimal.Parse(valueString, CultureInfo.InvariantCulture);
-                            if (format.Contains(";"))
-                                value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
-                            break;
-                        case nameof(Boolean):
-                            format = format ?? Format.BooleanFormat;
-                            if (format.Contains(";"))
-                                value = valueString == format.Split(';')[0];
-                            else
-                                value = Boolean.Parse(valueString);
-                            break;
+                        string separator = ((FixedWidthFileFieldAttribute)field).SplitSeparator;
+                        if (separator != null && valueString.Contains(separator))
+                            valueString = valueString.Split(new string[] { separator }, StringSplitOptions.None)[0];
                     }
+                    valueString = valueString.Trim();
+
+                    object value = null;
+                    var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
+                    string valueTypeName = underlyingType != null ? underlyingType.Name : property.PropertyType.Name;
+
+                    if (valueTypeName == nameof(String))
+                    {
+                        value = valueString;
+                    }
+                    else
+                    {
+                        string format = field.Format;
+                        //format = format ?? DefaultFormat.GetFormat(valueTypeName); // using Dict created by Reflection to only one line: format = format ?? ...
+                        switch (valueTypeName)
+                        {
+                            case nameof(DateTime):
+                                format = format ?? Format.DateTimeFormat;
+                                value = DateTime.ParseExact(valueString, format, CultureInfo.InvariantCulture);
+                                break;
+                            case nameof(Int32):
+                                format = format ?? Format.Int32Format;
+                                value = Int32.Parse(valueString);
+                                break;
+                            case nameof(Decimal):
+                                format = format ?? Format.DecimalFormat;
+                                value = Decimal.Parse(valueString, CultureInfo.InvariantCulture);
+                                if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
+                                    value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
+                                break;
+                            case nameof(Boolean):
+                                format = format ?? Format.BooleanFormat;
+                                if (format.Contains(";"))
+                                    value = valueString == format.Split(';')[0];
+                                else
+                                    value = Boolean.Parse(valueString);
+                                break;
+                        }
+                    }
+                    property.SetValue(data, value);
+                    // ALTERNATIVE using FastMember library - faster then Reflection
+                    //accessor[data, property.Name] = value;
                 }
-                property.SetValue(data, value);
-                // ALTERNATIVE using FastMember library - faster then Reflection
-                //accessor[data, property.Name] = value;
             }
             return data;
         }
@@ -109,11 +120,11 @@ namespace FixedWidthParserWriter
             FixedWidthAttribute field = null;
             if (fieldType == FieldType.LineField)
             {
-                field = property.GetCustomAttributes<FixedWidthLineFieldAttribute>().Where(a => a.StructureTypeId <= structureTypeId).OrderByDescending(a => a.StructureTypeId).FirstOrDefault();
+                field = property.GetCustomAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == structureTypeId);
             }
             else if (fieldType == FieldType.FileField)
             {
-                field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().Where(a => a.StructureTypeId <= structureTypeId).OrderByDescending(a => a.StructureTypeId).FirstOrDefault();
+                field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == structureTypeId);
             }
             var value = property.GetValue(this);
             //var accessor = TypeAccessor.Create(this.GetType()); // move before in caller method before loop
@@ -141,21 +152,21 @@ namespace FixedWidthParserWriter
                 {
                     case nameof(DateTime):
                         format = format ?? Format.DateTimeFormat;
-                        pad = field.Pad ?? Pad.CharacterSeparator;
+                        pad = field.Pad != '\0' ? field.Pad : Pad.CharacterSeparator;
                         break;
                     case nameof(Int32):
                         format = format ?? Format.Int32Format;
-                        pad = field.Pad ?? Pad.NumericSeparator;
+                        pad = field.Pad != '\0' ? field.Pad : Pad.NumericSeparator;
                         break;
                     case nameof(Decimal):
                         format = format ?? Format.DecimalFormat;
-                        pad = field.Pad ?? Pad.NumericSeparator;
+                        pad = field.Pad != '\0' ? field.Pad : Pad.NumericSeparator;
                         if (format.Contains(";"))
                             value = (decimal)value * (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
                         break;
                     case nameof(Boolean):
                         format = format ?? Format.BooleanFormat;
-                        pad = field.Pad ?? Pad.CharacterSeparator;
+                        pad = field.Pad != '\0' ? field.Pad : Pad.CharacterSeparator;
                         value = value.GetHashCode();
                         break;
                 }
@@ -173,13 +184,15 @@ namespace FixedWidthParserWriter
                 else if (field.PadSide == PadSide.Left)
                     result = result.PadLeft(field.Length, pad);
             }
+
+
             if (fieldType == FieldType.FileField)
             {
                 int lineIndex = ((FixedWidthFileFieldAttribute)field).LineIndex;
                 var content = this.Content;
                 if (lineIndex < 0)
                 {
-                    lineIndex += content.Count;
+                    lineIndex += content.Count + 1;
                 }
                 string clearString = String.Empty;
                 clearString = field.Length > 0 ? content[lineIndex].Remove(field.StartIndex, field.Length) : content[lineIndex].Remove(field.StartIndex);

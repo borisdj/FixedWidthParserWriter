@@ -40,10 +40,4 @@ namespace FixedWidthParserWriter.Tests
     {
         public override char NumericSeparator { get; set; } = ' ';
     }
-
-    /*public class InvoiceItemDefaultFormatBeta : DefaultFormat
-    {
-        public override string DateTimeFormat { get; set; } = "ddMMyy";
-        public override string DecimalFormat { get; set; } = "0;00"; // ';' - Special custom Format that removes decimal separator 123.45 -> 12345
-    }*/
 }

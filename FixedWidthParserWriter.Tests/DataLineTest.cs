@@ -9,8 +9,29 @@ namespace FixedWidthParserWriter.Tests
         [Fact]
         public void LineParserTest()
         {
-            var result = "correct";
-            Assert.Equal("correct", result);
+            var dataLines = GetDataLines(FormatType.Alpha);
+
+            var invoiceItems = new List<InvoiceItem>();
+            foreach (var line in dataLines)
+            {
+                invoiceItems.Add(new InvoiceItem().Parse(line));
+            }
+
+            var invoiceItem = new InvoiceItem()
+            {
+                Number = 1,
+                Description = "Laptop Dell xps13",
+                Unit = "Pcs", // Pcs - pieces
+                Quantity = 1,
+                Price = 856.00m
+            };
+
+            Assert.Equal(invoiceItem.Number, invoiceItems[0].Number);
+            Assert.Equal(invoiceItem.Description, invoiceItems[0].Description);
+            Assert.Equal(invoiceItem.Unit, invoiceItems[0].Unit);
+            Assert.Equal(invoiceItem.Quantity, invoiceItems[0].Quantity);
+            Assert.Equal(invoiceItem.Price, invoiceItems[0].Price);
+
         }
 
         [Fact]
