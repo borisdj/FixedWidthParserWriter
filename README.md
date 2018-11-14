@@ -44,6 +44,37 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
     public decimal Amount => Quantity * Price;
 }
 ```
+Then we can call it like this:
+```C#
+public List<Invoiceitem> ParseDataLineFields(new List<string> dataLines)
+{
+    var invoiceItems = new List<InvoiceItem>();
+    foreach (var line in dataLines)
+    {
+        invoiceItems.Add(new InvoiceItem().Parse(line));
+    }
+    return invoiceItems;
+}
+
+public List<string> WriteDataFileFields()
+{
+    var invoiceItems = new List<InvoiceItem> {
+        new InvoiceItem() { 
+            Number = 1, Description = "Laptop Dell xps13", Unit = "Pcs", Quantity = 1, Price = 856.00m
+        },
+        new InvoiceItem() {
+            Number = 2, Description = "Monitor Asus 32''", Unit = "Pcs", Quantity = 2, Price = 568.00m
+        }
+    };
+
+    string itemsLineData = string.Empty;
+    foreach (var item in invoiceItems)
+    {
+        itemsLineData += item.ToString() + Environment.NewLine;
+    }
+    return itemsLineData;
+}
+```
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
 - *Start*
 - *Length*
@@ -58,8 +89,33 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
   -`DecimalFormat` Default = "0.00" ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
   -`BooleanFormat` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
 
+If we would have 2 structures then we can have multiple Attributes with different StructureId pre each Property
+(Full Example is in the Tests of the project):
+```C#
+public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
+{
+    public override void SetFormatAndPad()
+    {
+        Pad = InvoiceItemStructureProvider.GetDefaultPad((FormatType)StructureTypeId);
+    }
+
+    [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 1, Length = 4)]
+    [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 1, Length = 3)]
+    public int Number { get; set; }
+
+    [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta, Start = 4, Length = 1)]
+    public string SeparatorNumDesc { get; set; } = ".";
+
+    [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 5, Length = 30)]
+    [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 5, Length = 30)]
+    public string Description { get; set; }
+
+   //... Others Properties
+}
+```
+
 ### 2. Data in FileFields
-Second usage is when one data record is in diferent rows at defined positions (**record per File**), for example:
+Second usage is when one data record is in different rows at defined positions (**record per File**), for example:
 ```
 SoftysTech LCC
 Local Street NN
@@ -77,8 +133,7 @@ Due Date:     2018-11-15               Address: Some Location
 Date: 2018-10-31                                             Financial Manager
                                                                       John Doe
 ```
-
-
+For parsing/writing we make a model that inherits `FixedWidthDataFile` which Properties have `[FixedWidthLineField]` Att:
 ```C#
 public class Invoice : FixedWidthDataFile<Invoice>
 {
@@ -116,7 +171,54 @@ public class Invoice : FixedWidthDataFile<Invoice>
     public string SignatureName { get; set; }
 }
 ```
+Usage:
+```C#
+public Invoice ParseDataFileFields(new List<string> fileLines)
+{
+    var invoice = new Invoice().Parse(fileLines);
+    return invoice;
+}
 
+public List<string> WriteDataLineFields()
+{
+    var invoice = new Invoice()
+    {
+        CompanyName = "SoftysTech LCC",
+        CompanyAddress = "Local Street NN",
+        Date = new DateTime(2018, 10, 30),
+        DueDate = new DateTime(2018, 11, 15),
+        BuyerName = "SysCompanik",
+        BuyerAddress = "Some Location",
+        InvoiceNumber = "0169/18",
+        AmountTotal = 1192.00m,
+        DateCreated = new DateTime(2018, 10, 31),
+        SignatureName = "John Doe",
+        SignatoryTitle = "Financial Manager",
+    };
+
+    invoice.Content = GetDataFormTemplate();
+    invoice.UpdateContent();
+    return invoice.Content;
+}
+```
+DataFormTemplate looks like this:
+```
+{CompanyName}
+{CompanyAddress}
+______________________________________________________________________________
+
+Invoice Date: {InvoiceDate}            Buyer:   {BuyerName}
+Due Date:     {DueDatee}               Address: {BuyerAdd}
+
+                              INVOICE no. NNNN/YY
+...                                                                           
+...                                                                           
+------------------------------------------------------------------------------
+                                                                         0.00 
+
+Date: {Date}                                                  {SignatoryTitle}
+                                                               {SignatureName}
+```
 
 In situation where many same type properties have Format different from default one, instead of setting that format individualy for each one, it is possible to override default format for certain data type in that class:
 ```C#
