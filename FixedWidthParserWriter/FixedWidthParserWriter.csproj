@@ -9,7 +9,7 @@
     <PackageTags>Fixed Width Parser Writer Line Flat File delimiter txt read reading write writing</PackageTags>
     <PackageReleaseNotes>Initial commit</PackageReleaseNotes>
     <Description>Fixed Width Parser Writer for reading and writing creating flat .txt files with fixed line delimiter (record per line) or relatively fixed position in file (record per file)</Description>
-    <PackageIconUrl>https://raw.githubusercontent.com/borisdj/EFCore.BulkExtensions/master/logo.png</PackageIconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/borisdj/FixedWidthParserWriter/master/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/borisdj/FixedWidthParserWriter</PackageProjectUrl>
   </PropertyGroup>
 
