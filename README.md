@@ -89,8 +89,8 @@ public List<string> WriteDataFileFields()
   -`DecimalFormat` Default = "0.00" ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
   -`BooleanFormat` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
 
-When we need more then one file structure/format then we can put multiple Attributes with different StructureId for each Property<br>
-(Full Example is in the Tests of the project):
+When need more then 1 file structure/format we can put multiple Attributes with different StructureId for each Property<br>
+(Next example show different 2 Fiel structure with different pad, full Example in the Tests of the project):
 ```C#
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 {
@@ -112,6 +112,12 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 
    //... Others Properties
 }
+```
+Beta Structure:
+```
+No |         Description         |Unit| Qty |   Price    |Disc%|   Amount   |
+0001Laptop Dell xps13             Pcs  0000010000000856.00000.000000000856.00
+0002Monitor Asus 32''             Pcs  0000020000000568.00000.000000001136.00
 ```
 
 ### 2. Data in FileFields
