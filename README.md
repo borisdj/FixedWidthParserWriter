@@ -196,7 +196,7 @@ public class Invoice : FixedWidthDataFile<Invoice>
     [FixedWidthFileField(Line = -2, Start = 17, Length = 62, PadSide = PadSide.Left)]
     public string SignatoryTitle { get; set; }
 
-    [FixedWidthFileField(Line = -1, Length = 78, PadSide = PadSide.Left)]
+    [FixedWidthFileField(Line = -1, Length = 78, PadSide = PadSide.Left)] // Line negative Value counts number from bottom
     public string SignatureName { get; set; }
 }
 ```
@@ -248,6 +248,10 @@ Due Date:     {DueDatee}               Address: {BuyerAdd}
 Date: {Date}                                                  {SignatoryTitle}
                                                                {SignatureName}
 ```
+
+`[FixedWidthFileField]` has additinaly parameters:
+- *Line* in which we define line number where the value is (Negative values are used to define certain row from bottom)
+For Fil type Here *Length* is not required, and if not set(remains 0) that means the value is entire row, trimmed.
 
 In situation where many same type properties have Format different from default one, instead of setting that format individualy for each one, it is possible to override default format for certain data type in that class:
 ```C#
