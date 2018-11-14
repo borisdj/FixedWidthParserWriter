@@ -152,7 +152,7 @@ namespace FixedWidthParserWriter
                 {
                     case nameof(DateTime):
                         format = format ?? Format.DateTimeFormat;
-                        pad = field.Pad != '\0' ? field.Pad : Pad.CharacterSeparator;
+                        pad = field.Pad != '\0' ? field.Pad : Pad.NonNumericSeparator;
                         break;
                     case nameof(Int32):
                         format = format ?? Format.Int32Format;
@@ -166,7 +166,7 @@ namespace FixedWidthParserWriter
                         break;
                     case nameof(Boolean):
                         format = format ?? Format.BooleanFormat;
-                        pad = field.Pad != '\0' ? field.Pad : Pad.CharacterSeparator;
+                        pad = field.Pad != '\0' ? field.Pad : Pad.NonNumericSeparator;
                         value = value.GetHashCode();
                         break;
                 }

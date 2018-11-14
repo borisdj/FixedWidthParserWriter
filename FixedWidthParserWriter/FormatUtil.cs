@@ -10,7 +10,7 @@
 
     public class DefaultPad
     {
-        public virtual char CharacterSeparator { get; set; } = ' ';
+        public virtual char NonNumericSeparator { get; set; } = ' ';
         public virtual char NumericSeparator { get; set; } = '0';
     }
 
