@@ -110,7 +110,7 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
     [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 5, Length = 30)]
     public string Description { get; set; }
 
-   //... Others Properties
+    //... Others Properties
 }
 
 public static class InvoiceItemStructureProvider
