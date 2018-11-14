@@ -48,9 +48,15 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 - *Start*
 - *Length*
 - *Format* (Defaults per data type: DateTime=""yyyyMMdd"", Int="", Decimal="0.00", Boolean="1;;0")
-- *Pad* (Defaults per data group type: CharacterSeparator=' ', NumericSeparator='0')
-- *PadSide* {Right, Left} (Defaults: NonNumberic=PadSide.Left, Numeric=PadSide.Right)
+- *Pad* (Defaults per data group type: NonNumericSeparator{bool,string,DateTime}=' ', NumericSeparator='0')
+- *PadSide* {Right, Left} (Defaults: NonNumeric=PadSide.Left, Numeric=PadSide.Right)
 - *StructureTypeId* (used when having multiple files with different structure or format for same data)
+
+*_*Format* types, [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings)(int, decimal):<br>
+  -`DateTimeFormat` Default = ""yyyyMMdd"<br>
+  -`Int32Format` Default = "0"<br>
+  -`DecimalFormat` Default = "0.00" ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
+  -`BooleanFormat` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
 
 ### 2. Data in FileFields
 Second usage is when one data record is in diferent rows at defined positions (**record per File**), for example:
