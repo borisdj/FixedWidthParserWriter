@@ -112,6 +112,28 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 
    //... Others Properties
 }
+
+public static class InvoiceItemStructureProvider
+{
+    public static DefaultPad GetDefaultPad(FormatType formatType)
+    {
+        DefaultPad defaultPad = new DefaultPad();
+        switch (formatType)
+        {
+            case FormatType.Beta:
+                defaultPad = new InvoiceItemDefaultPadBeta();
+                break;
+        }
+        return defaultPad;
+    }
+}
+
+public class InvoiceItemDefaultPadBeta : DefaultPad
+{
+    public override char NumericSeparator { get; set; } = ' ';
+}
+
+public enum FormatType { Alpha, Beta }
 ```
 Beta Structure:
 ```
