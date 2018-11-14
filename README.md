@@ -90,7 +90,7 @@ public List<string> WriteDataFileFields()
   -`BooleanFormat` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
 
 When need more then 1 file structure/format we can put multiple Attributes with different StructureId for each Property<br>
-(Next example show different 2 Fiel structure with different pad, full Example in the Tests of the project):
+(Next example shows 2 structure with different pad(NumericSeparator: zero('0') or space(' '):
 ```C#
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 {
@@ -141,6 +141,7 @@ No |         Description         |Unit| Qty |   Price    |Disc%|   Amount   |
 0001Laptop Dell xps13             Pcs  0000010000000856.00000.000000000856.00
 0002Monitor Asus 32''             Pcs  0000020000000568.00000.000000001136.00
 ```
+Full Examples are in Tests of the project.
 
 ### 2. Data in FileFields
 Second usage is when one data record is in different rows at defined positions (**record per File**), for example:
