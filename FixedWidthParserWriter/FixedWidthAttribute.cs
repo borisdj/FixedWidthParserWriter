@@ -25,14 +25,12 @@ namespace FixedWidthParserWriter
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class FixedWidthFileFieldAttribute : FixedWidthAttribute
     {
-        public override object TypeId { get { return this; } }
-
         public override int Start { get; set; } = 1; // overriding to set initial value
 
-        public int Line { get; set; } = 1;
-        public string SplitSeparator { get; set; }
+        public override object TypeId { get { return this; } }
 
         public int StructureTypeId { get; set; }
+        public int Line { get; set; } = 1;
 
         public int LineIndex => Line - 1;
     }

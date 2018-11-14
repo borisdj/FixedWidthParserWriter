@@ -62,12 +62,6 @@ namespace FixedWidthParserWriter
                         valueString = (length == 0) ? valueString.Substring(startIndex) : valueString.Substring(startIndex, length);
                     }
 
-                    if (fieldType == FieldType.FileField)
-                    {
-                        string separator = ((FixedWidthFileFieldAttribute)field).SplitSeparator;
-                        if (separator != null && valueString.Contains(separator))
-                            valueString = valueString.Split(new string[] { separator }, StringSplitOptions.None)[0];
-                    }
                     valueString = valueString.Trim();
 
                     object value = null;
