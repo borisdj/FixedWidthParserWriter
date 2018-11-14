@@ -89,7 +89,7 @@ public List<string> WriteDataFileFields()
   -`DecimalFormat` Default = "0.00" ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
   -`BooleanFormat` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
 
-If we would have 2 structures then we can have multiple Attributes with different StructureId pre each Property
+When we need more then one file structure/format then we can put multiple Attributes with different StructureId for each Property<br>
 (Full Example is in the Tests of the project):
 ```C#
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
