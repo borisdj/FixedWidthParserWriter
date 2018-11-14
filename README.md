@@ -250,10 +250,9 @@ Date: {Date}                                                  {SignatoryTitle}
 ```
 
 `[FixedWidthFileField]` has additional parameter:
-- *Line* in which we define line number where the value is (Negative values are used to define certain row from bottom)
-For File type:
-- *Length* is not required, and if not set(remains 0) that means the value is entire row, trimmed.
-- *Start* has default = 1
+- *Line* in which we define line number where the value is (Negative values are used to define certain row from bottom)<br>
+
+For File type *Length* is not required, if not set(remains 0) it means the value is entire row(trimmed), and *Start* has default = 1.
 
 In situation where many same type properties have Format different from default one, instead of setting that format individually for each one, it is possible to override default format for certain data type in that class:
 ```C#
