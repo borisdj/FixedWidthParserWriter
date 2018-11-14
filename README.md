@@ -255,7 +255,7 @@ For File type:
 - *Length* is not required, and if not set(remains 0) that means the value is entire row, trimmed.
 - *Start* has default = 1
 
-In situation where many same type properties have Format different from default one, instead of setting that format individualy for each one, it is possible to override default format for certain data type in that class:
+In situation where many same type properties have Format different from default one, instead of setting that format individually for each one, it is possible to override default format for certain data type in that class:
 ```C#
     public class InvoiceDefaultFormat : DefaultFormat
     {
