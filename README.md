@@ -14,7 +14,7 @@ No |         Description         |Unit| Qty |   Price    |Disc%|   Amount   |
   1.Laptop Dell xps13             Pcs       1       856.00  0.00       856.00
   2.Monitor Asus 32''             Pcs       2       568.00  0.00      1136.00
 ```
-For parsing/writing we make a model that inherits 'FixedWidthDataLine' which Properties have `[FixedWidthLineField]` Att:
+For parsing/writing we make a model that inherits `FixedWidthDataLine` which Properties have `[FixedWidthLineField]` Att:
 ```C#
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 {
