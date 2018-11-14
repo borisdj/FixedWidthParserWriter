@@ -112,7 +112,7 @@ public class Invoice : FixedWidthDataFile<Invoice>
 ```
 
 
-In situation where many same type properties have Format different from default one, instead of setting that format individualy for each one, it is possible to overridee default format for ceratain data type in that class:
+In situation where many same type properties have Format different from default one, instead of setting that format individualy for each one, it is possible to override default format for certain data type in that class:
 ```C#
     public class InvoiceDefaultFormat : DefaultFormat
     {
