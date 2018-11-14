@@ -1,0 +1,15 @@
+{CompanyName}
+{CompanyAddress}
+______________________________________________________________________________
+
+Invoice Date: {InvoiceDate}            Buyer:   {BuyerName}
+Due Date:     {DueDatee}               Address: {BuyerAdd}
+
+                              INVOICE no. NNNN/YY
+...                                                                           
+...                                                                           
+------------------------------------------------------------------------------
+                                                                         0.00 
+
+Date: {Date}                                                  {SignatoryTitle}
+                                                               {SignatureName}
