@@ -8,7 +8,7 @@ Package manager console command for installation: *Install-Package FixedWidthPar
 There are are 2 main types of usage:<br>
 
 ### 1. Data in LineFields
-First is regular flat data file (**record per Line**), for example:
+First is regular flat data file (**record per Line**), for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceItems.txt):
 ```
 No |         Description         |Unit| Qty |   Price    |Disc%|   Amount   |
   1.Laptop Dell xps13             Pcs       1       856.00  0.00       856.00
@@ -144,7 +144,7 @@ No |         Description         |Unit| Qty |   Price    |Disc%|   Amount   |
 Full Examples are in Tests of the project.
 
 ### 2. Data in FileFields
-Second usage is when one data record is in different rows at defined positions (**record per File**), for example:
+Second usage is when one data record is in different rows at defined positions (**record per File**), for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoice.txt):
 ```
 SoftysTech LCC
 Local Street NN
@@ -280,6 +280,8 @@ In situation where many same type properties have Format different from default 
         /* ... Other Properties */
     }
 ```
+
+Combining both previous usages we can make complex file structures like [FullInvoice](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
 
 ## Contributing
 
