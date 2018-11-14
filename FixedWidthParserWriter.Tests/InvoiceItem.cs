@@ -38,6 +38,6 @@ namespace FixedWidthParserWriter.Tests
 
         [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 65, Length = 13)]
         [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 65, Length = 13)]
-        public decimal Amount => Quantity * Price;
+        public decimal Amount => Quantity * Price * (1 - Discount);
     }
 }
