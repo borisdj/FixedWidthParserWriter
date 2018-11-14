@@ -46,7 +46,7 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 ```
 Then we can call it like this:
 ```C#
-public List<Invoiceitem> ParseDataLineFields(new List<string> dataLines)
+public List<Invoiceitem> ParseDataLineFields(new List<string> dataLines) // dataLines are stripped of header
 {
     var invoiceItems = new List<InvoiceItem>();
     foreach (var line in dataLines)
