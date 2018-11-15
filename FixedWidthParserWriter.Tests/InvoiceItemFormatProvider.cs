@@ -10,11 +10,17 @@ namespace FixedWidthParserWriter.Tests
     {
         public static DefaultPad GetDefaultPad(FormatType formatType)
         {
-            DefaultPad defaultPad = new DefaultPad();
+            DefaultPad defaultPad = null;
             switch (formatType)
             {
+                case FormatType.Alpha:
+                    defaultPad = new DefaultPad();
+                    break;
                 case FormatType.Beta:
-                    defaultPad = new InvoiceItemDefaultPadBeta();
+                    defaultPad = new DefaultPad()
+                    {
+                        NumericSeparator = ' '
+                    };
                     break;
             }
             return defaultPad;
@@ -34,10 +40,5 @@ namespace FixedWidthParserWriter.Tests
             }
             return defaultFormat;
         }*/
-    }
-
-    public class InvoiceItemDefaultPadBeta : DefaultPad
-    {
-        public override char NumericSeparator { get; set; } = ' ';
     }
 }
