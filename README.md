@@ -61,7 +61,7 @@ public List<Invoiceitem> ParseDataLineFields(new List<string> dataLines) // data
     return invoiceItems;
 }
 
-public List<string> WriteDataFileFields()
+public List<string> WriteDataLineFields()
 {
     var invoiceItems = new List<InvoiceItem> {
         new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 856.00m },
