@@ -40,7 +40,7 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthFileField(Line = -2, Start = 17, Length = 50, PadSide = PadSide.Left)]
         public string SignatoryTitle { get; set; }
 
-        [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)]
+        [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // When Line is negative Value it counts from bottom
         public string SignatureName { get; set; }
     }
 
