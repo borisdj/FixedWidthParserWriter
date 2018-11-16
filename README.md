@@ -5,7 +5,19 @@ It is targeting NetStandard 2.0 so it can be used on project targeting NetCore(2
 Available on [![NuGet](https://img.shields.io/badge/NuGet-1.0.0-blue.svg)](https://www.nuget.org/packages/FixedWidthParserWriter/) latest version.<br>
 Package manager console command for installation: *Install-Package FixedWidthParserWriter*
 
-There are 2 main types of usage:<br>
+There are 2 main types of usage that are explained in the following segments: **1. LineFields** & **2. FileFields**<br>
+
+## Contributing
+
+If you find this project useful you can mark it by leaving a Github **\*Star**.</br>
+
+Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and the process for submitting pull requests.
+
+[![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)
+
+## Contact
+Want to contact us for Hire (Development & Consulting):</br>
+[www.codis.tech](http://www.codis.tech)
 
 ### 1. Data in LineFields
 First is regular flat data file (**record per Line**), for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceItems.txt):
@@ -276,15 +288,3 @@ In situation where many same type properties have Format different from default 
 ```
 
 Combining both previous usages we can make complex file structures like [FullInvoice](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
-
-## Contributing
-
-If you find this project useful you can mark it by leaving a Github **\*Star**.</br>
-
-Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and the process for submitting pull requests.
-
-[![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)
-
-## Contact
-Want to contact us for Hire (Development & Consulting):</br>
-[www.codis.tech](http://www.codis.tech)
