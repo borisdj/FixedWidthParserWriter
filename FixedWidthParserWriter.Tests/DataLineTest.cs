@@ -21,14 +21,12 @@ namespace FixedWidthParserWriter.Tests
             {
                 Number = 1,
                 Description = "Laptop Dell xps13",
-                Unit = "Pcs", // Pcs - pieces
                 Quantity = 1,
                 Price = 856.00m
             };
 
             Assert.Equal(invoiceItem.Number, invoiceItems[0].Number);
             Assert.Equal(invoiceItem.Description, invoiceItems[0].Description);
-            Assert.Equal(invoiceItem.Unit, invoiceItems[0].Unit);
             Assert.Equal(invoiceItem.Quantity, invoiceItems[0].Quantity);
             Assert.Equal(invoiceItem.Price, invoiceItems[0].Price);
 
@@ -39,22 +37,8 @@ namespace FixedWidthParserWriter.Tests
         {
             var invoiceItems = new List<InvoiceItem>
             {
-                new InvoiceItem()
-                {
-                    Number = 1,
-                    Description = "Laptop Dell xps13",
-                    Unit = "Pcs", // Pcs - pieces
-                    Quantity = 1,
-                    Price = 856.00m
-                },
-                new InvoiceItem()
-                {
-                    Number = 2,
-                    Description = "Monitor Asus 32''",
-                    Unit = "Pcs",
-                    Quantity = 2,
-                    Price = 568.00m
-                }
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 856.00m },
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 568.00m }
             };
 
             string resultAlpha = string.Empty;
@@ -87,7 +71,7 @@ namespace FixedWidthParserWriter.Tests
 
         public List<string> GetDataLines(FormatType formatType)
         {
-            //var head = "No |         Description         |Unit| Qty |   Price    |Disc%|   Amount   |";
+            //var head = "No |         Description         | Qty |   Price    |   Amount   |";
 
             List<string> dataLines = null;
             switch (formatType)
@@ -95,15 +79,15 @@ namespace FixedWidthParserWriter.Tests
                 case FormatType.Alpha:
                     dataLines = new List<string>
                     {
-                        "0001Laptop Dell xps13             Pcs  0000010000000856.00000.000000000856.00",
-                        "0002Monitor Asus 32''             Pcs  0000020000000568.00000.000000001136.00"
+                        "0001Laptop Dell xps13             0000010000000856.000000000856.00",
+                        "0002Monitor Asus 32''             0000020000000568.000000001136.00"
                     };
                     break;
                 case FormatType.Beta:
                     dataLines = new List<string>
                     {
-                        "  1.Laptop Dell xps13             Pcs       1       856.00  0.00       856.00",
-                        "  2.Monitor Asus 32''             Pcs       2       568.00  0.00      1136.00"
+                        "  1.Laptop Dell xps13                  1       856.00       856.00",
+                        "  2.Monitor Asus 32''                  2       568.00      1136.00"
                     };
                     break;
             }

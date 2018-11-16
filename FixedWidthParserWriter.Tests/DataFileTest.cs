@@ -61,19 +61,21 @@ namespace FixedWidthParserWriter.Tests
             {
                 "SoftysTech LCC",
                 "Local Street NN",
-                "______________________________________________________________________________",
+                "__________________________________________________________________",
                 "",
-                "Invoice Date: 2018-10-30               Buyer:   SysCompanik",
-                "Due Date:     2018-11-15               Address: Some Location",
+                "Invoice Date: 2018-10-30         Buyer:   SysCompanik",
+                "Due Date:     2018-11-15         Address: Some Location",
                 "",
-                "                              INVOICE no. 0169/18",
-                "...                                                                           ",
-                "...                                                                           ",
-                "------------------------------------------------------------------------------",
-                "                                                                     1,192.00 ",
+                "                        INVOICE no. 0169/18",
                 "",
-                "Date: 2018-10-31                                             Financial Manager",
-                "                                                                      John Doe"
+                "No |         Description         | Qty |   Price    |   Amount   |",
+                "...                                                               ",
+                "...                                                               ",
+                "------------------------------------------------------------------",          
+                "                                                          1,192.00",
+                "",
+                "Date: 2018-10-31                                 Financial Manager",
+                "                                                          John Doe"
             };
             return dataLines;
         }
@@ -84,19 +86,21 @@ namespace FixedWidthParserWriter.Tests
             {
                 "{CompanyName}",
                 "{CompanyAddress}",
-                "______________________________________________________________________________",
+                "__________________________________________________________________",
                 "",
-                "Invoice Date: {InvoiceDate}            Buyer:   {BuyerName}",
-                "Due Date:     {DueDatee}               Address: {BuyerAdd}",
+                "Invoice Date: {InvoiceDate}      Buyer:   {BuyerName}",
+                "Due Date:     {DueDatee}         Address: {BuyerAdd}",
                 "",
-                "                              INVOICE no. NNNN/YY",
-                "...                                                                           ",
-                "...                                                                           ",
-                "------------------------------------------------------------------------------",
-                "                                                                         0.00 ",
+                "                        INVOICE no. NNNN/YY",
                 "",
-                "Date: {Date}                                                  {SignatoryTitle}",
-                "                                                               {SignatureName}"
+                "No |         Description         | Qty |   Price    |   Amount   |",
+                "...                                                               ",
+                "...                                                               ",
+                "------------------------------------------------------------------",
+                "                                                              0.00",
+                "",
+                "Date: {Date}                                      {SignatoryTitle}",
+                "                                                   {SignatureName}"
             };
             return dataLines;
         }

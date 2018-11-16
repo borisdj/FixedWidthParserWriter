@@ -1,16 +1,17 @@
 SoftysTech LCC
 Local Street NN
-______________________________________________________________________________
+__________________________________________________________________
 
-Invoice Date: 2018-10-30               Buyer:   SysCompanik
-Due Date:     2018-11-15               Address: Some Location
+Invoice Date: 2018-10-30         Buyer:   SysCompanik
+Due Date:     2018-11-15         Address: Some Location
 
-                              INVOICE no. 0169/18
-No |         Description         |Unit| Qty |   Price    |Disc%|   Amount   |
-  1.Laptop Dell xps13             Pcs       1       856.00  0.00       856.00
-  2.Monitor Asus 32''             Pcs       2       568.00  0.00      1136.00
-------------------------------------------------------------------------------
-                                                                     1,192.00 
+                        INVOICE no. 0169/18
+						
+No |         Description         | Qty |   Price    |   Amount   |
+  1.Laptop Dell xps13                  1       856.00       856.00
+  2.Monitor Asus 32''                  2       568.00      1136.00
+------------------------------------------------------------------
+                                                          1,192.00 
 
-Date: 2018-10-31                                             Financial Manager
-                                                                      John Doe
+Date: 2018-10-31                                 Financial Manager
+                                                          John Doe

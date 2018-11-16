@@ -20,24 +20,16 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 5, Length = 30)]
         public string Description { get; set; }
 
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 35, Length = 5)]
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 35, Length = 5)]
-        public string Unit { get; set; }
-
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 40, Length = 6)]
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 40, Length = 6)]
+        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 35, Length = 6)]
+        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 35, Length = 6)]
         public int Quantity { get; set; }
 
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 46, Length = 13)]
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 46, Length = 13)]
+        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 41, Length = 13)]
+        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 41, Length = 13)]
         public decimal Price { get; set; }
 
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 59, Length = 6)]
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 59, Length = 6)]
-        public decimal Discount { get; set; }
-
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 65, Length = 13)]
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 65, Length = 13)]
-        public decimal Amount => Quantity * Price * (1 - Discount);
+        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 54, Length = 13)]
+        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 54, Length = 13)]
+        public decimal Amount => Quantity * Price;
     }
 }
