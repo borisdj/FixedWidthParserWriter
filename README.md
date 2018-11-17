@@ -186,11 +186,6 @@ public class Invoice : FixedWidthDataFile<Invoice>
 
     [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // When Line is negative Value it counts from bottom
     public string SignatureName { get; set; }
-    
-    public override void SetDefaultConfig()
-    {
-        DefaultConfig.FormatDateTime = "yyyy-MM-dd";
-    }
 }
 ```
 Usage:
