@@ -8,16 +8,12 @@ Package manager console command for installation: *Install-Package FixedWidthPar
 There are 2 main types of usage that are explained in the following segments: **1. LineFields** & **2. FileFields**<br>
 
 ## Contributing
-
 If you find this project useful you can mark it by leaving a Github **\*Star**.</br>
 
-Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and the process for submitting pull requests.
+Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and the process for submitting pull requests.<br>
+[![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/EFCore.BulkExtensions/blob/master/LICENSE)
 
-[![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)
-
-## Contact
-Want to contact us for Hire (Development & Consulting):</br>
-[www.codis.tech](http://www.codis.tech)
+Want to **Contact** us for Hire (Development & Consulting): [www.codis.tech](http://www.codis.tech)
 
 ### 1. Data in LineFields
 First is regular flat data file (**record per Line**), for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceItems.txt):
