@@ -82,7 +82,7 @@ public List<string> WriteDataLineFields()
 
 *_*Format* types, [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings)(int, decimal):<br>
   -`FormatIntegerNumber` Default = "0", \*groupFormat:`Int32`,`Int64`<br>
-  -`FormatDecimal` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`
+  -`FormatDecimal` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
                    ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
   -`FormatBoolean` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
   -`FormatDateTime` Default = ""yyyyMMdd"<br>
@@ -191,6 +191,11 @@ public class Invoice : FixedWidthDataFile<Invoice>
 
     [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // When Line is negative Value it counts from bottom
     public string SignatureName { get; set; }
+    
+    public override void SetDefaultConfig()
+    {
+        DefaultConfig.FormatDateTime = "yyyy-MM-dd";
+    }
 }
 ```
 Usage:
