@@ -75,54 +75,48 @@ public List<string> WriteDataLineFields()
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
 - *Start*
 - *Length*
-- *Format* (Defaults per data type: DateTime=""yyyyMMdd"", Int="", Decimal="0.00", Boolean="1;;0")
-- *Pad* (Defaults per data group type: NonNumericSeparator{bool,string,DateTime}=' ', NumericSeparator='0')
-- *PadSide* {Right, Left} (Defaults: NonNumeric=PadSide.Left, Numeric=PadSide.Right)
+- *Format* (Defaults per data type or group)
+- *Pad* (Defaults per data category type: ' ')
+- *PadSide* {Right, Left} (Defaults per data category: NonNumeric = PadSide.Left, Numeric = PadSide.Right)
 - *StructureTypeId* (used when having multiple files with different structure or format for same data)
 
 *_*Format* types, [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings)(int, decimal):<br>
-  -`DateTimeFormat` Default = ""yyyyMMdd"<br>
-  -`Int32Format` Default = "0"<br>
-  -`DecimalFormat` Default = "0.00" ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
-  -`BooleanFormat` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
-
+  -`FormatIntegerNumber` Default = "0", \*groupFormat:`Int32`,`Int64`<br>
+  -`FormatDecimal` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`
+                   ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
+  -`FormatBoolean` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
+  -`FormatDateTime` Default = ""yyyyMMdd"<br>
+  
 When need more then 1 file structure/format we can put multiple Attributes with different StructureId for each Property<br>
 (Next example shows 2 structure with different pad(NumericSeparator: zero('0') or space(' '):
 ```C#
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 {
-    public override void SetFormatAndPad()
-    {
-        Pad = InvoiceItemStructureProvider.GetDefaultPad((FormatType)StructureTypeId);
-    }
+	public override void SetDefaultConfig()
+	{
+		switch ((FormatType)StructureTypeId)
+		{
+			case FormatType.Alpha:
+				// config remains initial default
+				break;
+			case FormatType.Beta:
+				DefaultConfig.PadSeparatorNumeric = '0';
+				break;
+		}
+	}
+	
+	[FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 1, Length = 4)]
+	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 1, Length = 3)]
+	public int Number { get; set; }
 
-    [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 1, Length = 4)]
-    [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 1, Length = 3)]
-    public int Number { get; set; }
+	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta, Start = 4, Length = 1)]
+	public string SeparatorNumDesc { get; set; } = ".";
 
-    [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta, Start = 4, Length = 1)]
-    public string SeparatorNumDesc { get; set; } = ".";
+	[FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 5, Length = 30)]
+	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 5, Length = 30)]
+	public string Description { get; set; }
 
-    [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 5, Length = 30)]
-    [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 5, Length = 30)]
-    public string Description { get; set; }
-
-    //... Others Properties
-}
-
-public static class InvoiceItemStructureProvider
-{
-    public static DefaultPad GetDefaultPad(FormatType formatType)
-    {
-        DefaultPad defaultPad = new DefaultPad();
-        switch (formatType)
-        {
-            case FormatType.Beta:
-                defaultPad = new InvoiceItemDefaultPadBeta();
-                break;
-        }
-        return defaultPad;
-    }
+	//... Others Properties
 }
 
 public class InvoiceItemDefaultPadBeta : DefaultPad
