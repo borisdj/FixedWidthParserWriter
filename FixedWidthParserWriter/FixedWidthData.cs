@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+//using FastMember; // Nuget FastMember.Signed
 
 namespace FixedWidthParserWriter
 {
     public class FixedWidthData
     {
         public List<string> Content { get; set; }
-        public DefaultFormat Format { get; set; } = new DefaultFormat();
-        public DefaultPad Pad { get; set; } = new DefaultPad();
+        public DefaultConfig DefaultConfig { get; set; } = new DefaultConfig();
 
-        public virtual void SetFormatAndPad() { } // to be overriden for setting custom Format on entire property type
+        public virtual void SetDefaultConfig() { } // to be overriden for setting custom Format on entire property type
 
         protected T ParseData<T>(List<string> lines, FieldType fieldType, int structureTypeId = 0) where T : class, new()
         {
-            SetFormatAndPad();
+            SetDefaultConfig();
 
             var data = new T();
             var orderProperties = data.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthAttribute))).ToList();
 
+            //var accessor = TypeAccessor.Create(typeof(T), true); // with FastMember
             foreach (var property in orderProperties)
             {
                 if (!property.CanWrite)
@@ -72,38 +73,61 @@ namespace FixedWidthParserWriter
                     {
                         value = valueString;
                     }
+                    else if(valueTypeName == nameof(Char))
+                    {
+                        value = (char)valueString[0];
+                    }
                     else
                     {
-                        string format = field.Format;
-                        //format = format ?? DefaultFormat.GetFormat(valueTypeName); // using Dict created by Reflection to only one line: format = format ?? ...
-                        switch (valueTypeName)
+                        string format = field.Format; //= field.Format ?? DefaultFormat.GetFormat(valueTypeName);
+
+                        if (valueTypeName == nameof(Int32) || valueTypeName == nameof(Int64))
                         {
-                            case nameof(DateTime):
-                                format = format ?? Format.DateTimeFormat;
-                                value = DateTime.ParseExact(valueString, format, CultureInfo.InvariantCulture);
-                                break;
-                            case nameof(Int32):
-                                format = format ?? Format.Int32Format;
-                                value = Int32.Parse(valueString);
-                                break;
-                            case nameof(Decimal):
-                                format = format ?? Format.DecimalFormat;
-                                value = Decimal.Parse(valueString, CultureInfo.InvariantCulture);
-                                if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
-                                    value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
-                                break;
-                            case nameof(Boolean):
-                                format = format ?? Format.BooleanFormat;
-                                if (format.Contains(";"))
-                                    value = valueString == format.Split(';')[0];
-                                else
-                                    value = Boolean.Parse(valueString);
-                                break;
+                            format = format ?? DefaultConfig.FormatNumberInteger;
+                            switch (valueTypeName)
+                            {
+                                case nameof(Int32):
+                                    value = Int32.Parse(valueString);
+                                    break;
+                                case nameof(Int64):
+                                    value = Int64.Parse(valueString);
+                                    break;
+                            }
+                        }
+                        else if (valueTypeName == nameof(Decimal) || valueTypeName == nameof(Single) || valueTypeName == nameof(Double))
+                        {
+                            format = format ?? DefaultConfig.FormatNumberDecimal;
+                            switch (valueTypeName)
+                            {
+                                case nameof(Decimal):
+                                    value = Decimal.Parse(valueString, CultureInfo.InvariantCulture);
+                                    if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
+                                        value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
+                                    break;
+                                case nameof(Single):
+                                    value = Single.Parse(valueString, CultureInfo.InvariantCulture);
+                                    if (format.Contains(";"))
+                                        value = (float)value / (float)Math.Pow(10, format.Length - 2);
+                                    break;
+                                case nameof(Double):
+                                    value = Double.Parse(valueString, CultureInfo.InvariantCulture);
+                                    if (format.Contains(";"))
+                                        value = (double)value / (double)Math.Pow(10, format.Length - 2);
+                                    break;
+                            }
+                        }
+                        else if(valueTypeName == nameof(Boolean))
+                        {
+                            format = format ?? DefaultConfig.FormatBoolean;
+                        }
+                        else if (valueTypeName == nameof(DateTime))
+                        {
+                            format = format ?? DefaultConfig.FormatDateTime;
+                            value = DateTime.ParseExact(valueString, format, CultureInfo.InvariantCulture);
                         }
                     }
                     property.SetValue(data, value);
-                    // ALTERNATIVE using FastMember library - faster then Reflection
-                    //accessor[data, property.Name] = value;
+                    //accessor[data, property.Name] = value; // with FastMember
                 }
             }
             return data;
@@ -126,15 +150,19 @@ namespace FixedWidthParserWriter
             
             string valueTypeName = value?.GetType().Name ?? nameof(String);
 
-            if (valueTypeName == nameof(Decimal) || valueTypeName == nameof(Int32))
-                field.PadSide = field.PadSide != PadSide.Default ? field.PadSide : PadSide.Left; // Numeric types have default Left pad
+            if (valueTypeName == nameof(Int32) || valueTypeName == nameof(Int64) || valueTypeName == nameof(Decimal) || valueTypeName == nameof(Single) || valueTypeName == nameof(Double))
+            {
+                field.PadSide = field.PadSide != PadSide.Default ? field.PadSide : DefaultConfig.PadSideNumeric; // Numeric types have initial default Left pad
+            }
             else
-                field.PadSide = field.PadSide != PadSide.Default ? field.PadSide : PadSide.Right; // others types have default Right pad
+            {
+                field.PadSide = field.PadSide != PadSide.Default ? field.PadSide : DefaultConfig.PadSideNonNumeric; // NonNumeric types have initial default Right pad
+            }
 
             char pad = ' ';
 
             string result = String.Empty;
-            if (valueTypeName == nameof(String))
+            if (valueTypeName == nameof(String) || valueTypeName == nameof(Char))
             {
                 result = value?.ToString() ?? "";
             }
@@ -144,24 +172,41 @@ namespace FixedWidthParserWriter
                 //format = format ?? DefaultFormat.GetFormat(valueTypeName);
                 switch (valueTypeName)
                 {
-                    case nameof(DateTime):
-                        format = format ?? Format.DateTimeFormat;
-                        pad = field.Pad != '\0' ? field.Pad : Pad.NonNumericSeparator;
-                        break;
                     case nameof(Int32):
-                        format = format ?? Format.Int32Format;
-                        pad = field.Pad != '\0' ? field.Pad : Pad.NumericSeparator;
+                    case nameof(Int64):
+                        format = format ?? DefaultConfig.FormatNumberInteger;
+                        pad = field.Pad != '\0' ? field.Pad : DefaultConfig.PadSeparatorNumeric;
                         break;
                     case nameof(Decimal):
-                        format = format ?? Format.DecimalFormat;
-                        pad = field.Pad != '\0' ? field.Pad : Pad.NumericSeparator;
-                        if (format.Contains(";"))
-                            value = (decimal)value * (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
+                    case nameof(Single):
+                    case nameof(Double):
+                        format = format ?? DefaultConfig.FormatNumberDecimal;
+                        pad = field.Pad != '\0' ? field.Pad : DefaultConfig.PadSeparatorNumeric;
+                        if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
+                        {
+                            double decimalFactor = Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
+                            switch (valueTypeName)
+                            {
+                                case nameof(Decimal):
+                                    value = (decimal)value * (decimal)decimalFactor;
+                                    break;
+                                case nameof(Single):
+                                    value = (float)value * (float)decimalFactor;
+                                    break;
+                                case nameof(Double):
+                                    value = (double)value * decimalFactor;
+                                    break;
+                            }
+                        }
                         break;
                     case nameof(Boolean):
-                        format = format ?? Format.BooleanFormat;
-                        pad = field.Pad != '\0' ? field.Pad : Pad.NonNumericSeparator;
+                        format = format ?? DefaultConfig.FormatBoolean;
+                        pad = field.Pad != '\0' ? field.Pad : DefaultConfig.PadSeparatorNonNumeric;
                         value = value.GetHashCode();
+                        break;
+                    case nameof(DateTime):
+                        format = format ?? DefaultConfig.FormatDateTime;
+                        pad = field.Pad != '\0' ? field.Pad : DefaultConfig.PadSeparatorNonNumeric;
                         break;
                 }
                 result = format != null ? String.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value) : value.ToString();

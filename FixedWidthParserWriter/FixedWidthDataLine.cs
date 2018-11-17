@@ -23,7 +23,7 @@ namespace FixedWidthParserWriter
 
         public override string ToString()
         {
-            SetFormatAndPad();
+            SetDefaultConfig();
 
             var orderProperties = this.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthLineFieldAttribute)));
             orderProperties = orderProperties.Where(a => a.GetCustomAttributes<FixedWidthLineFieldAttribute>().Any(b => b.StructureTypeId == StructureTypeId));

@@ -13,7 +13,7 @@ namespace FixedWidthParserWriter
 
         public void UpdateContent(int structureTypeId = 0)
         {
-            SetFormatAndPad();
+            SetDefaultConfig();
 
             var orderProperties = this.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthAttribute))).ToList();
             string orderLine = String.Empty;

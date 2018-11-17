@@ -79,15 +79,15 @@ namespace FixedWidthParserWriter.Tests
                 case FormatType.Alpha:
                     dataLines = new List<string>
                     {
-                        "0001Laptop Dell xps13             0000010000000856.000000000856.00",
-                        "0002Monitor Asus 32''             0000020000000568.000000001136.00"
+                        "  1.Laptop Dell xps13                  1       856.00       856.00",
+                        "  2.Monitor Asus 32''                  2       568.00      1136.00"
                     };
                     break;
                 case FormatType.Beta:
                     dataLines = new List<string>
                     {
-                        "  1.Laptop Dell xps13                  1       856.00       856.00",
-                        "  2.Monitor Asus 32''                  2       568.00      1136.00"
+                        "0001Laptop Dell xps13             0000010000000856.000000000856.00",
+                        "0002Monitor Asus 32''             0000020000000568.000000001136.00"
                     };
                     break;
             }

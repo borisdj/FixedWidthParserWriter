@@ -4,11 +4,6 @@ namespace FixedWidthParserWriter.Tests
 {
     public class Invoice : FixedWidthDataFile<Invoice>
     {
-        public override void SetFormatAndPad()
-        {
-            Format = new InvoiceDefaultFormat();
-        }
-
         [FixedWidthFileField(Line = 1)]
         public string CompanyName { get; set; }
 
@@ -42,10 +37,10 @@ namespace FixedWidthParserWriter.Tests
 
         [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // When Line is negative Value it counts from bottom
         public string SignatureName { get; set; }
-    }
 
-    public class InvoiceDefaultFormat : DefaultFormat
-    {
-        public override string DateTimeFormat { get; set; } = "yyyy-MM-dd";
+        public override void SetDefaultConfig()
+        {
+            DefaultConfig.FormatDateTime = "yyyy-MM-dd";
+        }
     }
 }

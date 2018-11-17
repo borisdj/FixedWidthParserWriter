@@ -1,19 +1,12 @@
-using System;
-
 namespace FixedWidthParserWriter.Tests
 {
     public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
     {
-        public override void SetFormatAndPad()
-        {
-            Pad = InvoiceItemStructureProvider.GetDefaultPad((FormatType)StructureTypeId);
-        }
-
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 1, Length = 4)]
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 1, Length = 3)]
+        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 1, Length = 3)]
+        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta, Start = 1, Length = 4)]
         public int Number { get; set; }
 
-        [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta, Start = 4, Length = 1)]
+        [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 4, Length = 1)]
         public string SeparatorNumDesc { get; set; } = ".";
 
         [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 5, Length = 30)]
@@ -31,5 +24,24 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 54, Length = 13)]
         [FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 54, Length = 13)]
         public decimal Amount => Quantity * Price;
+
+        public override void SetDefaultConfig()
+        {
+            switch ((FormatType)StructureTypeId)
+            {
+                case FormatType.Alpha:
+                    // config remains initial default
+                    break;
+                case FormatType.Beta:
+                    DefaultConfig.PadSeparatorNumeric = '0';
+                    break;
+            }
+        }
+    }
+
+    public enum FormatType
+    {
+        Alpha,
+        Beta
     }
 }
