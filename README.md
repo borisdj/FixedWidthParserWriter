@@ -251,16 +251,11 @@ For File type *Length* is not required, if not set(remains 0) it means the value
 
 In situation where many same type properties have Format different from default one, instead of setting that format individually for each one, it is possible to override default format for certain data type in that class:
 ```C#
-    public class InvoiceDefaultFormat : DefaultFormat
-    {
-        public override string DateTimeFormat { get; set; } = "yyyy-MM-dd";
-    }
-    
     public class Invoice : FixedWidthDataFile<Invoice>
     {
-        public override void SetFormatAndPad()
+        public override void SetDefaultConfig()
         {
-            Format = new InvoiceDefaultFormat();
+            DefaultConfig.FormatDateTime = "yyyy-MM-dd";
         }
         
         [FixedWidthFileField(Line = 1)]
@@ -277,4 +272,4 @@ In situation where many same type properties have Format different from default 
     }
 ```
 
-Combining both previous usages we can make complex file structures like [FullInvoice](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
+Combining both previous usages we can make complex file structures like [invoiceFull](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
