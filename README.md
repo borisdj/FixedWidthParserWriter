@@ -80,7 +80,7 @@ public List<string> WriteDataLineFields()
 - *PadSide* {Right, Left} (Defaults per data category: NonNumeric = PadSide.Left, Numeric = PadSide.Right)
 - *StructureTypeId* (used when having multiple files with different structure or format for same data)
 
-*_*Format* types, [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings)(int, decimal):<br>
+*_*Format* types, [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings):<br>
   -`FormatIntegerNumber` Default = "0", \*groupFormat:`Int32`,`Int64`<br>
   -`FormatDecimal` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
                    ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
@@ -117,11 +117,6 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 	public string Description { get; set; }
 
 	//... Others Properties
-}
-
-public class InvoiceItemDefaultPadBeta : DefaultPad
-{
-    public override char NumericSeparator { get; set; } = ' ';
 }
 
 public enum FormatType { Alpha, Beta }
