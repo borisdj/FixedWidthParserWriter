@@ -85,7 +85,7 @@ public List<string> WriteDataLineFields()
   -`FormatDecimalNumber` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
   			 ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
-  -`FormatBoolean` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
+  -`FormatBoolean` Default = "T; ;F" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
   -`FormatDateTime` Default = ""yyyyMMdd"<br>
   
 When need more then 1 file structure/format we can put multiple Attributes with different StructureId for each Property<br>
@@ -134,11 +134,9 @@ Full Examples are in Tests of the project.
 Second usage is when one data record is in different rows at defined positions (**record per File**), for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoice.txt):
 ```
 SoftysTech LCC
-Local Street NN
 __________________________________________________________________
 
 Invoice Date: 2018-10-30         Buyer:   SysCompanik
-Due Date:     2018-11-15         Address: Some Location
 
                         INVOICE no. 0169/18
 						
@@ -158,20 +156,11 @@ public class Invoice : FixedWidthDataFile<Invoice>
     [FixedWidthFileField(Line = 1)]
     public string CompanyName { get; set; }
 
-    [FixedWidthFileField(Line = 2)]
-    public string CompanyAddress { get; set; }
-
     [FixedWidthFileField(Line = 5, Start = 15, Length = 19, Format = "yyyy-MM-dd")]
     public DateTime Date { get; set; }
 
-    [FixedWidthFileField(Line = 6, Start = 15, Length = 19, Format = "yyyy-MM-dd")]
-    public DateTime DueDate { get; set; }
-
     [FixedWidthFileField(Line = 5, Start = 43)]
     public string BuyerName { get; set; }
-
-    [FixedWidthFileField(Line = 6, Start = 43)]
-    public string BuyerAddress { get; set; }
 
     [FixedWidthFileField(Line = 8, Start = 37)]
     public string InvoiceNumber { get; set; }
@@ -202,11 +191,8 @@ public List<string> WriteDataLineFields()
     var invoice = new Invoice()
     {
         CompanyName = "SoftysTech LCC",
-        CompanyAddress = "Local Street NN",
         Date = new DateTime(2018, 10, 30),
-        DueDate = new DateTime(2018, 11, 15),
         BuyerName = "SysCompanik",
-        BuyerAddress = "Some Location",
         InvoiceNumber = "0169/18",
         AmountTotal = 1192.00m,
         DateCreated = new DateTime(2018, 10, 31),
@@ -222,11 +208,9 @@ public List<string> WriteDataLineFields()
 [DataFormTemplate](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceTemplate.txt) looks like this:
 ```
 {CompanyName}
-{CompanyAddress}
 __________________________________________________________________
 
 Invoice Date: {InvoiceDate}      Buyer:   {BuyerName}
-Due Date:     {DueDatee}         Address: {BuyerAdd}
 
                         INVOICE no. NNNN/YY
 						
@@ -236,7 +220,7 @@ No |         Description         | Qty |   Price    |   Amount   |
 ------------------------------------------------------------------
                                                               0.00 
 
-Date: {Date}                                      {SignatoryTitle}
+Date: {DateCreated}                                      {SignatoryTitle}
                                                    {SignatureName}
 ```
 
@@ -256,9 +240,6 @@ In situation where many same type properties have Format different from default 
         
         [FixedWidthFileField(Line = 1)]
         public string CompanyName { get; set; }
-
-        [FixedWidthFileField(Line = 2)]
-        public string CompanyAddress { get; set; }
 
         // Format set on class with custom DefaultFormat so not required on each Attribute of DateTime Property
         [FixedWidthFileField(Line = 5, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
