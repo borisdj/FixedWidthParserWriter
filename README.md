@@ -151,7 +151,8 @@ Date: 2018-10-31                                 Financial Manager
                                                           John Doe
 ```
 For parsing/writing we make a model that inherits `FixedWidthDataFile` and on Properties we add `[FixedWidthFileField]` attribute that has additional parameter:
-- *Line* in which we define line number where the value is (Negative values are used to define rows from bottom)<br>
+- *Line* in which we define line number where the value is (Negative values are used to define rows from bottom)
+
 For File type *Length* is not required, if not set(remains 0) it means the value is entire row(trimmed), and *Start* has default = 1.
 ```C#
 public class Invoice : FixedWidthDataFile<Invoice>
