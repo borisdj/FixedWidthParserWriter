@@ -89,7 +89,7 @@ public List<string> WriteDataLineFields()
   -`FormatDateTime`. . . . . .Default = "yyyyMMdd"<br>
  Custom format strings for [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings).
 
-When need more then 1 file structure/format we can put multiple Attributes with different *StructureTypeId* for each Property.<br>
+When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
 Next example shows 2 structures, second has one less Property and different PadSeparatorNumeric: '0' instead of ' '(space).
 ```C#
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
