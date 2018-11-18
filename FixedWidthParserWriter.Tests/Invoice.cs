@@ -7,7 +7,7 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthFileField(Line = 1)]
         public string CompanyName { get; set; }
 
-        // Format set on class with custom DefaultFormat so not required on each Attribute of DateTime Property
+        // Format set on class with FormatDateTime so not required on each Attribute of DateTime Property
         [FixedWidthFileField(Line = 4, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
         public DateTime Date { get; set; }
 
