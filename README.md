@@ -150,7 +150,9 @@ No |         Description         | Qty |   Price    |   Amount   |
 Date: 2018-10-31                                 Financial Manager
                                                           John Doe
 ```
-For parsing/writing we make a model that inherits `FixedWidthDataFile` which Properties have `[FixedWidthLineField]` Att:
+For parsing/writing we make a model that inherits `FixedWidthDataFile` and on Properties we add `[FixedWidthFileField]` attribute that has additional parameter:
+- *Line* in which we define line number where the value is (Negative values are used to define rows from bottom)<br>
+For File type *Length* is not required, if not set(remains 0) it means the value is entire row(trimmed), and *Start* has default = 1.
 ```C#
 public class Invoice : FixedWidthDataFile<Invoice>
 {
@@ -224,12 +226,6 @@ No |         Description         | Qty |   Price    |   Amount   |
 Date: {DateCreated}                               {SignatoryTitle}
                                                    {SignatureName}
 ```
-
-`[FixedWidthFileField]` has additional parameter:
-- *Line* in which we define line number where the value is (Negative values are used to define rows from bottom)<br>
-
-For File type *Length* is not required, if not set(remains 0) it means the value is entire row(trimmed), and *Start* has default = 1.
-
 In situation where many same type properties have Format different from default one, instead of setting custom format individually for each one, it is possible to override default format for certain data type in that class:
 ```C#
     public class Invoice : FixedWidthDataFile<Invoice>
@@ -249,5 +245,4 @@ In situation where many same type properties have Format different from default 
         /* ... Other Properties */
     }
 ```
-
 Combining both previous usages we can make complex file structures like [invoiceFull](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
