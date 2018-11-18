@@ -88,39 +88,39 @@ public List<string> WriteDataLineFields()
   -`FormatBoolean` . . . . . . Default = "T; ;F" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
   -`FormatDateTime`. . . . . .Default = "yyyyMMdd"<br>
   
-When need more then 1 file structure/format we can put multiple Attributes with different StructureId for each Property<br>
+When need more then 1 file structure/format we can put multiple Attributes with different *StructureTypeId* for each Property<br>
 (Next example shows 2 structure with different pad(NumericSeparator: zero('0') or space(' '):
 ```C#
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 {
 	public override void SetDefaultConfig()
 	{
-		switch ((FormatType)StructureTypeId)
+		switch ((ConfigType)StructureTypeId)
 		{
-			case FormatType.Alpha:
+			case ConfigType.Alpha:
 				// config remains initial default
 				break;
-			case FormatType.Beta:
+			case ConfigType.Beta:
 				DefaultConfig.PadSeparatorNumeric = '0';
 				break;
 		}
 	}
 
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 1, Length = 4)]
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 1, Length = 3)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 4)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 1, Length = 3)]
 	public int Number { get; set; }
 
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta, Start = 4, Length = 1)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta, Start = 4, Length = 1)]
 	public string SeparatorNumDesc { get; set; } = ".";
 
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 5, Length = 30)]
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 5, Length = 30)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 30)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 5, Length = 30)]
 	public string Description { get; set; }
 
 	//... Others Properties
 }
 
-public enum FormatType { Alpha, Beta }
+public enum ConfigType { Alpha, Beta }
 ```
 Beta Structure:
 ```
