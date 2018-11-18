@@ -157,13 +157,13 @@ public class Invoice : FixedWidthDataFile<Invoice>
     [FixedWidthFileField(Line = 1)]
     public string CompanyName { get; set; }
 
-    [FixedWidthFileField(Line = 5, Start = 15, Length = 19, Format = "yyyy-MM-dd")]
+    [FixedWidthFileField(Line = 4, Start = 15, Length = 19, Format = "yyyy-MM-dd")]
     public DateTime Date { get; set; }
 
-    [FixedWidthFileField(Line = 5, Start = 43)]
+    [FixedWidthFileField(Line = 4, Start = 43)]
     public string BuyerName { get; set; }
 
-    [FixedWidthFileField(Line = 8, Start = 37)]
+    [FixedWidthFileField(Line = 6, Start = 37)]
     public string InvoiceNumber { get; set; }
 
     [FixedWidthFileField(Line = -4, Length = 66, Pad = ' ', Format = "0,000.00")]
@@ -243,7 +243,7 @@ In situation where many same type properties have Format different from default 
         public string CompanyName { get; set; }
 
         // Format set on class with custom DefaultFormat so not required on each Attribute of DateTime Property
-        [FixedWidthFileField(Line = 5, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
+        [FixedWidthFileField(Line = 4, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
         public DateTime Date { get; set; }
         
         /* ... Other Properties */
