@@ -7,7 +7,7 @@ namespace FixedWidthParserWriter.Tests
         public int Number { get; set; }
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 4, Length = 1)]
-        public string SeparatorNumDesc { get; set; } = ".";
+        public string NumberedBullet { get; set; } = ".";
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 30)]
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 5, Length = 30)]

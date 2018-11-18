@@ -31,6 +31,7 @@ namespace FixedWidthParserWriter.Tests
 
         public override void SetDefaultConfig()
         {
+            //DefaultConfig.FormatNumberDecimal = "0,000.00";
             DefaultConfig.FormatDateTime = "yyyy-MM-dd";
         }
     }

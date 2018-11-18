@@ -38,7 +38,8 @@ namespace FixedWidthParserWriter.Tests
                 SignatoryTitle = "Financial Manager",
             };
 
-            invoice.Content = GetDataFormTemplate();
+            List<string> templateLines = GetDataFormTemplate();
+            invoice.Content = templateLines;
             invoice.UpdateContent();
 
             List<string> fileLines = GetDataFile();
