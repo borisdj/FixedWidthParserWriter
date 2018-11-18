@@ -81,12 +81,12 @@ public List<string> WriteDataLineFields()
 - *StructureTypeId* (used when having multiple files with different structure or format for same data)
 
 *_*Format* (Custom [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings)) types:<br>
-  -`FormatIntegerNumber` Default = "0", \*groupFormat:`Int32`,`Int64`<br>
-  -`FormatDecimalNumber` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
-  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+  -`FormatIntegerNumber`_Default = "0", \*groupFormat:`Int32`,`Int64`<br>
+  -`FormatDecimalNumber`_Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
+  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
   			 ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
-  -`FormatBoolean` Default = "T; ;F" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
-  -`FormatDateTime` Default = ""yyyyMMdd"<br>
+  -`FormatBoolean`_______Default = "T; ;F" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
+  -`FormatDateTime`______Default = ""yyyyMMdd"<br>
   
 When need more then 1 file structure/format we can put multiple Attributes with different StructureId for each Property<br>
 (Next example shows 2 structure with different pad(NumericSeparator: zero('0') or space(' '):
