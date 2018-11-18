@@ -85,8 +85,8 @@ public List<string> WriteDataLineFields()
   -`FormatDecimalNumber` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
   			 ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
-  -`FormatBoolean` . . . Default = "T; ;F" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
-  -`FormatDateTime`. . . Default = ""yyyyMMdd"<br>
+  -`FormatBoolean` . . . . . . Default = "T; ;F" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
+  -`FormatDateTime`. . . . . .Default = ""yyyyMMdd"<br>
   
 When need more then 1 file structure/format we can put multiple Attributes with different StructureId for each Property<br>
 (Next example shows 2 structure with different pad(NumericSeparator: zero('0') or space(' '):
