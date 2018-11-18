@@ -92,6 +92,8 @@ public List<string> WriteDataLineFields()
 When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
 Next example shows 2 structures, second has one less Property and different PadSeparatorNumeric: '0' instead of ' '(space).
 ```C#
+public enum ConfigType { Alpha, Beta }
+
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 {
 	public override void SetDefaultConfig()
@@ -120,8 +122,6 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 
 	//... Others Properties
 }
-
-public enum ConfigType { Alpha, Beta }
 ```
 Beta Structure:
 ```
