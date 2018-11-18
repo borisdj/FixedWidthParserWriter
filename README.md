@@ -30,7 +30,7 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
     public int Number { get; set; }
 
     [FixedWidthLineField(Start = 4, Length = 1)]
-    public string SeparatorNumDesc { get; set; } = ".";
+    public string NumberedBullet { get; set; } = ".";
 
     [FixedWidthLineField(Start = 5, Length = 30)]
     public string Description { get; set; }
@@ -77,21 +77,23 @@ public List<string> WriteDataLineFields()
 - *Length*
 - *Format* (Defaults per data type or group)
 - *Pad* (Defaults per data category{*Numeric*, *NonNumeric*} type, initially: ' ')
-- *PadSide* {Right, Left} (Defaults per data category: NonNumeric = PadSide.Left, Numeric = PadSide.Right)
+- *PadSide* {Right, Left} (Defaults per data category: *NonNumeric = PadSide.Left, Numeric = PadSide.Right*)
 - *StructureTypeId* (used when having multiple files with different structure or format for same data)
 
 *_*Format* types:<br>
-  -`FormatIntegerNumber` Default = "0", \*groupFormat:`Int32`,`Int64`<br>
-  -`FormatDecimalNumber` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
+  -`FormatIntegerNumber` Default = "**0**", \*groupFormat:`Int32`,`Int64`<br>
+  -`FormatDecimalNumber` Default = "**0.00**", \*groupFormat:`Decimal`,`Single`,`Double`<br>
    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-  			 ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
-  -`FormatBoolean` . . . . . . Default = "T; ;F" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
-  -`FormatDateTime`. . . . . .Default = "yyyyMMdd"<br>
+  			 ("*0;00*" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
+  -`FormatBoolean` . . . . . . Default = "**1; ;0**" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
+  -`FormatDateTime`. . . . . .Default = "**yyyyMMdd**"<br>
  Custom format strings for [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings).
 
-When need more then 1 file structure/format we can put multiple Attributes with different *StructureTypeId* for each Property<br>
-(Next example shows 2 structure with different pad(NumericSeparator: zero('0') or space(' '):
+When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
+Next example shows 2 structures, second has one less Property and different PadSeparatorNumeric: '0' instead of ' '(space).
 ```C#
+public enum ConfigType { Alpha, Beta }
+
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 {
 	public override void SetDefaultConfig()
@@ -120,8 +122,6 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 
 	//... Others Properties
 }
-
-public enum ConfigType { Alpha, Beta }
 ```
 Beta Structure:
 ```
@@ -150,7 +150,10 @@ No |         Description         | Qty |   Price    |   Amount   |
 Date: 2018-10-31                                 Financial Manager
                                                           John Doe
 ```
-For parsing/writing we make a model that inherits `FixedWidthDataFile` which Properties have `[FixedWidthLineField]` Att:
+For parsing/writing we make a model that inherits `FixedWidthDataFile` and on Properties we add `[FixedWidthFileField]` attribute that has additional parameter:
+- *Line* in which we define line number where the value is (Negative values represent row number from bottom)
+
+For FileField type *Length* is not required, if not set it means the value is entire row(trimmed), and *Start* has default = 1.
 ```C#
 public class Invoice : FixedWidthDataFile<Invoice>
 {
@@ -200,8 +203,9 @@ public List<string> WriteDataLineFields()
         SignatureName = "John Doe",
         SignatoryTitle = "Financial Manager",
     };
-
-    invoice.Content = GetDataFormTemplate();
+    
+    List<string> templateLines = GetDataFormTemplate();
+    invoice.Content = templateLines;
     invoice.UpdateContent();
     return invoice.Content;
 }
@@ -224,18 +228,13 @@ No |         Description         | Qty |   Price    |   Amount   |
 Date: {DateCreated}                               {SignatoryTitle}
                                                    {SignatureName}
 ```
-
-`[FixedWidthFileField]` has additional parameter:
-- *Line* in which we define line number where the value is (Negative values are used to define rows from bottom)<br>
-
-For File type *Length* is not required, if not set(remains 0) it means the value is entire row(trimmed), and *Start* has default = 1.
-
 In situation where many same type properties have Format different from default one, instead of setting custom format individually for each one, it is possible to override default format for certain data type in that class:
 ```C#
     public class Invoice : FixedWidthDataFile<Invoice>
     {
         public override void SetDefaultConfig()
         {
+            DefaultConfig.FormatNumberDecimal = "0,000.00";
             DefaultConfig.FormatDateTime = "yyyy-MM-dd";
         }
         
@@ -249,5 +248,4 @@ In situation where many same type properties have Format different from default 
         /* ... Other Properties */
     }
 ```
-
 Combining both previous usages we can make complex file structures like [invoiceFull](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
