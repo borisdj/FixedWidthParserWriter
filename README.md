@@ -175,7 +175,7 @@ public class Invoice : FixedWidthDataFile<Invoice>
     [FixedWidthFileField(Line = -2, Start = 17, Length = 50, PadSide = PadSide.Left)]
     public string SignatoryTitle { get; set; }
 
-    [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // Negative value Line counted from bottom 
+    [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // Line Negative - counted from bottom 
     public string SignatureName { get; set; }
 }
 ```
