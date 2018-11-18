@@ -107,11 +107,11 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 		}
 	}
 
-	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 4)]
-	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 1, Length = 3)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 3)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 1, Length = 4)]
 	public int Number { get; set; }
 
-	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta, Start = 4, Length = 1)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 4, Length = 1)]
 	public string SeparatorNumDesc { get; set; } = ".";
 
 	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 30)]
