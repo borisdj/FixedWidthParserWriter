@@ -76,14 +76,15 @@ public List<string> WriteDataLineFields()
 - *Start*
 - *Length*
 - *Format* (Defaults per data type or group)
-- *Pad* (Defaults per data category type: ' ')
+- *Pad* (Defaults per data category type, initially: ' ')
 - *PadSide* {Right, Left} (Defaults per data category: NonNumeric = PadSide.Left, Numeric = PadSide.Right)
 - *StructureTypeId* (used when having multiple files with different structure or format for same data)
 
-*_*Format* types, [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings):<br>
+*_*Format* (Custom [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings)) types:<br>
   -`FormatIntegerNumber` Default = "0", \*groupFormat:`Int32`,`Int64`<br>
-  -`FormatDecimal` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
-                   ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
+  -`FormatDecimalNumber` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
+  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+  			 ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
   -`FormatBoolean` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
   -`FormatDateTime` Default = ""yyyyMMdd"<br>
   
