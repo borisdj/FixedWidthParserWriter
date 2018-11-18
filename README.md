@@ -76,50 +76,52 @@ public List<string> WriteDataLineFields()
 - *Start*
 - *Length*
 - *Format* (Defaults per data type or group)
-- *Pad* (Defaults per data category type: ' ')
+- *Pad* (Defaults per data category{*Numeric*, *NonNumeric*} type, initially: ' ')
 - *PadSide* {Right, Left} (Defaults per data category: NonNumeric = PadSide.Left, Numeric = PadSide.Right)
 - *StructureTypeId* (used when having multiple files with different structure or format for same data)
 
-*_*Format* types, [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings):<br>
+*_*Format* types:<br>
   -`FormatIntegerNumber` Default = "0", \*groupFormat:`Int32`,`Int64`<br>
-  -`FormatDecimal` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
-                   ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)<br>
-  -`FormatBoolean` Default = "1;;0" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
-  -`FormatDateTime` Default = ""yyyyMMdd"<br>
-  
-When need more then 1 file structure/format we can put multiple Attributes with different StructureId for each Property<br>
+  -`FormatDecimalNumber` Default = "0.00", \*groupFormat:`Decimal`,`Single`,`Double`<br>
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+  			 ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
+  -`FormatBoolean` . . . . . . Default = "T; ;F" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
+  -`FormatDateTime`. . . . . .Default = "yyyyMMdd"<br>
+ Custom format strings for [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings).
+
+When need more then 1 file structure/format we can put multiple Attributes with different *StructureTypeId* for each Property<br>
 (Next example shows 2 structure with different pad(NumericSeparator: zero('0') or space(' '):
 ```C#
 public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 {
 	public override void SetDefaultConfig()
 	{
-		switch ((FormatType)StructureTypeId)
+		switch ((ConfigType)StructureTypeId)
 		{
-			case FormatType.Alpha:
+			case ConfigType.Alpha:
 				// config remains initial default
 				break;
-			case FormatType.Beta:
+			case ConfigType.Beta:
 				DefaultConfig.PadSeparatorNumeric = '0';
 				break;
 		}
 	}
-	
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 1, Length = 4)]
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 1, Length = 3)]
+
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 3)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 1, Length = 4)]
 	public int Number { get; set; }
 
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta, Start = 4, Length = 1)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 4, Length = 1)]
 	public string SeparatorNumDesc { get; set; } = ".";
 
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 5, Length = 30)]
-	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 5, Length = 30)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 30)]
+	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 5, Length = 30)]
 	public string Description { get; set; }
 
 	//... Others Properties
 }
 
-public enum FormatType { Alpha, Beta }
+public enum ConfigType { Alpha, Beta }
 ```
 Beta Structure:
 ```
@@ -133,11 +135,9 @@ Full Examples are in Tests of the project.
 Second usage is when one data record is in different rows at defined positions (**record per File**), for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoice.txt):
 ```
 SoftysTech LCC
-Local Street NN
 __________________________________________________________________
 
 Invoice Date: 2018-10-30         Buyer:   SysCompanik
-Due Date:     2018-11-15         Address: Some Location
 
                         INVOICE no. 0169/18
 						
@@ -157,22 +157,13 @@ public class Invoice : FixedWidthDataFile<Invoice>
     [FixedWidthFileField(Line = 1)]
     public string CompanyName { get; set; }
 
-    [FixedWidthFileField(Line = 2)]
-    public string CompanyAddress { get; set; }
-
-    [FixedWidthFileField(Line = 5, Start = 15, Length = 19, Format = "yyyy-MM-dd")]
+    [FixedWidthFileField(Line = 4, Start = 15, Length = 19, Format = "yyyy-MM-dd")]
     public DateTime Date { get; set; }
 
-    [FixedWidthFileField(Line = 6, Start = 15, Length = 19, Format = "yyyy-MM-dd")]
-    public DateTime DueDate { get; set; }
-
-    [FixedWidthFileField(Line = 5, Start = 43)]
+    [FixedWidthFileField(Line = 4, Start = 43)]
     public string BuyerName { get; set; }
 
-    [FixedWidthFileField(Line = 6, Start = 43)]
-    public string BuyerAddress { get; set; }
-
-    [FixedWidthFileField(Line = 8, Start = 37)]
+    [FixedWidthFileField(Line = 6, Start = 37)]
     public string InvoiceNumber { get; set; }
 
     [FixedWidthFileField(Line = -4, Length = 66, Pad = ' ', Format = "0,000.00")]
@@ -184,7 +175,7 @@ public class Invoice : FixedWidthDataFile<Invoice>
     [FixedWidthFileField(Line = -2, Start = 17, Length = 50, PadSide = PadSide.Left)]
     public string SignatoryTitle { get; set; }
 
-    [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // When Line is negative Value it counts from bottom
+    [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // Line Negative - counted from bottom 
     public string SignatureName { get; set; }
 }
 ```
@@ -201,11 +192,8 @@ public List<string> WriteDataLineFields()
     var invoice = new Invoice()
     {
         CompanyName = "SoftysTech LCC",
-        CompanyAddress = "Local Street NN",
         Date = new DateTime(2018, 10, 30),
-        DueDate = new DateTime(2018, 11, 15),
         BuyerName = "SysCompanik",
-        BuyerAddress = "Some Location",
         InvoiceNumber = "0169/18",
         AmountTotal = 1192.00m,
         DateCreated = new DateTime(2018, 10, 31),
@@ -221,11 +209,9 @@ public List<string> WriteDataLineFields()
 [DataFormTemplate](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceTemplate.txt) looks like this:
 ```
 {CompanyName}
-{CompanyAddress}
 __________________________________________________________________
 
 Invoice Date: {InvoiceDate}      Buyer:   {BuyerName}
-Due Date:     {DueDatee}         Address: {BuyerAdd}
 
                         INVOICE no. NNNN/YY
 						
@@ -235,16 +221,16 @@ No |         Description         | Qty |   Price    |   Amount   |
 ------------------------------------------------------------------
                                                               0.00 
 
-Date: {Date}                                      {SignatoryTitle}
+Date: {DateCreated}                               {SignatoryTitle}
                                                    {SignatureName}
 ```
 
 `[FixedWidthFileField]` has additional parameter:
-- *Line* in which we define line number where the value is (Negative values are used to define certain row from bottom)<br>
+- *Line* in which we define line number where the value is (Negative values are used to define rows from bottom)<br>
 
 For File type *Length* is not required, if not set(remains 0) it means the value is entire row(trimmed), and *Start* has default = 1.
 
-In situation where many same type properties have Format different from default one, instead of setting that format individually for each one, it is possible to override default format for certain data type in that class:
+In situation where many same type properties have Format different from default one, instead of setting custom format individually for each one, it is possible to override default format for certain data type in that class:
 ```C#
     public class Invoice : FixedWidthDataFile<Invoice>
     {
@@ -256,11 +242,8 @@ In situation where many same type properties have Format different from default 
         [FixedWidthFileField(Line = 1)]
         public string CompanyName { get; set; }
 
-        [FixedWidthFileField(Line = 2)]
-        public string CompanyAddress { get; set; }
-
         // Format set on class with custom DefaultFormat so not required on each Attribute of DateTime Property
-        [FixedWidthFileField(Line = 5, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
+        [FixedWidthFileField(Line = 4, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
         public DateTime Date { get; set; }
         
         /* ... Other Properties */
