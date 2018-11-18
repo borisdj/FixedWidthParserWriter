@@ -233,6 +233,7 @@ In situation where many same type properties have Format different from default 
     {
         public override void SetDefaultConfig()
         {
+			DefaultConfig.FormatNumberDecimal = "0,000.00";
             DefaultConfig.FormatDateTime = "yyyy-MM-dd";
         }
         
