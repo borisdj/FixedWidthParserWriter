@@ -204,7 +204,7 @@ public List<string> WriteDataLineFields()
         SignatoryTitle = "Financial Manager",
     };
 
-    invoice.Content = GetDataFormTemplate();
+    invoice.Content = GetDataFormTemplate(); // retuns List<string> with liens from DataFormTemplate and sets it in Content
     invoice.UpdateContent();
     return invoice.Content;
 }
