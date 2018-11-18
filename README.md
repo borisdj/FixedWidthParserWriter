@@ -84,7 +84,7 @@ public List<string> WriteDataLineFields()
   -`FormatIntegerNumber` Default = "**0**", \*groupFormat:`Int32`,`Int64`<br>
   -`FormatDecimalNumber` Default = "**0.00**", \*groupFormat:`Decimal`,`Single`,`Double`<br>
    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-  			 ("0;00" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
+  			 ("*0;00*" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
   -`FormatBoolean` . . . . . . Default = "**1; ;0**" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
   -`FormatDateTime`. . . . . .Default = "**yyyyMMdd**"<br>
  Custom format strings for [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings).
