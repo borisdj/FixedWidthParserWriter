@@ -226,11 +226,11 @@ Date: {DateCreated}                               {SignatoryTitle}
 ```
 
 `[FixedWidthFileField]` has additional parameter:
-- *Line* in which we define line number where the value is (Negative values are used to define certain row from bottom)<br>
+- *Line* in which we define line number where the value is (Negative values are used to define rows from bottom)<br>
 
 For File type *Length* is not required, if not set(remains 0) it means the value is entire row(trimmed), and *Start* has default = 1.
 
-In situation where many same type properties have Format different from default one, instead of setting that format individually for each one, it is possible to override default format for certain data type in that class:
+In situation where many same type properties have Format different from default one, instead of setting custom format individually for each one, it is possible to override default format for certain data type in that class:
 ```C#
     public class Invoice : FixedWidthDataFile<Invoice>
     {
