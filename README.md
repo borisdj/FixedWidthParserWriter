@@ -74,7 +74,7 @@ public List<string> WriteDataLineFields()
 ```
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
 - *Start*
-- *Length*
+- *Length* (when writing if Property has longer value then defined in Length it will be cut from the right to fit)
 - *Format* (Defaults per data type or group)
 - *Pad* (Defaults per data category{*Numeric*, *NonNumeric*} type, initially: ' ')
 - *PadSide* {Right, Left} (Defaults per data category: *NonNumeric = PadSide.Left, Numeric = PadSide.Right*)
