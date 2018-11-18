@@ -105,7 +105,7 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 				break;
 		}
 	}
-	
+
 	[FixedWidthLineField(StructureTypeId = (int)FormatType.Alpha, Start = 1, Length = 4)]
 	[FixedWidthLineField(StructureTypeId = (int)FormatType.Beta,  Start = 1, Length = 3)]
 	public int Number { get; set; }
