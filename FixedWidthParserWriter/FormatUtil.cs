@@ -18,7 +18,7 @@
         // Formats
         public virtual string FormatNumberInteger { get; set; } = "0";
         public virtual string FormatNumberDecimal { get; set; } = "0.00";
-        public virtual string FormatBoolean { get; set; } = "1;;0";
+        public virtual string FormatBoolean { get; set; } = "T; ;F";
         public virtual string FormatDateTime { get; set; } = "yyyyMMdd";
 
         //public virtual string FormatInt32 { get; set; }   // FormatNumberInteger

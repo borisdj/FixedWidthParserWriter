@@ -1,9 +1,7 @@
 {CompanyName}
-{CompanyAddress}
 __________________________________________________________________
 
 Invoice Date: {InvoiceDate}      Buyer:   {BuyerName}
-Due Date:     {DueDatee}         Address: {BuyerAdd}
 
                         INVOICE no. NNNN/YY
 						
@@ -13,5 +11,5 @@ No |         Description         | Qty |   Price    |   Amount   |
 ------------------------------------------------------------------
                                                               0.00 
 
-Date: {Date}                                      {SignatoryTitle}
+Date: {DateCreated}                               {SignatoryTitle}
                                                    {SignatureName}

@@ -9,7 +9,7 @@ namespace FixedWidthParserWriter.Tests
         [Fact]
         public void LineParserTest()
         {
-            var dataLines = GetDataLines(FormatType.Alpha);
+            var dataLines = GetDataLines(ConfigType.Alpha);
 
             var invoiceItems = new List<InvoiceItem>();
             foreach (var line in dataLines)
@@ -46,19 +46,19 @@ namespace FixedWidthParserWriter.Tests
             foreach (var item in invoiceItems)
             {
                 resultAlpha += item.ToString() + Environment.NewLine;
-                resultBeta += item.ToString((int)FormatType.Beta) + Environment.NewLine;
+                resultBeta += item.ToString((int)ConfigType.Beta) + Environment.NewLine;
             }
 
             List<string> dataLines;
 
-            dataLines = GetDataLines(FormatType.Alpha);
+            dataLines = GetDataLines(ConfigType.Alpha);
             string expectedAlpha = string.Empty;
             foreach (var line in dataLines)
             {
                 expectedAlpha += line + Environment.NewLine;
             };
 
-            dataLines = GetDataLines(FormatType.Beta);
+            dataLines = GetDataLines(ConfigType.Beta);
             string expectedBeta = string.Empty;
             foreach (var line in dataLines)
             {
@@ -69,21 +69,21 @@ namespace FixedWidthParserWriter.Tests
             Assert.Equal(expectedBeta, resultBeta);
         }
 
-        public List<string> GetDataLines(FormatType formatType)
+        public List<string> GetDataLines(ConfigType formatType)
         {
             //var head = "No |         Description         | Qty |   Price    |   Amount   |";
 
             List<string> dataLines = null;
             switch (formatType)
             {
-                case FormatType.Alpha:
+                case ConfigType.Alpha:
                     dataLines = new List<string>
                     {
                         "  1.Laptop Dell xps13                  1       856.00       856.00",
                         "  2.Monitor Asus 32''                  2       568.00      1136.00"
                     };
                     break;
-                case FormatType.Beta:
+                case ConfigType.Beta:
                     dataLines = new List<string>
                     {
                         "0001Laptop Dell xps13             0000010000000856.000000000856.00",

@@ -14,11 +14,8 @@ namespace FixedWidthParserWriter.Tests
             var invoice = new Invoice().Parse(fileLines);
 
             Assert.Equal("SoftysTech LCC", invoice.CompanyName);
-            Assert.Equal("Local Street NN", invoice.CompanyAddress);
             Assert.Equal(new DateTime(2018, 10, 30), invoice.Date);
-            Assert.Equal(new DateTime(2018, 11, 15), invoice.DueDate);
             Assert.Equal("SysCompanik", invoice.BuyerName);
-            Assert.Equal("Some Location", invoice.BuyerAddress);
             Assert.Equal("0169/18", invoice.InvoiceNumber);
             Assert.Equal(1192.00m, invoice.AmountTotal);
             Assert.Equal(new DateTime(2018, 10, 31), invoice.DateCreated);
@@ -32,11 +29,8 @@ namespace FixedWidthParserWriter.Tests
             var invoice = new Invoice()
             {
                 CompanyName = "SoftysTech LCC",
-                CompanyAddress = "Local Street NN",
                 Date = new DateTime(2018, 10, 30),
-                DueDate = new DateTime(2018, 11, 15),
                 BuyerName = "SysCompanik",
-                BuyerAddress = "Some Location",
                 InvoiceNumber = "0169/18",
                 AmountTotal = 1192.00m,
                 DateCreated = new DateTime(2018, 10, 31),
@@ -60,11 +54,9 @@ namespace FixedWidthParserWriter.Tests
             var dataLines = new List<string>
             {
                 "SoftysTech LCC",
-                "Local Street NN",
                 "__________________________________________________________________",
                 "",
                 "Invoice Date: 2018-10-30         Buyer:   SysCompanik",
-                "Due Date:     2018-11-15         Address: Some Location",
                 "",
                 "                        INVOICE no. 0169/18",
                 "",
@@ -85,11 +77,9 @@ namespace FixedWidthParserWriter.Tests
             var dataLines = new List<string>
             {
                 "{CompanyName}",
-                "{CompanyAddress}",
                 "__________________________________________________________________",
                 "",
                 "Invoice Date: {InvoiceDate}      Buyer:   {BuyerName}",
-                "Due Date:     {DueDatee}         Address: {BuyerAdd}",
                 "",
                 "                        INVOICE no. NNNN/YY",
                 "",
@@ -99,7 +89,7 @@ namespace FixedWidthParserWriter.Tests
                 "------------------------------------------------------------------",
                 "                                                              0.00",
                 "",
-                "Date: {Date}                                      {SignatoryTitle}",
+                "Date: {DateCreated}                               {SignatoryTitle}",
                 "                                                   {SignatureName}"
             };
             return dataLines;
