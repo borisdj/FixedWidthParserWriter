@@ -220,7 +220,7 @@ No |         Description         | Qty |   Price    |   Amount   |
 ------------------------------------------------------------------
                                                               0.00 
 
-Date: {DateCreated}                                      {SignatoryTitle}
+Date: {DateCreated}                               {SignatoryTitle}
                                                    {SignatureName}
 ```
 
