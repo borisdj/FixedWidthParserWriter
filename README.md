@@ -77,8 +77,8 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
  Custom format strings for [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings).
 
 When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
-Next example shows 2 structures, second has one less Property and different PadSeparatorNumeric: '0' instead of ' '(space).
-To change DefaultConfig per StructureType class model should implement `IFixedWidth` interface with `SetDefaultConfig()` method.
+Next example shows 2 structures, second has one less Property and different PadSeparatorNumeric: '0' instead of ' '(space).<br>
+To change DefaultConfig per StructureType, model should implement `IFixedWidth` interface with `SetDefaultConfig()` method.
 ```C#
 public enum ConfigType { Alpha, Beta }
 
