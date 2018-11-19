@@ -82,7 +82,7 @@ namespace FixedWidthParserWriter.Tests
 
         public List<string> GetDataLines(ConfigType formatType)
         {
-            //var head = "No |         Description         | Qty |   Price    |   Amount   |";
+          //var header ="No |         Description         | Qty |   Price    |   Amount   |";
 
             List<string> dataLines = null;
             switch (formatType)
