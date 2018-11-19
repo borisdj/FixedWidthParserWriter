@@ -26,7 +26,7 @@ For parsing/writing we make a model which Properties have `[FixedWidthLineField]
 ```C#
 public class InvoiceItem
 {
-	[FixedWidthLineField(Start = 1, Length = 3)]
+    [FixedWidthLineField(Start = 1, Length = 3)]
 	public int Number { get; set; }
 
 	[FixedWidthLineField(Start = 4, Length = 1)]
