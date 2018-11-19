@@ -17,7 +17,7 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthFileField(Line = 6, Start = 37)]
         public string InvoiceNumber { get; set; }
 
-        [FixedWidthFileField(Line = -4, Length = 66, Pad = ' ', Format = "0,000.00")]
+        [FixedWidthFileField(Line = -4, Length = 66, Format = "0,000.00")]
         public decimal AmountTotal { get; set; }
 
         [FixedWidthFileField(Line = -2, Start = 7, Length = 10/*, Format = "yyyy-MM-dd"*/)]
@@ -29,11 +29,12 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // Line Negative - counted from bottom
         public string SignatureName { get; set; }
 
-        public DefaultConfig GetDefaultConfig(int StructureTypeId = 0)
+        public DefaultConfig GetDefaultConfig(int StructureTypeId)
         {
             return new DefaultConfig
             {
                 FormatDateTime = "yyyy-MM-dd"
+                //FormatNumberDecimal = "0,000.00"
             };
         }
     }

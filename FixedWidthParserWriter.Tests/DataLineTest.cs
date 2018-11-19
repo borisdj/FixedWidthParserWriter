@@ -10,7 +10,7 @@ namespace FixedWidthParserWriter.Tests
         public void LineParserTest()
         {
             var dataLines = GetDataLines(ConfigType.Alpha);
-            List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines); // StrucutreTypeId argument not explicity set, defualt = 0 (ConfigType.Alpha)
+            List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines); // StrucutreTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
 
             var invoiceItem1 = new InvoiceItem()
             {
