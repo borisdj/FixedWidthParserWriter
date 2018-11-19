@@ -143,7 +143,7 @@ Date: 2018-10-31                                 Financial Manager
 For parsing/writing `[FixedWidthFileField]` attributes are used, that have additional parameter:
 - *Line* in which we define line number where the value is (Negative values represent row number from bottom)
 
-For FileField type *Length* is not required, if not set it means value goes till end of row(trimmed), and *Start* has default = 1.
+For type FileField param. *Length* not required, if not set means value goes till end of row(trimmed), and *Start* has default = 1.
 ```C#
 public class Invoice
 {
