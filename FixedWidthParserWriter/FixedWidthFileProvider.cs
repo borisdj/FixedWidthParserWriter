@@ -15,12 +15,7 @@ namespace FixedWidthParserWriter
         public void UpdateContent(T data, int structureTypeId = 0)
         {
             StructureTypeId = structureTypeId;
-
-            SetDefaultConfig();
-            if (data is IFixedWidth fixedWidth)
-            {
-                DefaultConfig = fixedWidth.GetDefaultConfig(StructureTypeId);
-            }
+            LoadNewDefaultConfig(data);
 
             var orderProperties = data.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthAttribute))).ToList();
             string orderLine = String.Empty;

@@ -12,14 +12,14 @@ namespace FixedWidthParserWriter
         public virtual PadSide PadSide { get; set; }
 
         public virtual int StartIndex => Start - 1;
+
+        public int StructureTypeId { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class FixedWidthLineFieldAttribute : FixedWidthAttribute
     {
         public override object TypeId { get { return this; } } // overriding done because of AllowMultiple == true
-
-        public int StructureTypeId { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
@@ -29,7 +29,6 @@ namespace FixedWidthParserWriter
 
         public override object TypeId { get { return this; } }
 
-        public int StructureTypeId { get; set; }
         public int Line { get; set; } = 1;
 
         public int LineIndex => Line - 1;

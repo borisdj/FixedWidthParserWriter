@@ -22,12 +22,7 @@ namespace FixedWidthParserWriter
         public List<string> Write(List<T> data, int structureTypeId = 0)
         {
             StructureTypeId = structureTypeId;
-
-            SetDefaultConfig();
-            if (data?.Count > 0 && data[0] is IFixedWidth fixedWidth)
-            {
-                DefaultConfig = fixedWidth.GetDefaultConfig(StructureTypeId);
-            }
+            LoadNewDefaultConfig(data[0]);
 
             List<string> resultLines = new List<string>();
             foreach (T element in data)
@@ -44,7 +39,8 @@ namespace FixedWidthParserWriter
                 {
                     var attribute = prop.GetCustomAttributes<FixedWidthLineFieldAttribute>().Single(a => a.StructureTypeId == StructureTypeId);
                     if (startPrev + lengthPrev != attribute.Start)
-                        throw new InvalidOperationException($"Invalid Start or Length parameter, {attribute.Start} !=  {startPrev + lengthPrev}, on FixedLineFieldAttribute (property {prop.Name}) for StructureTypeId {StructureTypeId}");
+                        throw new InvalidOperationException($"Invalid Start or Length parameter, {attribute.Start} !=  {startPrev + lengthPrev}" +
+                                                            $", on FixedLineFieldAttribute (property {prop.Name}) for StructureTypeId {StructureTypeId}");
                     startPrev = attribute.Start;
                     lengthPrev = attribute.Length;
 

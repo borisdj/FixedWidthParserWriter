@@ -22,16 +22,20 @@ namespace FixedWidthParserWriter
 
         public virtual void SetDefaultConfig() { } // can be override to change DefaultConfig on entire Provider class
 
-        protected T ParseData<T>(List<string> lines, FieldType fieldType) where T : class, new()
+        protected void LoadNewDefaultConfig<T>(T data)
         {
-            var data = new T();
-
             SetDefaultConfig();
             if (data is IFixedWidth fixedWidth)
             {
                 DefaultConfig = fixedWidth.GetDefaultConfig(StructureTypeId);
             }
-            
+        }
+
+        protected T ParseData<T>(List<string> lines, FieldType fieldType) where T : class, new()
+        {
+            var data = new T();
+            LoadNewDefaultConfig(data);
+
             var orderProperties = data.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthAttribute))).ToList();
 
             //var accessor = TypeAccessor.Create(typeof(T), true); // with FastMember
@@ -71,7 +75,8 @@ namespace FixedWidthParserWriter
                     {
                         if (valueString.Length < startIndex + length)
                         {
-                            throw new InvalidOperationException($"Property {property.Name}='{valueString}' with Length={valueString.Length} not enough for Substring(Start={startIndex + 1}, Length={length})");
+                            throw new InvalidOperationException($"Property {property.Name}='{valueString}' with Length={valueString.Length}" +
+                                                                $"not enough for Substring(Start={startIndex + 1}, Length={length})");
                         }
                         valueString = (length == 0) ? valueString.Substring(startIndex) : valueString.Substring(startIndex, length);
                     }
@@ -82,11 +87,11 @@ namespace FixedWidthParserWriter
                     var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
                     string valueTypeName = underlyingType != null ? underlyingType.Name : property.PropertyType.Name;
 
-                    if (valueTypeName == nameof(String))
+                    if (valueTypeName == nameof(String)) // string
                     {
                         value = valueString;
                     }
-                    else if(valueTypeName == nameof(Char))
+                    else if(valueTypeName == nameof(Char)) // char
                     {
                         value = (char)valueString[0];
                     }
@@ -99,10 +104,10 @@ namespace FixedWidthParserWriter
                             format = format ?? DefaultConfig.FormatNumberInteger;
                             switch (valueTypeName)
                             {
-                                case nameof(Int32):
+                                case nameof(Int32): // int
                                     value = Int32.Parse(valueString);
                                     break;
-                                case nameof(Int64):
+                                case nameof(Int64): // long
                                     value = Int64.Parse(valueString);
                                     break;
                             }
@@ -112,17 +117,17 @@ namespace FixedWidthParserWriter
                             format = format ?? DefaultConfig.FormatNumberDecimal;
                             switch (valueTypeName)
                             {
-                                case nameof(Decimal):
+                                case nameof(Decimal): // decimal
                                     value = Decimal.Parse(valueString, CultureInfo.InvariantCulture);
                                     if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
                                         value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
                                     break;
-                                case nameof(Single):
+                                case nameof(Single): // float
                                     value = Single.Parse(valueString, CultureInfo.InvariantCulture);
                                     if (format.Contains(";"))
                                         value = (float)value / (float)Math.Pow(10, format.Length - 2);
                                     break;
-                                case nameof(Double):
+                                case nameof(Double):  // double
                                     value = Double.Parse(valueString, CultureInfo.InvariantCulture);
                                     if (format.Contains(";"))
                                         value = (double)value / (double)Math.Pow(10, format.Length - 2);
@@ -148,30 +153,29 @@ namespace FixedWidthParserWriter
 
         protected string WriteData<T>(T element, PropertyInfo property, FieldType fieldType)
         {
-            FixedWidthAttribute field = null;
+            IEnumerable<FixedWidthAttribute> fields = null;
             if (fieldType == FieldType.LineField)
             {
-                field = property.GetCustomAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+                fields = property.GetCustomAttributes<FixedWidthLineFieldAttribute>();
             }
             else if (fieldType == FieldType.FileField)
             {
-                field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+                fields = property.GetCustomAttributes<FixedWidthFileFieldAttribute>();
             }
+            FixedWidthAttribute field = fields.SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+
             var value = property.GetValue(element);
             //var accessor = TypeAccessor.Create(this.GetType()); // move before in caller method before loop
             //var value = accessor[this, property.Name];
             
             string valueTypeName = value?.GetType().Name ?? nameof(String);
 
-            if (valueTypeName == nameof(Int32) || valueTypeName == nameof(Int64) || valueTypeName == nameof(Decimal) || valueTypeName == nameof(Single) || valueTypeName == nameof(Double))
+            if (field.PadSide == PadSide.Default)
             {
-                field.PadSide = field.PadSide != PadSide.Default ? field.PadSide : DefaultConfig.PadSideNumeric; // Numeric types have initial default Left pad
+                bool isNumbericType = (valueTypeName == nameof(Int32) || valueTypeName == nameof(Int64) || // IntegerNumbers
+                                       valueTypeName == nameof(Decimal) || valueTypeName == nameof(Single) || valueTypeName == nameof(Double)); // or DecimalNumbers
+                field.PadSide = isNumbericType ? DefaultConfig.PadSideNumeric : DefaultConfig.PadSideNonNumeric; // Initial default Left pad: Numeric-Left, NonNumeric-Right
             }
-            else
-            {
-                field.PadSide = field.PadSide != PadSide.Default ? field.PadSide : DefaultConfig.PadSideNonNumeric; // NonNumeric types have initial default Right pad
-            }
-
             char pad = ' ';
 
             string result = String.Empty;
