@@ -4,12 +4,12 @@ __________________________________________________________________
 Invoice Date: 2018-10-30         Buyer:   SysCompanik
 
                         INVOICE no. 0169/18
-						
+
 No |         Description         | Qty |   Price    |   Amount   |
 ...
 ...
 ------------------------------------------------------------------
-                                                          1,192.00 
+                                                          1,299.00
 
 Date: 2018-10-31                                 Financial Manager
                                                           John Doe

@@ -2,7 +2,7 @@ using System;
 
 namespace FixedWidthParserWriter.Tests
 {
-    public class Invoice : FixedWidthDataFile<Invoice>
+    public class Invoice : IFixedWidth
     {
         [FixedWidthFileField(Line = 1)]
         public string CompanyName { get; set; }
@@ -29,10 +29,12 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // Line Negative - counted from bottom
         public string SignatureName { get; set; }
 
-        public override void SetDefaultConfig()
+        public DefaultConfig GetDefaultConfig(int StructureTypeId = 0)
         {
-            //DefaultConfig.FormatNumberDecimal = "0,000.00";
-            DefaultConfig.FormatDateTime = "yyyy-MM-dd";
+            return new DefaultConfig
+            {
+                FormatDateTime = "yyyy-MM-dd"
+            };
         }
     }
 }

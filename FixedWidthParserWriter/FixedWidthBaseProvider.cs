@@ -7,18 +7,31 @@ using System.Reflection;
 
 namespace FixedWidthParserWriter
 {
-    public class FixedWidthData
+    public interface IFixedWidth
     {
+        DefaultConfig GetDefaultConfig(int structureTypeId);
+    }
+
+    public class FixedWidthBaseProvider
+    {
+        public int StructureTypeId { get; set; }
+
         public List<string> Content { get; set; }
-        public DefaultConfig DefaultConfig { get; set; } = new DefaultConfig();
 
-        public virtual void SetDefaultConfig() { } // to be overriden for setting custom Format on entire property type
+        public virtual DefaultConfig DefaultConfig { get; set; } = new DefaultConfig();
 
-        protected T ParseData<T>(List<string> lines, FieldType fieldType, int structureTypeId = 0) where T : class, new()
+        public virtual void SetDefaultConfig() { } // can be override to change DefaultConfig on entire Provider class
+
+        protected T ParseData<T>(List<string> lines, FieldType fieldType) where T : class, new()
         {
-            SetDefaultConfig();
-
             var data = new T();
+
+            SetDefaultConfig();
+            if (data is IFixedWidth fixedWidth)
+            {
+                DefaultConfig = fixedWidth.GetDefaultConfig(StructureTypeId);
+            }
+            
             var orderProperties = data.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthAttribute))).ToList();
 
             //var accessor = TypeAccessor.Create(typeof(T), true); // with FastMember
@@ -31,11 +44,11 @@ namespace FixedWidthParserWriter
                 int lineIndex = 0;
                 if (fieldType == FieldType.LineField)
                 {
-                    field = property.GetCustomAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == structureTypeId);
+                    field = property.GetCustomAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
                 }
                 else if (fieldType == FieldType.FileField)
                 {
-                    field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == structureTypeId);
+                    field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
                     // Deprecated from when every StructureType had all Properties and those that did not had it's specific attribute took the one with higest StructureTypeId
                     //field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().Where(a => a.StructureTypeId <= structureTypeId).OrderByDescending(a => a.StructureTypeId).FirstOrDefault();
 
@@ -133,18 +146,18 @@ namespace FixedWidthParserWriter
             return data;
         }
 
-        protected string ToFormatedString(PropertyInfo property, FieldType fieldType, int structureTypeId = 0)
+        protected string WriteData<T>(T element, PropertyInfo property, FieldType fieldType)
         {
             FixedWidthAttribute field = null;
             if (fieldType == FieldType.LineField)
             {
-                field = property.GetCustomAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == structureTypeId);
+                field = property.GetCustomAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
             }
             else if (fieldType == FieldType.FileField)
             {
-                field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == structureTypeId);
+                field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
             }
-            var value = property.GetValue(this);
+            var value = property.GetValue(element);
             //var accessor = TypeAccessor.Create(this.GetType()); // move before in caller method before loop
             //var value = accessor[this, property.Name];
             
@@ -223,7 +236,6 @@ namespace FixedWidthParserWriter
                 else if (field.PadSide == PadSide.Left)
                     result = result.PadLeft(field.Length, pad);
             }
-
 
             if (fieldType == FieldType.FileField)
             {

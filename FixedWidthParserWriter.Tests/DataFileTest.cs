@@ -11,13 +11,13 @@ namespace FixedWidthParserWriter.Tests
         {
             List<string> fileLines = GetDataFile();
 
-            var invoice = new Invoice().Parse(fileLines);
+            Invoice invoice = new FixedWidthFileProvider<Invoice>().Parse(fileLines);
 
             Assert.Equal("SoftysTech LCC", invoice.CompanyName);
             Assert.Equal(new DateTime(2018, 10, 30), invoice.Date);
             Assert.Equal("SysCompanik", invoice.BuyerName);
             Assert.Equal("0169/18", invoice.InvoiceNumber);
-            Assert.Equal(1192.00m, invoice.AmountTotal);
+            Assert.Equal(1299.00m, invoice.AmountTotal);
             Assert.Equal(new DateTime(2018, 10, 31), invoice.DateCreated);
             Assert.Equal("Financial Manager", invoice.SignatoryTitle);
             Assert.Equal("John Doe", invoice.SignatureName);
@@ -32,21 +32,20 @@ namespace FixedWidthParserWriter.Tests
                 Date = new DateTime(2018, 10, 30),
                 BuyerName = "SysCompanik",
                 InvoiceNumber = "0169/18",
-                AmountTotal = 1192.00m,
+                AmountTotal = 1299.00m,
                 DateCreated = new DateTime(2018, 10, 31),
                 SignatureName = "John Doe",
                 SignatoryTitle = "Financial Manager",
             };
 
-            List<string> templateLines = GetDataFormTemplate();
-            invoice.Content = templateLines;
-            invoice.UpdateContent();
+            var fileProvider = new FixedWidthFileProvider<Invoice>() { Content = GetDataFormTemplate() };
+            fileProvider.UpdateContent(invoice);
 
             List<string> fileLines = GetDataFile();
             int numberOfLines = fileLines.Count;
             for (int i = 0; i < numberOfLines; i++)
             {
-                Assert.Equal(fileLines[i], invoice.Content[i]);
+                Assert.Equal(fileLines[i], fileProvider.Content[i]);
             }
         }
 
@@ -64,8 +63,8 @@ namespace FixedWidthParserWriter.Tests
                 "No |         Description         | Qty |   Price    |   Amount   |",
                 "...                                                               ",
                 "...                                                               ",
-                "------------------------------------------------------------------",          
-                "                                                          1,192.00",
+                "------------------------------------------------------------------",
+                "                                                          1,299.00",
                 "",
                 "Date: 2018-10-31                                 Financial Manager",
                 "                                                          John Doe"

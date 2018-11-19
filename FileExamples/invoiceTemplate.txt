@@ -4,12 +4,12 @@ __________________________________________________________________
 Invoice Date: {InvoiceDate}      Buyer:   {BuyerName}
 
                         INVOICE no. NNNN/YY
-						
+
 No |         Description         | Qty |   Price    |   Amount   |
 ...
 ...
 ------------------------------------------------------------------
-                                                              0.00 
+                                                              0.00
 
 Date: {DateCreated}                               {SignatoryTitle}
                                                    {SignatureName}

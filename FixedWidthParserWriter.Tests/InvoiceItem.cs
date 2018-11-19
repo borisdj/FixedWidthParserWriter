@@ -1,6 +1,6 @@
 namespace FixedWidthParserWriter.Tests
 {
-    public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
+    public class InvoiceItem : IFixedWidth
     {
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 3)]
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta, Start = 1, Length = 4)]
@@ -25,17 +25,19 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 54, Length = 13)]
         public decimal Amount => Quantity * Price;
 
-        public override void SetDefaultConfig()
+        public DefaultConfig GetDefaultConfig(int StructureTypeId = 0)
         {
+            var defaultConfig = new DefaultConfig();
             switch ((ConfigType)StructureTypeId)
             {
                 case ConfigType.Alpha:
                     // config remains initial default
                     break;
                 case ConfigType.Beta:
-                    DefaultConfig.PadSeparatorNumeric = '0';
+                    defaultConfig.PadSeparatorNumeric = '0';
                     break;
             }
+            return defaultConfig;
         }
     }
 

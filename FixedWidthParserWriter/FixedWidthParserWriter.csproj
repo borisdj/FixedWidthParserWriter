@@ -6,9 +6,9 @@
     <Company>www.codis.tech</Company>
     <Copyright></Copyright>
     <PackageLicenseUrl>https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageTags>Fixed Width Parser Writer Line Flat File Data Field delimiter txt read reading write writing</PackageTags>
+    <PackageTags>Fixed Width Relative Height Parser Writer Line Flat File Data Field delimiter txt read reading write writing</PackageTags>
     <PackageReleaseNotes>Code refatored</PackageReleaseNotes>
-    <Description>Fixed Width Parser Writer for reading and writing flat data (files) with defined field position in line or file.</Description>
+    <Description>Fixed Width Parser Writer for reading and writing flat data (files) with defined field position in line or file (relative height).</Description>
     <PackageIconUrl>https://raw.githubusercontent.com/borisdj/FixedWidthParserWriter/master/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/borisdj/FixedWidthParserWriter</PackageProjectUrl>
     <Version>1.0.1</Version>
