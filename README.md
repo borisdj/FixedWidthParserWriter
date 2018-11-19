@@ -27,36 +27,36 @@ For parsing/writing we make a model which Properties have `[FixedWidthLineField]
 public class InvoiceItem
 {
     [FixedWidthLineField(Start = 1, Length = 3)]
-	public int Number { get; set; }
+    public int Number { get; set; }
 
-	[FixedWidthLineField(Start = 4, Length = 1)]
-	public string NumberedBullet { get; set; } = ".";
+    [FixedWidthLineField(Start = 4, Length = 1)]
+    public string NumberedBullet { get; set; } = ".";
 
-	[FixedWidthLineField(Start = 5, Length = 30)]
-	public string Description { get; set; }
+    [FixedWidthLineField(Start = 5, Length = 30)]
+    public string Description { get; set; }
 
-	[FixedWidthLineField(Start = 35, Length = 6)]
-	public int Quantity { get; set; }
+    [FixedWidthLineField(Start = 35, Length = 6)]
+    public int Quantity { get; set; }
 
-	[FixedWidthLineField(Start = 41, Length = 13)]
-	public decimal Price { get; set; }
+    [FixedWidthLineField(Start = 41, Length = 13)]
+    public decimal Price { get; set; }
 
-	[FixedWidthLineField(Start = 54, Length = 13)]
-	public decimal Amount => Quantity * Price;
+    [FixedWidthLineField(Start = 54, Length = 13)]
+    public decimal Amount => Quantity * Price;
 }
 ```
 Then we can call it like this:
 ```C#
 public List<Invoiceitem> ParseFieldsFromLines(new List<string> dataLines) // dataLines are stripped of header
 {
-	List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines);
-	return invoiceItems;
+    List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines);
+    return invoiceItems;
 }
 
 public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 {
-	List<string> dataLines = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems);
-	return dataLines;
+    List<string> dataLines = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems);
+    return dataLines;
 }
 ```
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
@@ -84,33 +84,33 @@ public enum ConfigType { Alpha, Beta }
 
 public class InvoiceItem : IFixedWidth
 {
-	public DefaultConfig GetDefaultConfig(int StructureTypeId)
-	{
-		var defaultConfig = new DefaultConfig();
-		switch ((ConfigType)StructureTypeId)
-		{
-			case ConfigType.Alpha:
-				// config remains initial default
-				break;
-			case ConfigType.Beta:
-				defaultConfig.PadSeparatorNumeric = '0';
-				break;
-		}
-		return defaultConfig;
-	}
+    public DefaultConfig GetDefaultConfig(int StructureTypeId)
+    {
+        var defaultConfig = new DefaultConfig();
+        switch ((ConfigType)StructureTypeId)
+        {
+            case ConfigType.Alpha:
+                // config remains initial default
+                break;
+            case ConfigType.Beta:
+                defaultConfig.PadSeparatorNumeric = '0';
+                break;
+        }
+        return defaultConfig;
+    }
 
-	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 3)]
-	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 1, Length = 4)]
-	public int Number { get; set; }
+    [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 3)]
+    [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 1, Length = 4)]
+    public int Number { get; set; }
 
-	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 4, Length = 1)]
-	public string SeparatorNumDesc { get; set; } = ".";
+    [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 4, Length = 1)]
+    public string SeparatorNumDesc { get; set; } = ".";
 
-	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 30)]
-	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 5, Length = 30)]
-	public string Description { get; set; }
+    [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 30)]
+    [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 5, Length = 30)]
+    public string Description { get; set; }
 
-	//... Others Properties
+    //... Others Properties
 }
 ```
 Beta Structure:
@@ -147,46 +147,46 @@ For type FileField param. *Length* not required, if not set means value goes til
 ```C#
 public class Invoice
 {
-	[FixedWidthFileField(Line = 1)]
-	public string CompanyName { get; set; }
+    [FixedWidthFileField(Line = 1)]
+    public string CompanyName { get; set; }
 
-	[FixedWidthFileField(Line = 4, Start = 15, Length = 19, Format = "yyyy-MM-dd")]
-	public DateTime Date { get; set; }
+    [FixedWidthFileField(Line = 4, Start = 15, Length = 19, Format = "yyyy-MM-dd")]
+    public DateTime Date { get; set; }
 
-	[FixedWidthFileField(Line = 4, Start = 43)]
-	public string BuyerName { get; set; }
+    [FixedWidthFileField(Line = 4, Start = 43)]
+    public string BuyerName { get; set; }
 
-	[FixedWidthFileField(Line = 6, Start = 37)]
-	public string InvoiceNumber { get; set; }
+    [FixedWidthFileField(Line = 6, Start = 37)]
+    public string InvoiceNumber { get; set; }
 
-	[FixedWidthFileField(Line = -4, Length = 66, Format = "0,000.00")]
-	public decimal AmountTotal { get; set; }
+    [FixedWidthFileField(Line = -4, Length = 66, Format = "0,000.00")]
+    public decimal AmountTotal { get; set; }
 
-	[FixedWidthFileField(Line = -2, Start = 7, Length = 10, Format = "yyyy-MM-dd")]
-	public DateTime DateCreated { get; set; }
+    [FixedWidthFileField(Line = -2, Start = 7, Length = 10, Format = "yyyy-MM-dd")]
+    public DateTime DateCreated { get; set; }
 
-	[FixedWidthFileField(Line = -2, Start = 17, Length = 50, PadSide = PadSide.Left)]
-	public string SignatoryTitle { get; set; }
+    [FixedWidthFileField(Line = -2, Start = 17, Length = 50, PadSide = PadSide.Left)]
+    public string SignatoryTitle { get; set; }
 
-	[FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // Line Negative - counted from bottom 
-	public string SignatureName { get; set; }
+    [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // Line Negative - counted from bottom 
+    public string SignatureName { get; set; }
 }
 ```
 Usage:
 ```C#
 public Invoice ParseFieldsFromFile(new List<string> fileLines)
 {
-	invoice invoice = new FixedWidthFileProvider<Invoice>().Parse(fileLines);
-	return invoice;
+    invoice invoice = new FixedWidthFileProvider<Invoice>().Parse(fileLines);
+    return invoice;
 }
 
 public List<string> WriteFieldsToFile(Invoice)
 {
-	List<string> templateLines = GetDataFormTemplate();
-	var fileProvider = new FixedWidthFileProvider<Invoice>() { Content = templateLines };
-	fileProvider.UpdateContent(invoice);
-	invoice.UpdateContent();
-	return invoice.Content;
+    List<string> templateLines = GetDataFormTemplate();
+    var fileProvider = new FixedWidthFileProvider<Invoice>() { Content = templateLines };
+    fileProvider.UpdateContent(invoice);
+    invoice.UpdateContent();
+    return invoice.Content;
 }
 ```
 [DataFormTemplate](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceTemplate.txt) looks like this:
@@ -211,22 +211,22 @@ In situation where many same type properties have Format different from default 
 ```C#
 public class Invoice : IFixedWidth
 {
-	public DefaultConfig GetDefaultConfig(int StructureTypeId)
-	{
-		return new DefaultConfig
-		{
-			FormatDateTime = "yyyy-MM-dd"
-		};
-	}
+    public DefaultConfig GetDefaultConfig(int StructureTypeId)
+    {
+        return new DefaultConfig
+        {
+            FormatDateTime = "yyyy-MM-dd"
+        };
+    }
 
-	[FixedWidthFileField(Line = 1)]
-	public string CompanyName { get; set; }
+    [FixedWidthFileField(Line = 1)]
+    public string CompanyName { get; set; }
 
-	// Format set on class with FormatDateTime so not required on each Attribute of DateTime Property
-	[FixedWidthFileField(Line = 4, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
-	public DateTime Date { get; set; }
+    // Format set on class with FormatDateTime so not required on each Attribute of DateTime Property
+    [FixedWidthFileField(Line = 4, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
+    public DateTime Date { get; set; }
 
-	/* ... Other Properties */
+    /* ... Other Properties */
 }
 ```
 If we need to changed DefaultConfig(Format) for multiple models then we could override entire Provider to keep it [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
