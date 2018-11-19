@@ -159,7 +159,7 @@ public class Invoice
     [FixedWidthFileField(Line = 6, Start = 37)]
     public string InvoiceNumber { get; set; }
 
-    [FixedWidthFileField(Line = -4, Length = 66, Pad = ' ', Format = "0,000.00")]
+    [FixedWidthFileField(Line = -4, Length = 66, Format = "0,000.00")]
     public decimal AmountTotal { get; set; }
 
     [FixedWidthFileField(Line = -2, Start = 7, Length = 10, Format = "yyyy-MM-dd")]
