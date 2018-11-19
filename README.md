@@ -78,7 +78,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 
 When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
 Next example shows 2 structures, second has one less Property and different PadSeparatorNumeric: '0' instead of ' '(space).<br>
-To change DefaultConfig per StructureType, model should implement `IFixedWidth` interface with `SetDefaultConfig()` method.
+To change `DefaultConfig` per StructureType, model should implement `IFixedWidth` interface with `SetDefaultConfig()` func.
 ```C#
 public enum ConfigType { Alpha, Beta }
 
