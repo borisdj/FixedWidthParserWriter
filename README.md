@@ -207,7 +207,7 @@ No |         Description         | Qty |   Price    |   Amount   |
 Date: {DateCreated}                               {SignatoryTitle}
                                                    {SignatureName}
 ```
-In situation where many same type properties have Format different from default one, instead of setting custom format individually for each one, it is possible to override default format for certain data types/groups in that class:
+In situation where many same type properties have Format different from default one, instead of setting custom format individually for each Property, it is possible to override DefaultConfig for certain data types/groups in that class:
 ```C#
     public class Invoice : IFixedWidth
     {
@@ -229,6 +229,6 @@ In situation where many same type properties have Format different from default 
         /* ... Other Properties */
     }
 ```
-If we would need to changed default Format for multiple models then we could override entire Provider to keep it [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
+If we would need to changed DefaultConfig(Format) for multiple models then we could override entire Provider to keep it [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
 
 Combining both previous usages we can make complex file structures like [invoiceFull](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
