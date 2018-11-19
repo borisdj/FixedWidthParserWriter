@@ -19,12 +19,12 @@ Want to **Contact** us for Hire (Development & Consulting): [www.codis.tech](htt
 First is regular flat data file, **record per Line (Fixed-Width)**, for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceItems.txt):
 ```
 No |         Description         | Qty |   Price    |   Amount   |
-  1.Laptop Dell xps13                  1       856.00       856.00
-  2.Monitor Asus 32''                  2       568.00      1136.00
+  1.Laptop Dell xps13                  1       821.00       821.00
+  2.Monitor Asus 32''                  2       478.00       956.00
 ```
-For parsing/writing we make a model that inherits `FixedWidthDataLine` which Properties have `[FixedWidthLineField]` Att:
+For parsing/writing we make a model which Properties have `[FixedWidthLineField]` Attribute:
 ```C#
-public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
+public class InvoiceItem
 {
     [FixedWidthLineField(Start = 1, Length = 3)]
     public int Number { get; set; }
@@ -47,29 +47,16 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 ```
 Then we can call it like this:
 ```C#
-public List<Invoiceitem> ParseDataLineFields(new List<string> dataLines) // dataLines are stripped of header
+public List<Invoiceitem> ParseFieldsFromLines(new List<string> dataLines) // dataLines are stripped of header
 {
-    var invoiceItems = new List<InvoiceItem>();
-    foreach (var line in dataLines)
-    {
-        invoiceItems.Add(new InvoiceItem().Parse(line));
-    }
+    List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines);
     return invoiceItems;
 }
 
-public List<string> WriteDataLineFields()
+public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 {
-    var invoiceItems = new List<InvoiceItem> {
-        new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 856.00m },
-        new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 568.00m }
-    };
-
-    string itemsLineData = string.Empty;
-    foreach (var item in invoiceItems)
-    {
-        itemsLineData += item.ToString() + Environment.NewLine;
-    }
-    return itemsLineData;
+    List<string> dataLines = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems);
+    return dataLines;
 }
 ```
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
@@ -91,22 +78,25 @@ public List<string> WriteDataLineFields()
 
 When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
 Next example shows 2 structures, second has one less Property and different PadSeparatorNumeric: '0' instead of ' '(space).
+To change DefaultConfig per StructureType class model should implement `IFixedWidth` interface with `SetDefaultConfig()` method.
 ```C#
 public enum ConfigType { Alpha, Beta }
 
-public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
+public class InvoiceItem : IFixedWidth
 {
-	public override void SetDefaultConfig()
+	public DefaultConfig GetDefaultConfig(int StructureTypeId)
 	{
+		var defaultConfig = new DefaultConfig();
 		switch ((ConfigType)StructureTypeId)
 		{
 			case ConfigType.Alpha:
 				// config remains initial default
 				break;
 			case ConfigType.Beta:
-				DefaultConfig.PadSeparatorNumeric = '0';
+				defaultConfig.PadSeparatorNumeric = '0';
 				break;
 		}
+		return defaultConfig;
 	}
 
 	[FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 3)]
@@ -126,8 +116,8 @@ public class InvoiceItem : FixedWidthDataLine<InvoiceItem>
 Beta Structure:
 ```
 No |         Description         | Qty |   Price    |   Amount   |
-0001Laptop Dell xps13             0000010000000856.000000000856.00
-0002Monitor Asus 32''             0000020000000568.000000001136.00
+0001Laptop Dell xps13             0000010000000821.000000000821.00
+0002Monitor Asus 32''             0000020000000478.000000000956.00
 ```
 Full Examples are in Tests of the project.
 
@@ -145,17 +135,17 @@ No |         Description         | Qty |   Price    |   Amount   |
 ...
 ...
 ------------------------------------------------------------------
-                                                          1,192.00 
+                                                          1,299.00 
 
 Date: 2018-10-31                                 Financial Manager
                                                           John Doe
 ```
-For parsing/writing we make a model that inherits `FixedWidthDataFile` and on Properties we add `[FixedWidthFileField]` attribute that has additional parameter:
+For parsing/writing `[FixedWidthFileField]` attributes are used, that have additional parameter:
 - *Line* in which we define line number where the value is (Negative values represent row number from bottom)
 
 For FileField type *Length* is not required, if not set it means value goes till end of row(trimmed), and *Start* has default = 1.
 ```C#
-public class Invoice : FixedWidthDataFile<Invoice>
+public class Invoice
 {
     [FixedWidthFileField(Line = 1)]
     public string CompanyName { get; set; }
@@ -172,7 +162,7 @@ public class Invoice : FixedWidthDataFile<Invoice>
     [FixedWidthFileField(Line = -4, Length = 66, Pad = ' ', Format = "0,000.00")]
     public decimal AmountTotal { get; set; }
 
-    [FixedWidthFileField(Line = -2, Start = 7, Length = 10)]
+    [FixedWidthFileField(Line = -2, Start = 7, Length = 10, Format = "yyyy-MM-dd")]
     public DateTime DateCreated { get; set; }
 
     [FixedWidthFileField(Line = -2, Start = 17, Length = 50, PadSide = PadSide.Left)]
@@ -184,28 +174,17 @@ public class Invoice : FixedWidthDataFile<Invoice>
 ```
 Usage:
 ```C#
-public Invoice ParseDataFileFields(new List<string> fileLines)
+public Invoice ParseFieldsFromFile(new List<string> fileLines)
 {
-    var invoice = new Invoice().Parse(fileLines);
+	Invoice invoice = new FixedWidthFileProvider<Invoice>().Parse(fileLines);
     return invoice;
 }
 
-public List<string> WriteDataLineFields()
+public List<string> WriteFieldsToFile(Invoice)
 {
-    var invoice = new Invoice()
-    {
-        CompanyName = "SoftysTech LCC",
-        Date = new DateTime(2018, 10, 30),
-        BuyerName = "SysCompanik",
-        InvoiceNumber = "0169/18",
-        AmountTotal = 1192.00m,
-        DateCreated = new DateTime(2018, 10, 31),
-        SignatureName = "John Doe",
-        SignatoryTitle = "Financial Manager",
-    };
-    
-    List<string> templateLines = GetDataFormTemplate();
-    invoice.Content = templateLines;
+	List<string> templateLines = GetDataFormTemplate();
+	var fileProvider = new FixedWidthFileProvider<Invoice>() { Content = templateLines };
+    fileProvider.UpdateContent(invoice);
     invoice.UpdateContent();
     return invoice.Content;
 }
@@ -228,14 +207,16 @@ No |         Description         | Qty |   Price    |   Amount   |
 Date: {DateCreated}                               {SignatoryTitle}
                                                    {SignatureName}
 ```
-In situation where many same type properties have Format different from default one, instead of setting custom format individually for each one, it is possible to override default format for certain data type in that class:
+In situation where many same type properties have Format different from default one, instead of setting custom format individually for each one, it is possible to override default format for certain data types/groups in that class:
 ```C#
-    public class Invoice : FixedWidthDataFile<Invoice>
+    public class Invoice : IFixedWidth
     {
-        public override void SetDefaultConfig()
+        public DefaultConfig GetDefaultConfig(int StructureTypeId = 0)
         {
-            DefaultConfig.FormatNumberDecimal = "0,000.00";
-            DefaultConfig.FormatDateTime = "yyyy-MM-dd";
+            return new DefaultConfig
+            {
+                FormatDateTime = "yyyy-MM-dd"
+            };
         }
         
         [FixedWidthFileField(Line = 1)]
@@ -248,4 +229,6 @@ In situation where many same type properties have Format different from default 
         /* ... Other Properties */
     }
 ```
+If we would need to changed default Format for multiple models then we could override entire Provider to keep it [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
+
 Combining both previous usages we can make complex file structures like [invoiceFull](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
