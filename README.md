@@ -176,7 +176,7 @@ Usage:
 ```C#
 public Invoice ParseFieldsFromFile(new List<string> fileLines)
 {
-	Invoice invoice = new FixedWidthFileProvider<Invoice>().Parse(fileLines);
+	invoice invoice = new FixedWidthFileProvider<Invoice>().Parse(fileLines);
     return invoice;
 }
 
@@ -211,7 +211,7 @@ In situation where many same type properties have Format different from default 
 ```C#
     public class Invoice : IFixedWidth
     {
-        public DefaultConfig GetDefaultConfig(int StructureTypeId = 0)
+        public DefaultConfig GetDefaultConfig(int StructureTypeId)
         {
             return new DefaultConfig
             {
