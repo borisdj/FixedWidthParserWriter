@@ -74,7 +74,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
   			 ("*0;00*" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
   -`FormatBoolean` . . . . . . Default = "**1; ;0**" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
   -`FormatDateTime`. . . . . .Default = "**yyyyMMdd**"<br>
- Custom format strings for [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings) [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) and.
+ Custom format strings for [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings) and [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
 When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
 Next example shows 2 structures, second has one less Property and different PadSeparatorNumeric: '0' instead of ' '(space).<br>
