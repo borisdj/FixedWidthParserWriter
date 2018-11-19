@@ -78,7 +78,7 @@ public List<string> WriteDataLineFields()
 - *Format* (Defaults per data type or group)
 - *Pad* (Defaults per data category{*Numeric*, *NonNumeric*} type, initially: ' ')
 - *PadSide* {Right, Left} (Defaults per data category: *NonNumeric = PadSide.Left, Numeric = PadSide.Right*)
-- *StructureTypeId* (used when having multiple files with different structure or format for same data)
+- *StructureTypeId* (Default = 0, used when having multiple files with different structure or format for same data)
 
 *_*Format* types:<br>
   -`FormatIntegerNumber` Default = "**0**", \*groupFormat:`Int32`,`Int64`<br>
