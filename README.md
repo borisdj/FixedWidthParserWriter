@@ -14,8 +14,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and 
 [![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)<br>
 Want to **Contact** us for Hire (Development & Consulting): [www.codis.tech](http://www.codis.tech)
 
-##
-### 1. Data in LineFields
+## 1. Data in LineFields
 First is regular flat data file, **record per Line (Fixed-Width)**, for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceItems.txt):
 ```
 No |         Description         | Qty |   Price    |   Amount   |
@@ -121,7 +120,7 @@ No |         Description         | Qty |   Price    |   Amount   |
 ```
 Full Examples are in Tests of the project.
 
-### 2. Data in FileFields
+## 2. Data in FileFields
 Second usage is when one data record is in different rows at defined positions, **record per File (Fixed/Relative-Height)**, [E.g.](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoice.txt):
 ```
 SoftysTech LCC
