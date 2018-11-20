@@ -7,11 +7,15 @@
     <Copyright></Copyright>
     <PackageLicenseUrl>https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE</PackageLicenseUrl>
     <PackageTags>Fixed Width Relative Height Parser Writer Line Flat File Data Field delimiter txt read reading write writing</PackageTags>
-    <PackageReleaseNotes>Code Refactored</PackageReleaseNotes>
+    <PackageReleaseNotes>Reflection replaced with FastMember</PackageReleaseNotes>
     <Description>Fixed Width Parser Writer for reading and writing flat data (files) with defined field position in line or file (relative height).</Description>
     <PackageIconUrl>https://raw.githubusercontent.com/borisdj/FixedWidthParserWriter/master/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/borisdj/FixedWidthParserWriter</PackageProjectUrl>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FastMember.Signed" Version="1.4.1" />
+  </ItemGroup>
 
 </Project>

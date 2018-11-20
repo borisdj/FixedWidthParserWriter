@@ -12,30 +12,20 @@ namespace FixedWidthParserWriter.Tests
             var dataLines = GetDataLines(ConfigType.Alpha);
             List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines); // StrucutreTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
 
-            var invoiceItem1 = new InvoiceItem()
+            var expectedInvoiceItems = new List<InvoiceItem>
             {
-                Number = 1,
-                Description = "Laptop Dell xps13",
-                Quantity = 1,
-                Price = 821.00m
-            };
-            var invoiceItem2 = new InvoiceItem()
-            {
-                Number = 2,
-                Description = "Monitor Asus 32''",
-                Quantity = 2,
-                Price = 478.00m
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m },
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m }
             };
 
-            Assert.Equal(invoiceItem1.Number, invoiceItems[0].Number);
-            Assert.Equal(invoiceItem1.Description, invoiceItems[0].Description);
-            Assert.Equal(invoiceItem1.Quantity, invoiceItems[0].Quantity);
-            Assert.Equal(invoiceItem1.Price, invoiceItems[0].Price);
-
-            Assert.Equal(invoiceItem2.Number, invoiceItems[1].Number);
-            Assert.Equal(invoiceItem2.Description, invoiceItems[1].Description);
-            Assert.Equal(invoiceItem2.Quantity, invoiceItems[1].Quantity);
-            Assert.Equal(invoiceItem2.Price, invoiceItems[1].Price);
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.Equal(expectedInvoiceItems[i].Number, invoiceItems[i].Number);
+                Assert.Equal(expectedInvoiceItems[i].Description, invoiceItems[i].Description);
+                Assert.Equal(expectedInvoiceItems[i].Quantity, invoiceItems[i].Quantity);
+                Assert.Equal(expectedInvoiceItems[i].Price, invoiceItems[i].Price);
+                Assert.Equal(expectedInvoiceItems[i].Amount, invoiceItems[i].Amount);
+            }
         }
 
         [Fact]

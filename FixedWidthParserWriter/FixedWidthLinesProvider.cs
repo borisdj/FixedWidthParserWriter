@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using FastMember;
 
 namespace FixedWidthParserWriter
 {
@@ -21,29 +21,49 @@ namespace FixedWidthParserWriter
         public List<string> Write(List<T> data, int structureTypeId = 0)
         {
             StructureTypeId = structureTypeId;
-            LoadNewDefaultConfig(data[0]);
+            LoadNewDefaultConfig(new T());
+
+            var accessor = TypeAccessor.Create(typeof(T), true);
+            var memberSet = accessor.GetMembers().Where(a => a.IsDefined(typeof(FixedWidthLineFieldAttribute)));
+            var membersDict = new Dictionary<int, Member>();
+            var attributesDict = new Dictionary<string, FixedWidthLineFieldAttribute>();
+            var memberNameTypeNameDict = new Dictionary<string, string>();
+            foreach (var member in memberSet)
+            {
+                var attribute = member.GetMemberAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+                if (attribute != null)
+                {
+                    membersDict.Add(attribute.Start, member);
+                    attributesDict.Add(member.Name, attribute);
+                    memberNameTypeNameDict.Add(member.Name, member.Type.Name);
+                }
+            }
+            var membersData = membersDict.OrderBy(a => a.Key).Select(a => a.Value);
 
             List<string> resultLines = new List<string>();
             foreach (T element in data)
             {
-                var orderProperties = element.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthLineFieldAttribute)));
-                orderProperties = orderProperties.Where(a => a.GetCustomAttributes<FixedWidthLineFieldAttribute>().Any(b => b.StructureTypeId == StructureTypeId));
-                orderProperties = orderProperties.OrderBy(a => a.GetCustomAttributes<FixedWidthLineFieldAttribute>().Single(b => b.StructureTypeId == StructureTypeId).Start);
-
                 string line = String.Empty;
 
                 int startPrev = 1;
                 int lengthPrev = 0;
-                foreach (PropertyInfo prop in orderProperties)
+                foreach (var propertyMember in membersData)
                 {
-                    var attribute = prop.GetCustomAttributes<FixedWidthLineFieldAttribute>().Single(a => a.StructureTypeId == StructureTypeId);
+                    var attribute = attributesDict[propertyMember.Name];
                     if (startPrev + lengthPrev != attribute.Start)
                         throw new InvalidOperationException($"Invalid Start or Length parameter, {attribute.Start} !=  {startPrev + lengthPrev}" +
-                                                            $", on FixedLineFieldAttribute (property {prop.Name}) for StructureTypeId {StructureTypeId}");
+                                                            $", on FixedLineFieldAttribute (property {propertyMember.Name}) for StructureTypeId {StructureTypeId}");
                     startPrev = attribute.Start;
                     lengthPrev = attribute.Length;
 
-                    line += WriteData(element, prop, FieldType.LineField);
+                    var memberData = new FastMemberData()
+                    {
+                        Member = propertyMember,
+                        Accessor = accessor,
+                        Attribute = attribute,
+                        MemberNameTypeNameDict = memberNameTypeNameDict
+                    };
+                    line += WriteData(element, memberData, FieldType.LineField);
                 }
                 resultLines.Add(line);
             }

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using FastMember;
 
 namespace FixedWidthParserWriter
 {
@@ -17,12 +17,33 @@ namespace FixedWidthParserWriter
             StructureTypeId = structureTypeId;
             LoadNewDefaultConfig(data);
 
-            var orderProperties = data.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthAttribute))).ToList();
-            string orderLine = String.Empty;
-
-            foreach (var prop in orderProperties)
+            var accessor = TypeAccessor.Create(typeof(T), true);
+            var memberSet = accessor.GetMembers().Where(a => a.IsDefined(typeof(FixedWidthFileFieldAttribute)));
+            var membersData = new List<Member>();
+            var attributesDict = new Dictionary<string, FixedWidthFileFieldAttribute>();
+            var memberNameTypeNameDict = new Dictionary<string, string>();
+            foreach (var member in memberSet)
             {
-                WriteData(data, prop, FieldType.FileField);
+                var attribute = member.GetMemberAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+                if (attribute != null)
+                {
+                    membersData.Add(member);
+                    attributesDict.Add(member.Name, attribute);
+                    memberNameTypeNameDict.Add(member.Name, member.Type.Name);
+                }
+            }
+
+            foreach (var propertyMember in membersData)
+            {
+                var attribute = attributesDict[propertyMember.Name];
+                var memberData = new FastMemberData()
+                {
+                    Member = propertyMember,
+                    Accessor = accessor,
+                    Attribute = attribute,
+                    MemberNameTypeNameDict = memberNameTypeNameDict
+                };
+                WriteData(data, memberData, FieldType.FileField);
             }
         }
     }
