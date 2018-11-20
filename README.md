@@ -11,10 +11,10 @@ There are 2 main types of usage that are explained in the following segments: **
 If you find this project useful you can mark it by leaving a Github **\*Star**.</br>
 
 Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and the process for submitting pull requests.<br>
-[![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)
-
+[![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)<br>
 Want to **Contact** us for Hire (Development & Consulting): [www.codis.tech](http://www.codis.tech)
 
+##
 ### 1. Data in LineFields
 First is regular flat data file, **record per Line (Fixed-Width)**, for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceItems.txt):
 ```
