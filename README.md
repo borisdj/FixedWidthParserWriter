@@ -60,7 +60,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 ```
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
 - *Start*
-- *Length* (when writing if Property has longer value then defined in Length it will be cut from the right to fit)
+- *Length* (when writing if Property has longer value then defined in Length it will be cut from the right to fit - valueTrim)
 - *Format* (Defaults per data type or group)
 - *Pad* (Defaults per data category{*Numeric*, *NonNumeric*} type, initially: ' ')
 - *PadSide* {Right, Left} (Defaults per data category: *NonNumeric = PadSide.Left, Numeric = PadSide.Right*)
