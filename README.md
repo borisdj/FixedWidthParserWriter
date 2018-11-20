@@ -1,8 +1,8 @@
 ## FixedWidthParserWriter
-Library (C# .NET) for Parsing(Reading) & Writing fixed-width/flat data files (.txt or other).<br>
+Library (C# .NET) for Parsing(Reading) & Writing fixed-width/flat data files (.txt or other), very Efficient - NoReflection.<br>
 It is targeting NetStandard 2.0 so it can be used on project targeting NetCore(2.0+) or NetFramework(4.6.1+).
 
-Available on [![NuGet](https://img.shields.io/badge/NuGet-1.0.3-blue.svg)](https://www.nuget.org/packages/FixedWidthParserWriter/) latest version.<br>
+Available on [![NuGet](https://img.shields.io/badge/NuGet-1.0.4-blue.svg)](https://www.nuget.org/packages/FixedWidthParserWriter/) latest version.<br>
 Package manager console command for installation: *Install-Package FixedWidthParserWriter*
 
 There are 2 main types of usage that are explained in the following segments: **1. LineFields** & **2. FileFields**<br>
