@@ -59,7 +59,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 }
 ```
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
-- *Start*
+- *Start* (required for LineType so that order of fields in line does not depends on order of Propertis in model)
 - *Length* (when writing if Property has longer value then defined in Length it will be cut from the right to fit - valueTrim)
 - *Format* (Defaults per data type or group)
 - *Pad* (Defaults per data category{*Numeric*, *NonNumeric*} type, initially: ' ')
