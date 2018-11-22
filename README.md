@@ -63,8 +63,8 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 - *Start* (required for LineType so that order of lineFields does not depends on order of modelPropertis)
 - *Length* (when writing if Property has longer value then defined in Length it will be cut from the right to fit - valueTrim)
 - *Format* (Defaults per data type or group)
-- *Pad* (Defaults per data category{*Numeric*, *NonNumeric*} type, initially: ' ')
-- *PadSide* {Right, Left} (Defaults per data category: *NonNumeric = PadSide.Left, Numeric = PadSide.Right*)
+- *Pad* (Defaults per data category{*PadNumeric*, *PadNonNumeric*} type, initially: ' ')
+- *PadSide* {Right, Left} (Defaults per data category: *PadSideNumeric = PadSide.Left, PadSideNonNumeric = PadSide.Right*)
 - *StructureTypeId* (Default = 0, used when having multiple files with different structure or format for same data)
 
 *_*Format* types:<br>
