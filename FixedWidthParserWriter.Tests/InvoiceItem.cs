@@ -34,7 +34,7 @@ namespace FixedWidthParserWriter.Tests
                     // config remains initial default
                     break;
                 case ConfigType.Beta:
-                    defaultConfig.PadSeparatorNumeric = '0';
+                    defaultConfig.PadNumeric = '0';
                     break;
             }
             return defaultConfig;

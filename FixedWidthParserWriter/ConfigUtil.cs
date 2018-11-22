@@ -15,8 +15,8 @@
         //public virtual string FormatDouble { get; set; }  // FormatNumberDecimal
 
         // Pads
-        public virtual char PadSeparatorNumeric { get; set; } = ' ';
-        public virtual char PadSeparatorNonNumeric { get; set; } = ' ';
+        public virtual char PadNumeric { get; set; } = ' ';
+        public virtual char PadNonNumeric { get; set; } = ' ';
 
         public virtual PadSide PadSideNumeric { get; set; } = PadSide.Left;
         public virtual PadSide PadSideNonNumeric { get; set; } = PadSide.Right;

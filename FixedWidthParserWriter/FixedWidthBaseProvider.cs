@@ -174,7 +174,7 @@ namespace FixedWidthParserWriter
             {
                 bool isNumbericType = (valueTypeName == nameof(Int32) || valueTypeName == nameof(Int64) || // IntegerNumbers
                                        valueTypeName == nameof(Decimal) || valueTypeName == nameof(Single) || valueTypeName == nameof(Double)); // or DecimalNumbers
-                attribute.PadSide = isNumbericType ? DefaultConfig.PadSideNumeric : DefaultConfig.PadSideNonNumeric; // Initial default Left pad: Numeric-Left, NonNumeric-Right
+                attribute.PadSide = isNumbericType ? DefaultConfig.PadSideNumeric : DefaultConfig.PadSideNonNumeric; // Initial default Pad: PadNumeric-Left, PadNonNumeric-Right
             }
             char pad = ' ';
 
@@ -192,13 +192,13 @@ namespace FixedWidthParserWriter
                     case nameof(Int32):
                     case nameof(Int64):
                         format = format ?? DefaultConfig.FormatNumberInteger;
-                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadSeparatorNumeric;
+                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNumeric;
                         break;
                     case nameof(Decimal):
                     case nameof(Single):
                     case nameof(Double):
                         format = format ?? DefaultConfig.FormatNumberDecimal;
-                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadSeparatorNumeric;
+                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNumeric;
                         if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
                         {
                             double decimalFactor = Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
@@ -218,12 +218,12 @@ namespace FixedWidthParserWriter
                         break;
                     case nameof(Boolean):
                         format = format ?? DefaultConfig.FormatBoolean;
-                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadSeparatorNonNumeric;
+                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
                         value = value.GetHashCode();
                         break;
                     case nameof(DateTime):
                         format = format ?? DefaultConfig.FormatDateTime;
-                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadSeparatorNonNumeric;
+                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
                         break;
                 }
                 result = format != null ? String.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value) : value.ToString();
