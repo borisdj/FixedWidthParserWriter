@@ -63,8 +63,8 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 - *Start* (required for LineType so that order of lineFields does not depends on order of modelPropertis)
 - *Length* (when writing if Property has longer value then defined in Length it will be cut from the right to fit - valueTrim)
 - *Format* (Defaults per data type or group)
-- *Pad* (Defaults per data category{*PadNumeric*, *PadNonNumeric*} type, initially: ' ')
-- *PadSide* {Right, Left} (Defaults per data category: *PadSideNumeric = PadSide.Left, PadSideNonNumeric = PadSide.Right*)
+- *Pad* (Defaults per data category: {*PadNumeric* = ' ', *PadNonNumeric* = ' '})
+- *PadSide* (Defaults per data category: {*PadSideNumeric = PadSide.Left, PadSideNonNumeric = PadSide.Right*})
 - *StructureTypeId* (Default = 0, used when having multiple files with different structure or format for same data)
 
 *_*Format* types:<br>
@@ -77,7 +77,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
  Custom format strings for [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings) and [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
 When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
-Next example shows 2 structures, second has one less Property and different PadSeparatorNumeric: '0' instead of ' '(space).<br>
+Next example shows 2 structures, second has one less Property and different PadNumeric: '0' instead of ' '(space).<br>
 To change `DefaultConfig` per StructureType, model should implement `IFixedWidth` interface with `SetDefaultConfig()` func.
 ```C#
 public enum ConfigType { Alpha, Beta }
@@ -93,7 +93,7 @@ public class InvoiceItem : IFixedWidth
                 // config remains initial default
                 break;
             case ConfigType.Beta:
-                defaultConfig.PadSeparatorNumeric = '0';
+                defaultConfig.PadNumeric = '0';
                 break;
         }
         return defaultConfig;
@@ -104,7 +104,7 @@ public class InvoiceItem : IFixedWidth
     public int Number { get; set; }
 
     [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 4, Length = 1)]
-    public string SeparatorNumDesc { get; set; } = ".";
+    public string NumberedBullet { get; set; } = ".";
 
     [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 30)]
     [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 5, Length = 30)]
