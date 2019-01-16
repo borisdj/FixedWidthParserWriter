@@ -172,9 +172,9 @@ namespace FixedWidthParserWriter
 
             if (attribute.PadSide == PadSide.Default)
             {
-                bool isNumbericType = (valueTypeName == nameof(Int32) || valueTypeName == nameof(Int64) || // IntegerNumbers
+                bool isNumericType = (valueTypeName == nameof(Int32) || valueTypeName == nameof(Int64) || // IntegerNumbers
                                        valueTypeName == nameof(Decimal) || valueTypeName == nameof(Single) || valueTypeName == nameof(Double)); // or DecimalNumbers
-                attribute.PadSide = isNumbericType ? DefaultConfig.PadSideNumeric : DefaultConfig.PadSideNonNumeric; // Initial default Pad: PadNumeric-Left, PadNonNumeric-Right
+                attribute.PadSide = isNumericType ? DefaultConfig.PadSideNumeric : DefaultConfig.PadSideNonNumeric; // Initial default Pad: PadNumeric-Left, PadNonNumeric-Right
             }
             char pad = ' ';
 
@@ -226,6 +226,7 @@ namespace FixedWidthParserWriter
                         pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
                         break;
                 }
+                value = value ?? "";
                 result = format != null ? String.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value) : value.ToString();
             }
 
