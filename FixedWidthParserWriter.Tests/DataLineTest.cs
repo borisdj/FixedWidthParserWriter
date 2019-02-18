@@ -70,6 +70,43 @@ namespace FixedWidthParserWriter.Tests
             Assert.Equal(expectedBeta, resultBeta);
         }
 
+        [Fact]
+        public void LineParserNullableTest()
+        {
+            List<string> fileLines = GetDataLinesNullable();
+
+            List<NullableModel> fields = new FixedWidthLinesProvider<NullableModel>().Parse(fileLines);
+
+            List<NullableModel> expectedFields = new List<NullableModel>
+            {
+                new NullableModel()
+                {
+                    Bool = true,
+                    Char = (char)"char"[0],
+                    DateTime = new DateTime(2019, 1, 1),
+                    Int32 = 1000,
+                    Int64 = 1000,
+                    Decimal = (Decimal)1000.1,
+                    Double = (double)1000.1,
+                    Single = (Single)1000.1
+                },
+                new NullableModel()
+            };
+
+            for (int i = 0; i < expectedFields.Count; i++)
+            {
+                Assert.Equal(expectedFields[i].Bool, fields[i].Bool);
+                Assert.Equal(expectedFields[i].Char, fields[i].Char);
+                Assert.Equal(expectedFields[i].Int32, fields[i].Int32);
+                Assert.Equal(expectedFields[i].Int64, fields[i].Int64);
+                Assert.Equal(expectedFields[i].Decimal, fields[i].Decimal);
+                Assert.Equal(expectedFields[i].Single, fields[i].Single);
+                Assert.Equal(expectedFields[i].Double, fields[i].Double);
+                Assert.Equal(expectedFields[i].DateTime, fields[i].DateTime);
+            }
+        
+        }
+
         public List<string> GetDataLines(ConfigType formatType)
         {
           //var header ="No |         Description         | Qty |   Price    |   Amount   |";
@@ -92,6 +129,17 @@ namespace FixedWidthParserWriter.Tests
                     };
                     break;
             }
+            return dataLines;
+        }
+
+        public List<string> GetDataLinesNullable()
+        {
+            var dataLines = new List<string>
+            {
+                "char     1000      1000                1000.10             1000.10   1000.10   2019-01-011",
+                "                                                                                          ",
+            };
+
             return dataLines;
         }
     }
