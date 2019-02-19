@@ -27,7 +27,7 @@ namespace FixedWidthParserWriter
 
         public virtual DefaultConfig DefaultConfig { get; set; } = new DefaultConfig();
 
-        public virtual void SetDefaultConfig() { } // can be override to change DefaultConfig on entire Provider class
+        public virtual void SetDefaultConfig() { } // can be overriden to change DefaultConfig on entire Provider class
 
         protected void LoadNewDefaultConfig<T>(T data)
         {
@@ -74,6 +74,7 @@ namespace FixedWidthParserWriter
                         lineIndex += lines.Count + 1;
                     }
                 }
+
                 if (attribute != null)
                 {
                     string valueString = lines[lineIndex];
@@ -84,76 +85,18 @@ namespace FixedWidthParserWriter
                     {
                         if (valueString.Length < startIndex + length)
                         {
-                            throw new InvalidOperationException($"Property {member.Name}='{valueString}' with Length={valueString.Length}" +
-                                                                $"not enough for Substring(Start={startIndex + 1}, Length={length})");
+                            throw new InvalidOperationException($"Property: Name={member.Name}, Value='{valueString}', Length={valueString.Length}" +
+                                                                $"not enough for Substring: Start={startIndex + 1}, Length={length})");
                         }
                         valueString = (length == 0) ? valueString.Substring(startIndex) : valueString.Substring(startIndex, length);
                     }
 
                     valueString = valueString.Trim();
 
-                    object value = null;
-                    var underlyingType = Nullable.GetUnderlyingType(member.Type);
-                    string valueTypeName = underlyingType != null ? underlyingType.Name : member.Type.Name;
+                    object value = ParseStringValueToObject(valueString, member, attribute);
 
-                    if (valueTypeName == nameof(String)) // string
-                    {
-                        value = valueString;
-                    }
-                    else if(valueTypeName == nameof(Char)) // char
-                    {
-                        value = (char)valueString[0];
-                    }
-                    else
-                    {
-                        string format = attribute.Format; //= field.Format ?? DefaultFormat.GetFormat(valueTypeName);
-
-                        if (valueTypeName == nameof(Int32) || valueTypeName == nameof(Int64))
-                        {
-                            format = format ?? DefaultConfig.FormatNumberInteger;
-                            switch (valueTypeName)
-                            {
-                                case nameof(Int32): // int
-                                    value = Int32.Parse(valueString);
-                                    break;
-                                case nameof(Int64): // long
-                                    value = Int64.Parse(valueString);
-                                    break;
-                            }
-                        }
-                        else if (valueTypeName == nameof(Decimal) || valueTypeName == nameof(Single) || valueTypeName == nameof(Double))
-                        {
-                            format = format ?? DefaultConfig.FormatNumberDecimal;
-                            switch (valueTypeName)
-                            {
-                                case nameof(Decimal): // decimal
-                                    value = Decimal.Parse(valueString, CultureInfo.InvariantCulture);
-                                    if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
-                                        value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
-                                    break;
-                                case nameof(Single): // float
-                                    value = Single.Parse(valueString, CultureInfo.InvariantCulture);
-                                    if (format.Contains(";"))
-                                        value = (float)value / (float)Math.Pow(10, format.Length - 2);
-                                    break;
-                                case nameof(Double):  // double
-                                    value = Double.Parse(valueString, CultureInfo.InvariantCulture);
-                                    if (format.Contains(";"))
-                                        value = (double)value / (double)Math.Pow(10, format.Length - 2);
-                                    break;
-                            }
-                        }
-                        else if(valueTypeName == nameof(Boolean))
-                        {
-                            format = format ?? DefaultConfig.FormatBoolean;
-                        }
-                        else if (valueTypeName == nameof(DateTime))
-                        {
-                            format = format ?? DefaultConfig.FormatDateTime;
-                            value = DateTime.ParseExact(valueString, format, CultureInfo.InvariantCulture);
-                        }
-                    }
                     accessor[data, member.Name] = value;
+
                     //property.SetValue(data, value); // With Reflection - DEPRECATED
                 }
             }
@@ -255,6 +198,149 @@ namespace FixedWidthParserWriter
                 content[lineIndex] = clearString.Insert(attribute.StartIndex, result);
             }
             return result;
+        }
+
+        protected object ParseStringValueToObject(string valueString, Member member, FixedWidthAttribute attribute)
+        {
+            var underlyingType = Nullable.GetUnderlyingType(member.Type);
+            string valueTypeName = underlyingType != null ? underlyingType.Name : member.Type.Name;
+
+            object value = null;
+
+            if (string.IsNullOrEmpty(valueString))
+            {
+                if (underlyingType == null && valueTypeName != nameof(String))
+                {
+                    throw new InvalidOperationException($"Empty string cannot be parsed to not nullable Property: Name={member.Name}, Type={valueTypeName}");
+                }
+
+                return value;
+            }
+
+            ParserHandler Parser = null;
+            string format = attribute.Format;
+
+            switch (valueTypeName)
+            {
+                case nameof(String):
+                    Parser = ParserString;
+                    break;
+
+                case nameof(Char):
+                    Parser = ParserChar;
+                    break;
+
+                case nameof(Int32):
+                case nameof(Int64):
+                    {
+                        format = format = format ?? DefaultConfig.FormatNumberInteger;
+                        Parser = ParserNumberInteger;
+                        break;
+                    }
+
+                case nameof(Decimal):
+                case nameof(Single):
+                case nameof(Double):
+                    {
+                        format = format ?? DefaultConfig.FormatNumberDecimal;
+                        Parser = ParserNumberDecimal;
+                        break;
+                    }
+
+                case nameof(Boolean):
+                    {
+                        format = format ?? DefaultConfig.FormatBoolean;
+                        Parser = ParserBoolean;
+                        break;
+                    }
+
+                case nameof(DateTime):
+                    {
+                        format = format ?? DefaultConfig.FormatDateTime;
+                        Parser = ParserDateTime;
+                        break;
+                    }
+            }
+
+            try
+            {
+                value = Parser(valueString, valueTypeName, format);
+            }
+            catch
+            {
+                throw new InvalidCastException($"Property: Name={member.Name}, Value ={valueString}, Format={format} cannot be parsed to Type={valueTypeName}");
+            }
+
+            return value;
+        }
+
+        private delegate object ParserHandler(string valueString, string typeName, string format);
+
+        private object ParserString(string valueString, string typeName, string format)
+        {
+            return valueString; 
+        }
+
+        private object ParserChar(string valueString, string typeName, string format)
+        {
+            return (char)valueString[0];
+        }
+
+        private object ParserNumberInteger(string valueString, string typeName, string format)
+        {
+            object value = null;
+            switch (typeName)
+            {
+                case nameof(Int32): // int
+                    value = Int32.Parse(valueString);
+                    break;
+                case nameof(Int64): // long
+                    value = Int64.Parse(valueString);
+                    break;
+            }
+
+            return value;
+        }
+
+        private object ParserNumberDecimal(string valueString, string typeName, string format)
+        {
+            object value = null;
+            switch (typeName)
+            {
+                case nameof(Decimal): // decimal
+                    value = Decimal.Parse(valueString, CultureInfo.InvariantCulture);
+                    if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
+                        value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
+                    break;
+                case nameof(Single): // float
+                    value = Single.Parse(valueString, CultureInfo.InvariantCulture);
+                    if (format.Contains(";"))
+                        value = (float)value / (float)Math.Pow(10, format.Length - 2);
+                    break;
+                case nameof(Double):  // double
+                    value = Double.Parse(valueString, CultureInfo.InvariantCulture);
+                    if (format.Contains(";"))
+                        value = (double)value / (double)Math.Pow(10, format.Length - 2);
+                    break;
+            }
+
+            return value;
+        }
+
+        private object ParserBoolean(string valueString, string typeName, string format)
+        {
+            var valueFormatIndex = format.Split(';').ToList().FindIndex(a => a == valueString);
+
+            object value = valueFormatIndex == 0 ? true : valueFormatIndex == 2 ? false : (bool?)null;
+
+            return value;
+        }
+
+        private object ParserDateTime(string valueString, string typeName, string format)
+        {
+            object value = DateTime.ParseExact(valueString, format, CultureInfo.InvariantCulture);
+
+            return value;
         }
     }
 }
