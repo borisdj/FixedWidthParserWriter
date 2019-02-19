@@ -10,7 +10,7 @@ namespace FixedWidthParserWriter.Tests
         public void LineParserTest()
         {
             var dataLines = GetDataLines(ConfigType.Alpha);
-            List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines); // StrucutreTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
+            List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines); // StructureTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
 
             var expectedInvoiceItems = new List<InvoiceItem>
             {
@@ -104,7 +104,6 @@ namespace FixedWidthParserWriter.Tests
                 Assert.Equal(expectedFields[i].Double, fields[i].Double);
                 Assert.Equal(expectedFields[i].DateTime, fields[i].DateTime);
             }
-        
         }
 
         public List<string> GetDataLines(ConfigType formatType)

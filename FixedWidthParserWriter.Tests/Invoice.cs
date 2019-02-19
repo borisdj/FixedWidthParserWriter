@@ -8,7 +8,7 @@ namespace FixedWidthParserWriter.Tests
         public string CompanyName { get; set; }
 
         // Format set on class with FormatDateTime so not required on each Attribute of DateTime Property
-        [FixedWidthFileField(Line = 4, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
+        [FixedWidthFileField(Line = 4, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)] // In general Length could be = 10 but name of this DateField in Template is 13 (>10) so we have to use at least 13 or max spaces which is 19.
         public DateTime Date { get; set; }
 
         [FixedWidthFileField(Line = 4, Start = 43)]
