@@ -230,20 +230,14 @@ namespace FixedWidthParserWriter
                     Parser = ParserChar;
                     break;
 
-                case nameof(Int32):
-                case nameof(Int64):
-                    {
-                        format = format = format ?? DefaultConfig.FormatNumberInteger;
-                        Parser = ParserNumberInteger;
-                        break;
-                    }
-
                 case nameof(Decimal):
                 case nameof(Single):
                 case nameof(Double):
+                case nameof(Int32):
+                case nameof(Int64):
                     {
                         format = format ?? DefaultConfig.FormatNumberDecimal;
-                        Parser = ParserNumberDecimal;
+                        Parser = ParserNumber;
                         break;
                     }
 
@@ -286,41 +280,39 @@ namespace FixedWidthParserWriter
             return (char)valueString[0];
         }
 
-        private object ParserNumberInteger(string valueString, string typeName, string format)
+        private object ParserNumber(string valueString, string typeName, string format)
         {
             object value = null;
-            switch (typeName)
+
+            int signMultiplier = 1;
+            if (valueString.Contains("-"))
             {
-                case nameof(Int32): // int
-                    value = Int32.Parse(valueString);
-                    break;
-                case nameof(Int64): // long
-                    value = Int64.Parse(valueString);
-                    break;
+                valueString = valueString.Replace("-", string.Empty);
+                signMultiplier = -1;
             }
 
-            return value;
-        }
-
-        private object ParserNumberDecimal(string valueString, string typeName, string format)
-        {
-            object value = null;
             switch (typeName)
             {
                 case nameof(Decimal): // decimal
                     value = Decimal.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
-                        value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
+                        value = signMultiplier * (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
                     break;
                 case nameof(Single): // float
                     value = Single.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";"))
-                        value = (float)value / (float)Math.Pow(10, format.Length - 2);
+                        value = signMultiplier * (float)value / (float)Math.Pow(10, format.Length - 2);
                     break;
                 case nameof(Double):  // double
                     value = Double.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";"))
-                        value = (double)value / (double)Math.Pow(10, format.Length - 2);
+                        value = signMultiplier * (double)value / (double)Math.Pow(10, format.Length - 2);
+                    break;
+                case nameof(Int32): // int
+                    value = signMultiplier * Int32.Parse(valueString);
+                    break;
+                case nameof(Int64): // long
+                    value = signMultiplier * Int64.Parse(valueString);
                     break;
             }
 
