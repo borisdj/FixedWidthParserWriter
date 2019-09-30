@@ -183,6 +183,14 @@ namespace FixedWidthParserWriter
                     result = result.PadRight(attribute.Length, pad);
                 else if (attribute.PadSide == PadSide.Left)
                     result = result.PadLeft(attribute.Length, pad);
+
+                var numberTypesList = new List<string> { nameof(Int32), nameof(Int64), nameof(Decimal), nameof(Single), nameof(Double) };
+                bool isNumberType = numberTypesList.Contains(valueTypeName);
+                if (isNumberType && result.Contains("-") && result.Substring(0, 1) == "0") // is negative Number with leading Zero
+                {
+                    result = result.Replace("-", "");
+                    result = "-" + result;// move sign '-'(minus) before pad
+                }
             }
 
             if (fieldType == FieldType.FileField)
@@ -294,19 +302,19 @@ namespace FixedWidthParserWriter
             switch (typeName)
             {
                 case nameof(Decimal): // decimal
-                    value = Decimal.Parse(valueString, CultureInfo.InvariantCulture);
+                    value = signMultiplier * Decimal.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
-                        value = signMultiplier * (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
+                        value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
                     break;
                 case nameof(Single): // float
-                    value = Single.Parse(valueString, CultureInfo.InvariantCulture);
+                    value = signMultiplier * Single.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";"))
-                        value = signMultiplier * (float)value / (float)Math.Pow(10, format.Length - 2);
+                        value = (float)value / (float)Math.Pow(10, format.Length - 2);
                     break;
                 case nameof(Double):  // double
-                    value = Double.Parse(valueString, CultureInfo.InvariantCulture);
+                    value = signMultiplier *  Double.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";"))
-                        value = signMultiplier * (double)value / (double)Math.Pow(10, format.Length - 2);
+                        value = (double)value / (double)Math.Pow(10, format.Length - 2);
                     break;
                 case nameof(Int32): // int
                     value = signMultiplier * Int32.Parse(valueString);
