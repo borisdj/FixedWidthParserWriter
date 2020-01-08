@@ -222,6 +222,11 @@ namespace FixedWidthParserWriter
                 return value;
             }
 
+            if (string.Equals(attribute.NullPattern, valueString))
+            {
+                return null;
+            }
+
             ParserHandler Parser = null;
             string format = attribute.Format;
 
