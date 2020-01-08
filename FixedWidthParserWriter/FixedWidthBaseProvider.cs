@@ -115,9 +115,7 @@ namespace FixedWidthParserWriter
 
             if (attribute.PadSide == PadSide.Default)
             {
-                bool isNumericType = (valueTypeName == nameof(Int32) || valueTypeName == nameof(Int64) || // IntegerNumbers
-                                       valueTypeName == nameof(Decimal) || valueTypeName == nameof(Single) || valueTypeName == nameof(Double)); // or DecimalNumbers
-                attribute.PadSide = isNumericType ? DefaultConfig.PadSideNumeric : DefaultConfig.PadSideNonNumeric; // Initial default Pad: PadNumeric-Left, PadNonNumeric-Right
+                attribute.PadSide = IsNumericType(valueTypeName) ? DefaultConfig.PadSideNumeric : DefaultConfig.PadSideNonNumeric; // Initial default Pad: PadNumeric-Left, PadNonNumeric-Right
             }
             char pad = ' ';
 
@@ -132,6 +130,7 @@ namespace FixedWidthParserWriter
                 //format = format ?? DefaultFormat.GetFormat(valueTypeName);
                 switch (valueTypeName)
                 {
+                    case nameof(Int16):
                     case nameof(Int32):
                     case nameof(Int64):
                         format = format ?? DefaultConfig.FormatNumberInteger;
@@ -184,9 +183,7 @@ namespace FixedWidthParserWriter
                 else if (attribute.PadSide == PadSide.Left)
                     result = result.PadLeft(attribute.Length, pad);
 
-                var numberTypesList = new List<string> { nameof(Int32), nameof(Int64), nameof(Decimal), nameof(Single), nameof(Double) };
-                bool isNumberType = numberTypesList.Contains(valueTypeName);
-                if (isNumberType && result.Contains("-") && result.Substring(0, 1) == "0") // is negative Number with leading Zero
+                if (IsNumericType(valueTypeName) && result.Contains("-") && result.Substring(0, 1) == "0") // is negative Number with leading Zero
                 {
                     result = result.Replace("-", "");
                     result = "-" + result;// move sign '-'(minus) before pad
@@ -241,6 +238,7 @@ namespace FixedWidthParserWriter
                 case nameof(Decimal):
                 case nameof(Single):
                 case nameof(Double):
+                case nameof(Int16):
                 case nameof(Int32):
                 case nameof(Int64):
                 case nameof(Byte):
@@ -320,6 +318,9 @@ namespace FixedWidthParserWriter
                 case nameof(Byte): // byte
                     value = Byte.Parse(valueString);
                     break;
+                case nameof(Int16): // short
+                    value = Int16.Parse(valueString);
+                    break;
                 case nameof(Int32): // int
                     value = signMultiplier * Int32.Parse(valueString);
                     break;
@@ -346,5 +347,15 @@ namespace FixedWidthParserWriter
 
             return value;
         }
+
+
+        private bool IsNumericType(string typeName) =>
+            new List<string>
+                {
+                    nameof(Byte), // byte
+                    nameof(Int16), nameof(Int32), nameof(Int64), // Integer numbers
+                    nameof(Decimal), nameof(Single), nameof(Double) // Decimal numbers
+                }
+                .Contains(typeName);
     }
 }

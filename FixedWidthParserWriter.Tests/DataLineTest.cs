@@ -14,8 +14,8 @@ namespace FixedWidthParserWriter.Tests
 
             var expectedInvoiceItems = new List<InvoiceItem>
             {
-                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m, StatusCode = 1},
-                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m, StatusCode = 2}
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m, StatusCode = 1, ProductCode = 123},
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m, StatusCode = 2, ProductCode = 125}
             };
 
             for (int i = 0; i < 2; i++)
@@ -34,8 +34,8 @@ namespace FixedWidthParserWriter.Tests
         {
             var invoiceItems = new List<InvoiceItem>
             {
-                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m, StatusCode = 1},
-                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m, StatusCode = 2}
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m, StatusCode = 1, ProductCode = 123},
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m, StatusCode = 2, ProductCode = 125}
             };
 
             List<string> resultLinesAlpha = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)ConfigType.Alpha);
@@ -117,15 +117,15 @@ namespace FixedWidthParserWriter.Tests
                 case ConfigType.Alpha:
                     dataLines = new List<string>
                     {
-                        "  1.Laptop Dell xps13                  1       821.00       821.001",
-                        "  2.Monitor Asus 32''                  2       478.00       956.002"
+                        "  1.Laptop Dell xps13                  1       821.00       821.001  123",
+                        "  2.Monitor Asus 32''                  2       478.00       956.002  125"
                     };
                     break;
                 case ConfigType.Beta:
                     dataLines = new List<string>
                     {
-                        "0001Laptop Dell xps13             0000010000000821.000000000821.001",
-                        "0002Monitor Asus 32''             0000020000000478.000000000956.002"
+                        "0001Laptop Dell xps13             0000010000000821.000000000821.00100123",
+                        "0002Monitor Asus 32''             0000020000000478.000000000956.00200125"
                     };
                     break;
             }

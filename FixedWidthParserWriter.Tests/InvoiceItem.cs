@@ -29,6 +29,10 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta, Start = 67, Length = 1)]
         public byte StatusCode { get; set; }
 
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 68, Length = 5)]
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta, Start = 68, Length = 5)]
+        public short ProductCode { get; set; }
+
         public DefaultConfig GetDefaultConfig(int StructureTypeId)
         {
             var defaultConfig = new DefaultConfig();
