@@ -25,6 +25,10 @@ namespace FixedWidthParserWriter.Tests
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 54, Length = 13)]
         public decimal Amount => Quantity * Price;
 
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 67, Length = 1)]
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta, Start = 67, Length = 1)]
+        public byte StatusCode { get; set; }
+
         public DefaultConfig GetDefaultConfig(int StructureTypeId)
         {
             var defaultConfig = new DefaultConfig();

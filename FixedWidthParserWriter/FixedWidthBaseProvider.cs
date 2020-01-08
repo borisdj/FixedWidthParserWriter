@@ -243,6 +243,7 @@ namespace FixedWidthParserWriter
                 case nameof(Double):
                 case nameof(Int32):
                 case nameof(Int64):
+                case nameof(Byte):
                     {
                         format = format ?? DefaultConfig.FormatNumberDecimal;
                         Parser = ParserNumber;
@@ -280,7 +281,7 @@ namespace FixedWidthParserWriter
 
         private object ParserString(string valueString, string typeName, string format)
         {
-            return valueString; 
+            return valueString;
         }
 
         private object ParserChar(string valueString, string typeName, string format)
@@ -315,6 +316,9 @@ namespace FixedWidthParserWriter
                     value = signMultiplier *  Double.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";"))
                         value = (double)value / (double)Math.Pow(10, format.Length - 2);
+                    break;
+                case nameof(Byte): // byte
+                    value = Byte.Parse(valueString);
                     break;
                 case nameof(Int32): // int
                     value = signMultiplier * Int32.Parse(valueString);
