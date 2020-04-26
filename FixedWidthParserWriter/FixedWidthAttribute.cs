@@ -14,6 +14,8 @@ namespace FixedWidthParserWriter
         public virtual int StartIndex => Start - 1;
 
         public int StructureTypeId { get; set; }
+
+        public bool ExceptionOnOverflow { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]

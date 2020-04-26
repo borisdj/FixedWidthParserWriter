@@ -106,6 +106,45 @@ namespace FixedWidthParserWriter.Tests
             }
         }
 
+        [Fact]
+        public void LineParserOverflowExceptionTest()
+        {
+            OverflowException expectedNotNull = null;
+            OverflowException expectedNull = null;
+
+            var invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m },
+                new InvoiceItem() { Number = 23456, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m }
+            };
+
+            try
+            {
+                List<string> resultLines = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)ConfigType.Gamma);
+            }
+            catch (System.OverflowException e)
+            {
+                expectedNotNull = e;
+            }
+
+            invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m },
+                new InvoiceItem() { Number = 23456, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m }
+            };
+
+            try
+            {
+                List<string> resultLines = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)ConfigType.Beta);
+            }
+            catch (System.OverflowException e)
+            {
+                expectedNull = e;
+            }
+            
+            Assert.NotNull(expectedNotNull);
+            Assert.Null(expectedNull);
+        }
         public List<string> GetDataLines(ConfigType formatType)
         {
           //var header ="No |         Description         | Qty |   Price    |   Amount   |";

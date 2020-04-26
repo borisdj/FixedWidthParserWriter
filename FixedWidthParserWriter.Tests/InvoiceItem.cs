@@ -4,6 +4,7 @@ namespace FixedWidthParserWriter.Tests
     {
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 3)]
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta, Start = 1, Length = 4)]
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Gamma, Start = 1, Length = 4, ExceptionOnOverflow=true)]
         public int Number { get; set; }
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 4, Length = 1)]
@@ -44,6 +45,7 @@ namespace FixedWidthParserWriter.Tests
     public enum ConfigType
     {
         Alpha,
-        Beta
+        Beta,
+        Gamma
     }
 }
