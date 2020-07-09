@@ -4,6 +4,7 @@ namespace FixedWidthParserWriter.Tests
     {
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 3)]
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta, Start = 1, Length = 4)]
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Gamma, Start = 2, Length = 3)]
         public int Number { get; set; }
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 4, Length = 1)]
@@ -11,18 +12,22 @@ namespace FixedWidthParserWriter.Tests
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 30)]
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 5, Length = 30)]
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Gamma,  Start = 6, Length = 30)]
         public string Description { get; set; }
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 35, Length = 6)]
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 35, Length = 6)]
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Gamma,  Start = 36, Length = 6)]
         public int Quantity { get; set; }
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 41, Length = 13)]
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 41, Length = 13)]
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Gamma,  Start = 42, Length = 13)]
         public decimal Price { get; set; }
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 54, Length = 13)]
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Beta,  Start = 54, Length = 13)]
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Gamma,  Start = 55, Length = 13)]
         public decimal Amount => Quantity * Price;
 
         public DefaultConfig GetDefaultConfig(int StructureTypeId)
@@ -44,6 +49,7 @@ namespace FixedWidthParserWriter.Tests
     public enum ConfigType
     {
         Alpha,
-        Beta
+        Beta,
+        Gamma
     }
 }

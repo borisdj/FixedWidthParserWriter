@@ -7,6 +7,11 @@ namespace FixedWidthParserWriter
 {
     public class FixedWidthLinesProvider<T> : FixedWidthBaseProvider where T : class, new()
     {
+        public T Parse(string line, int structureTypeId = 0)
+        {
+            return Parse(new List<string>(){ line }, structureTypeId)[0];
+        }
+
         public List<T> Parse(List<string> lines, int structureTypeId = 0)
         {
             StructureTypeId = structureTypeId;

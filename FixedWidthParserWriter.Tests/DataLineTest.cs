@@ -29,6 +29,43 @@ namespace FixedWidthParserWriter.Tests
         }
 
         [Fact]
+        public void TypedLineParserTest()
+        {
+            var dataLines = GetTypedDataLines();
+
+            var actualClients = new Stack<Client>();
+            var clientProvider = new FixedWidthLinesProvider<Client>();
+            var invoceProvider = new FixedWidthLinesProvider<InvoiceItem>();
+
+            for (int i = 0; i < dataLines.Count; i++)
+            {
+                switch (dataLines[i][0])
+                {
+                    case '1':
+                        actualClients.Push(clientProvider.Parse(dataLines[i]));
+                        break;
+                    case '2':
+                        actualClients.Peek().Invoices.Add(invoceProvider.Parse(dataLines[i], 2));
+                        break;
+                    default:
+                        throw new ArgumentException($"Invalid data type at line {i}");
+                }
+            }
+
+            var expectedClients = new List<Client>
+            {
+                new Client() { Name = "John Mike" },
+                new Client() { Name = "Miranda Klein" }
+            };
+
+            Assert.Equal(expectedClients[0].Name, actualClients.ToArray()[1].Name);
+            Assert.True(actualClients.ToArray()[0].Invoices.Count == 2);
+
+            Assert.Equal(expectedClients[1].Name, actualClients.ToArray()[0].Name);
+            Assert.True(actualClients.ToArray()[1].Invoices.Count == 3);
+        }
+
+        [Fact]
         public void LineWriterTest()
         {
             var invoiceItems = new List<InvoiceItem>
@@ -108,7 +145,7 @@ namespace FixedWidthParserWriter.Tests
 
         public List<string> GetDataLines(ConfigType formatType)
         {
-          //var header ="No |         Description         | Qty |   Price    |   Amount   |";
+            //var header ="No |         Description         | Qty |   Price    |   Amount   |";
 
             List<string> dataLines = null;
             switch (formatType)
@@ -128,6 +165,24 @@ namespace FixedWidthParserWriter.Tests
                     };
                     break;
             }
+            return dataLines;
+        }
+
+        public List<string> GetTypedDataLines()
+        {
+            //var header ="No |         Description         | Qty |   Price    |   Amount   |";
+
+            List<string> dataLines = null;
+            dataLines = new List<string>
+                    {
+                        "1John Mike                     ",
+                        "2  1.Laptop Dell xps13                  1       821.00       821.00",
+                        "2  2.Monitor Asus 32''                  2       478.00       956.00",
+                        "2  3.Generic Keyboard                   1        19.00        19.00",
+                        "1Miranda Klein                 ",
+                        "2  1.Laptop HP DM4                      1       372.00       372.00",
+                        "2  2.Monitor Asus 24''                  1       298.00       298.00",
+                    };
             return dataLines;
         }
 
