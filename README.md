@@ -16,6 +16,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and 
 Want to **Contact** us for Hire (Development & Consulting): [www.codis.tech](http://www.codis.tech)
 
 ## 1. Data in LineFields
+### 1.1 Regular flat data file
 First is regular flat data file, **record per Line (Fixed-Width)**, for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceItems.txt):
 ```
 No |         Description         | Qty |   Price    |   Amount   |
@@ -47,18 +48,93 @@ public class InvoiceItem
 ```
 Then we can call it like this:
 ```C#
-public List<Invoiceitem> ParseFieldsFromLines(new List<string> dataLines) // dataLines are stripped of header
+public List<Invoiceitem> Parse(new List<string> dataLines) 
+// dataLines are stripped of header
 {
     List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines);
     return invoiceItems;
 }
 
-public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
+public List<string> Write(List<InvoiceItem> invoiceItems)
 {
     List<string> dataLines = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems);
     return dataLines;
 }
 ```
+### 1.2 Mixed types data file
+When you are dealing with a data file with mixed types, **record per Line (Fixed-Width)**, for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/clientInvoiceItems.txt):
+```
+1|Client Name
+2|No |         Description         | Qty |   Price    |   Amount   |
+
+1John Mike                                                         
+2  1.Laptop Dell xps13                  1       821.00       821.00
+2  2.Monitor Asus 32''                  2       478.00       956.00
+2  3.Generic Keyboard                   1        19.00        19.00
+1Miranda Klein                                                     
+2  1.Laptop HP DM4                      1       372.00       372.00
+2  2.Monitor Asus 24''                  1       298.00       298.00
+```
+For parsing/writing we make a model which Properties have `[FixedWidthLineField]` Attribute:
+```C#
+class Client
+{
+    public List<InvoiceItem> Invoices { get; internal set; }
+    
+    [FixedWidthLineField(Start = 2, Length = 30)]
+    public string Name { get; internal set; }
+
+    public Client()
+    {
+        Invoices = new List<InvoiceItem>();
+    }
+}
+
+public class InvoiceItems
+{
+    [FixedWidthLineField(Start = 2, Length = 3)]
+    public int Number { get; set; }
+
+    [FixedWidthLineField(Start = 4, Length = 1)]
+    public string NumberedBullet { get; set; } = ".";
+
+    [FixedWidthLineField(Start = 6, Length = 30)]
+    public string Description { get; set; }
+
+    [FixedWidthLineField(Start = 36, Length = 6)]
+    public int Quantity { get; set; }
+
+    [FixedWidthLineField(Start = 42, Length = 13)]
+    public decimal Price { get; set; }
+
+    [FixedWidthLineField(Start = 55, Length = 13)]
+    public decimal Amount => Quantity * Price;
+}
+```
+Then we can loop through lines and parse them by type, like this:
+```C#
+var actualClients = new Stack<Client>();
+var clientProvider = new FixedWidthLinesProvider<Client>();
+var invoceProvider = new FixedWidthLinesProvider<InvoiceItem>();
+
+for (int i = 0; i < dataLines.Count; i++)
+{
+    string line = dataLines[i];
+    char recordType = line[0];
+    switch (recordType)
+    {
+        case '1':
+            actualClients.Push(clientProvider.Parse(line));
+            break;
+        case '2':
+            actualClients.Peek().Invoices.Add(invoceProvider.Parse(line, (int)ConfigType.Omega));
+            break;
+        default:
+            throw new ArgumentException($"Invalid data type at line {i}");
+    }
+}
+```
+### 1.3 Attribute
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
 - *Start* (required for LineType so that order of lineFields does not depends on order of modelPropertis)
 - *Length* (when writing if Property has longer value then defined in Length it will be cut from the right to fit - valueTrim)
