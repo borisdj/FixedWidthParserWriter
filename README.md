@@ -66,6 +66,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 - *Pad* (Defaults per data category: { *PadNumeric* = ' ', *PadNonNumeric* = ' ' })
 - *PadSide* (Defaults per data category: { *PadSideNumeric = PadSide.Left, PadSideNonNumeric = PadSide.Right* })
 - *StructureTypeId* (Default = 0, used when having multiple files with different structure or format for same data)
+- *ExceptionOnOverflow* (Default = false, used when an exception is desired when the field value is bigger than it's Length attribute)
 
 *_*Format* types:<br>
   -`FormatIntegerNumber` Default = "**0**", \*groupFormat:`Int32`,`Int64`<br>

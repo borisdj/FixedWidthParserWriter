@@ -81,6 +81,8 @@ namespace FixedWidthParserWriter
 
                     int startIndex = attribute.StartIndex;
                     int length = attribute.Length;
+                    bool exceptionOverflow = attribute.ExceptionOnOverflow;
+
                     if (startIndex > 0 || length > 0) // Length = 0; means value is entire line
                     {
                         if (valueString.Length < startIndex + length)
@@ -88,6 +90,10 @@ namespace FixedWidthParserWriter
                             throw new InvalidOperationException($"Property: Name={member.Name}, Value='{valueString}', Length={valueString.Length}" +
                                                                 $"not enough for Substring: Start={startIndex + 1}, Length={length})");
                         }
+
+                        if (exceptionOverflow && valueString.Length > length)
+                            throw new OverflowException($"Property: Name={member.Name}, Value='{valueString}' is bigger than Length={valueString.Length} causing data loss");
+
                         valueString = (length == 0) ? valueString.Substring(startIndex) : valueString.Substring(startIndex, length);
                     }
 
@@ -175,6 +181,9 @@ namespace FixedWidthParserWriter
 
             if (result.Length > attribute.Length && attribute.Length > 0) // if too long cut it
             {
+                if (attribute.ExceptionOnOverflow && attribute.Length < result.Length)
+                    throw new OverflowException($"Property: Name={memberName}, Value='{result}' is bigger than Length={attribute.Length} causing data loss");
+
                 result = result.Substring(0, attribute.Length);
             }
             else if (result.Length < attribute.Length) // if too short pad from one side
