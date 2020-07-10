@@ -9,7 +9,7 @@ namespace FixedWidthParserWriter
     {
         public T Parse(string line, int structureTypeId = 0)
         {
-            return Parse(new List<string>(){ line }, structureTypeId)[0];
+            return Parse(new List<string>() { line }, structureTypeId)[0];
         }
 
         public List<T> Parse(List<string> lines, int structureTypeId = 0)
@@ -22,10 +22,16 @@ namespace FixedWidthParserWriter
             }
             return result;
         }
+        public string Write(T data, int structureTypeId = 0)
+        {
+            return Write(new List<T>() { data }, structureTypeId)[0];
+        }
 
         public List<string> Write(List<T> data, int structureTypeId = 0)
         {
             StructureTypeId = structureTypeId;
+            char recordType = new char();
+
             LoadNewDefaultConfig(new T());
 
             var accessor = TypeAccessor.Create(typeof(T), true);
@@ -33,6 +39,18 @@ namespace FixedWidthParserWriter
             var membersDict = new Dictionary<int, Member>();
             var attributesDict = new Dictionary<string, FixedWidthLineFieldAttribute>();
             var memberNameTypeNameDict = new Dictionary<string, string>();
+
+            foreach (var classAttribute in System.Attribute.GetCustomAttributes(typeof(T)))
+            {
+                var fixedWidthAttribute = classAttribute as FixedWidthAttribute;
+                if (fixedWidthAttribute != null)
+                    if (fixedWidthAttribute.StructureTypeId == StructureTypeId)
+                        {
+                            recordType = fixedWidthAttribute.RecordType;
+                            break;
+                        }
+            }
+
             foreach (var member in memberSet)
             {
                 var attribute = member.GetMemberAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
@@ -43,6 +61,7 @@ namespace FixedWidthParserWriter
                     memberNameTypeNameDict.Add(member.Name, member.Type.Name);
                 }
             }
+            
             var membersData = membersDict.OrderBy(a => a.Key).Select(a => a.Value);
 
             List<string> resultLines = new List<string>();
@@ -52,6 +71,13 @@ namespace FixedWidthParserWriter
 
                 int startPrev = 1;
                 int lengthPrev = 0;
+
+                if (recordType != new char())
+                {
+                    line += recordType;
+                    lengthPrev = 1;
+                }
+
                 foreach (var propertyMember in membersData)
                 {
                     var attribute = attributesDict[propertyMember.Name];

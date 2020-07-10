@@ -4,6 +4,7 @@ namespace FixedWidthParserWriter
 {
     public class FixedWidthAttribute : Attribute
     {
+        public char RecordType { get; set; }
         public virtual int Start { get; set; }
         public virtual int Length { get; set; }
         public virtual string Format { get; set; }

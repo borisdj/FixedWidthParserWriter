@@ -97,15 +97,37 @@ namespace FixedWidthParserWriter.Tests
         }
 
         [Fact]
-        public void TypedLineWriterTest(ConfigType configType)
+        public void TypedLineWriterTest()
         {
+            var clients = new List<Client>() {
+                new Client() {Name = "John Mike"},
+                new Client() {Name = "Miranda Klein"}
+            };
+
             var invoiceItems = new List<InvoiceItem>
             {
                 new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m },
-                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m }
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m },
+                new InvoiceItem() { Number = 3, Description = "Generic Keyboard", Quantity = 1, Price = 19.00m }
             };
 
-            List<string> resultLines = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)configType);
+            clients[0].Invoices = invoiceItems;
+
+            invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop HP DM4", Quantity = 1, Price = 372.00m },
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 24''", Quantity = 1, Price = 298.00m },
+            };
+
+            clients[1].Invoices = invoiceItems;
+
+            List<string> resultLines = new List<string>();
+
+            foreach (var client in clients)
+            {
+                resultLines.Add(new FixedWidthLinesProvider<Client>().Write(client));
+                resultLines.AddRange(new FixedWidthLinesProvider<InvoiceItem>().Write(client.Invoices, (int)ConfigType.Omega));
+            }
 
             string result = string.Empty;
             foreach (var line in resultLines)
@@ -113,7 +135,7 @@ namespace FixedWidthParserWriter.Tests
                 result += line + Environment.NewLine;
             }
 
-            List<string> expectedLines = GetDataLines(configType);
+            List<string> expectedLines = GetTypedDataLines();
             string expected = string.Empty;
             foreach (var line in expectedLines)
             {

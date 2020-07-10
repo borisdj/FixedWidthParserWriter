@@ -1,5 +1,6 @@
 namespace FixedWidthParserWriter.Tests
 {
+    [FixedWidth(RecordType='2', StructureTypeId=(int)ConfigType.Omega)]
     public class InvoiceItem : IFixedWidth
     {
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 1, Length = 3)]
@@ -9,6 +10,7 @@ namespace FixedWidthParserWriter.Tests
         public int Number { get; set; }
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 4, Length = 1)]
+        [FixedWidthLineField(StructureTypeId = (int)ConfigType.Omega, Start = 5, Length = 1)]
         public string NumberedBullet { get; set; } = ".";
 
         [FixedWidthLineField(StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 30)]
