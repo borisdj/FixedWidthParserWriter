@@ -60,6 +60,42 @@ namespace FixedWidthParserWriter.Tests
                 new Client() { Name = "Miranda Klein" }
             };
 
+            var invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m },
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m },
+                new InvoiceItem() { Number = 3, Description = "Generic Keyboard", Quantity = 1, Price = 19.00m }
+            };
+
+            expectedClients[0].Invoices = invoiceItems;
+
+            invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop HP DM4", Quantity = 1, Price = 372.00m },
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 24''", Quantity = 1, Price = 298.00m },
+            };
+
+            expectedClients[1].Invoices = invoiceItems;
+
+            for (int i = 0; i < 2; i++)
+            {
+                var actualClient = actualClients.ToArray()[1-i];
+                var actualInvoiceItems = actualClient.Invoices;
+
+                var expectedInvoiceItems = expectedClients[i].Invoices;
+
+                Assert.Equal(expectedClients[i].Name, actualClient.Name);
+
+                for (int j = 0; j < actualClient.Invoices.Count; j++)
+                {
+                    Assert.Equal(expectedInvoiceItems[j].Number, actualInvoiceItems[j].Number);
+                    Assert.Equal(expectedInvoiceItems[j].Description, actualInvoiceItems[j].Description);
+                    Assert.Equal(expectedInvoiceItems[j].Quantity, actualInvoiceItems[j].Quantity);
+                    Assert.Equal(expectedInvoiceItems[j].Price, actualInvoiceItems[j].Price);
+                    Assert.Equal(expectedInvoiceItems[j].Amount, actualInvoiceItems[j].Amount);   
+                }
+            }
+
             Assert.Equal(expectedClients[0].Name, actualClients.ToArray()[1].Name);
             Assert.True(actualClients.ToArray()[0].Invoices.Count == 2);
 
