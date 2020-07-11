@@ -4,6 +4,7 @@ namespace FixedWidthParserWriter
 {
     public class FixedWidthAttribute : Attribute
     {
+        public char RecordType { get; set; }
         public virtual int Start { get; set; }
         public virtual int Length { get; set; }
         public virtual string Format { get; set; }
@@ -14,6 +15,8 @@ namespace FixedWidthParserWriter
         public virtual int StartIndex => Start - 1;
 
         public int StructureTypeId { get; set; }
+
+        public bool ExceptionOnOverflow { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
