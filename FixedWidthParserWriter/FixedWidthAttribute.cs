@@ -14,6 +14,11 @@ namespace FixedWidthParserWriter
         public virtual int StartIndex => Start - 1;
 
         public int StructureTypeId { get; set; }
+
+        /// <summary>
+        /// Pattern used to represent a null value.
+        /// </summary>
+        public virtual string NullPattern { get; set; } = string.Empty;
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
