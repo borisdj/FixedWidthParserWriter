@@ -90,6 +90,7 @@ namespace FixedWidthParserWriter.Tests
                     Double = (double)1000.1,
                     Single = (Single)1000.1
                 },
+                new NullableModel(),
                 new NullableModel()
             };
 
@@ -136,6 +137,7 @@ namespace FixedWidthParserWriter.Tests
             var dataLines = new List<string>
             {
                 "char     1000      1000                1000.10             1000.10   1000.10   2019-01-011",
+                "                                                                               0000-00-00 ",
                 "                                                                                          ",
             };
 

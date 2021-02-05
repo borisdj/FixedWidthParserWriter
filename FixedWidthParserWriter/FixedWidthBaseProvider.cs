@@ -338,6 +338,12 @@ namespace FixedWidthParserWriter
 
         private object ParserDateTime(string valueString, string typeName, string format)
         {
+            // Special handling for zero dates, eg. "00000000" for "yyyyMMdd" or "00-00-0000" for "dd-MM-yyyy",
+            // in this case we consider the date as null
+            string zeroDate = String.Concat(format.Select(x => (x >= 'a' && x <= 'z') || (x >= 'A' && x <= 'Z') ? '0' : x));
+            if (valueString == zeroDate)
+                return null;
+
             object value = DateTime.ParseExact(valueString, format, CultureInfo.InvariantCulture);
 
             return value;
