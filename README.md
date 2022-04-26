@@ -66,6 +66,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 - *Pad* (Defaults per data category: { *PadNumeric* = ' ', *PadNonNumeric* = ' ' })
 - *PadSide* (Defaults per data category: { *PadSideNumeric = PadSide.Left, PadSideNonNumeric = PadSide.Right* })
 - *StructureTypeId* (Default = 0, used when having multiple files with different structure or format for same data)
+- *NullPattern* (Default = string.Empty, Pattern used to represent a null value)
 
 *_*Format* types:<br>
   -`FormatIntegerNumber` Default = "**0**", \*groupFormat:`Int32`,`Int64`<br>
