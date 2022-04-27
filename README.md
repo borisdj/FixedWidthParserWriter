@@ -255,7 +255,7 @@ For parsing [CustomFileField] attributes are used, with additional params:
 
 - *StartsWith*, *EndsWith*, *EndsWith* finds lines with first occurance of search criteria
 - *Offset* moves found line up(is positive) or down(negative value) for defined number of rows
-- *RemoveText to clear custom substring from text value before additional casting
+- *RemoveText* to clear custom substring from text value before additional casting
 - *RemoveStartsWith*, *RemoveEndsWith*, *RemoveContains* defaults are 'True' meaning that search string is also cleared
 
 ```C#
