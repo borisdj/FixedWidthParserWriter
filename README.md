@@ -233,3 +233,47 @@ public class Invoice : IFixedWidth
 If we need to changed DefaultConfig(Format) for multiple models then we could override entire Provider to keep it [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
 
 Combining both previous usages we can make complex file structures like [invoiceFull](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
+
+## 3. Data in CustomFileFields
+Third use case is when one data field is relative to some text position.
+```
+SoftysTech LCC company
+__________________________________________________________________
+
+Date generated: 30.06.2020.
+
+                       Q REPORT no. 11/20**  
+1569ccACTN.162-677-169-796
+...
+Revenue:
+1,234.55
+...
+xx
+```
+
+For parsing [CustomFileField] attributes are used, with additional params:
+
+- *StartsWith*, *EndsWith*, *EndsWith* finds lines with first occurance of search criteria
+- *Offset* moves found line up(is positive) or down(negative value) for defined number of rows
+- *RemoveText to clear custom substring from text value before additional casting
+- *RemoveStartsWith*, *RemoveEndsWith*, *RemoveContains* defaults are 'True' meaning that search string is also cleared
+
+```C#
+public class Report
+{
+  [CustomFileField(EndsWith = " company")]
+  public string CompanyName { get; set; }
+
+  [CustomFileField(StartsWith = "Date generated: ", Format = "d.M.yyyy.")]
+  public DateTime Date { get; set; }
+
+  [CustomFileField(Contains = "Q REPORT no. ", RemoveText = "**")]
+  public string Number { get; set; }
+
+  [CustomFileField(Contains = "ACTN.", Length = -15)]
+  public string Account { get; set; }
+
+  [CustomFileField(StartsWith = "Revenue:", Offset = 1)]
+  public decimal Revenue { get; set; }
+}
+```
