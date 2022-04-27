@@ -22,8 +22,8 @@ namespace FixedWidthParserWriter
     public class FixedWidthBaseProvider
     {
         public int StructureTypeId { get; set; }
-
         public List<string> Content { get; set; }
+        public List<string> ErrorLog { get; set; }
 
         public virtual DefaultConfig DefaultConfig { get; set; } = new DefaultConfig();
 
@@ -38,7 +38,7 @@ namespace FixedWidthParserWriter
             }
         }
 
-        protected T ParseData<T>(List<string> lines, FieldType fieldType) where T : class, new()
+        protected virtual T ParseData<T>(List<string> lines, FieldType fieldType) where T : class, new()
         {
             var data = new T();
             LoadNewDefaultConfig(data);
@@ -54,6 +54,9 @@ namespace FixedWidthParserWriter
                     continue;
 
                 FixedWidthAttribute attribute = null;
+                FixedWidthFileFieldAttribute fixedWidthFileFieldAttribute = null;
+                CustomFileFieldAttribute customFileFieldAttribute = null;
+
                 int lineIndex = 0;
                 if (fieldType == FieldType.LineField)
                 {
@@ -62,36 +65,109 @@ namespace FixedWidthParserWriter
                 else if (fieldType == FieldType.FileField)
                 {
                     attribute = member.GetMemberAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
-                    // Deprecated from when every StructureType had all Properties and those that did not had it's specific attribute took the one with higest StructureTypeId
-                    //field = property.GetCustomAttributes<FixedWidthFileFieldAttribute>().Where(a => a.StructureTypeId <= structureTypeId).OrderByDescending(a => a.StructureTypeId).FirstOrDefault();
 
-                    var fileField = (FixedWidthFileFieldAttribute)attribute;
-                    if (fileField.Line == 0)
-                        throw new InvalidOperationException("'Line' parameter of [FixedWidthFileFieldAttribute] can not be zero.");
-                    lineIndex = fileField.LineIndex;
+                    fixedWidthFileFieldAttribute = (FixedWidthFileFieldAttribute)attribute;
+                    if (fixedWidthFileFieldAttribute.Line == 0)
+                    {
+                        var errormessage = "'Line' parameter of [FixedWidthFileFieldAttribute] can not be zero.";
+                        if (ErrorLog == null)
+                        {
+                            throw new InvalidOperationException(errormessage);
+                        }
+                        else
+                        {
+                            ErrorLog.Add(errormessage);
+                            continue;
+                        }
+                    }
+                    lineIndex = fixedWidthFileFieldAttribute.LineIndex;
                     if (lineIndex < 0) // line is counted from bottom
                     {
                         lineIndex += lines.Count + 1;
                     }
                 }
+                else if (fieldType == FieldType.CustomFileField)
+                {
+                    attribute = member.GetMemberAttributes<CustomFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+                    if (attribute != null)
+                    {
+                        customFileFieldAttribute = (CustomFileFieldAttribute)attribute;
 
-                if (attribute != null)
+                        // 3 args
+                        if (customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.EndsWith != null && customFileFieldAttribute.Contains != null)
+                            lineIndex = lines.FindIndex(a => a.StartsWith(customFileFieldAttribute.StartsWith) && a.EndsWith(customFileFieldAttribute.EndsWith) && a.Contains(customFileFieldAttribute.Contains));
+                        // 2 args
+                        else if (customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.EndsWith != null)
+                            lineIndex = lines.FindIndex(a => a.StartsWith(customFileFieldAttribute.StartsWith) && a.EndsWith(customFileFieldAttribute.EndsWith));
+                        else if (customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.Contains != null)
+                            lineIndex = lines.FindIndex(a => a.StartsWith(customFileFieldAttribute.StartsWith) && a.Contains(customFileFieldAttribute.Contains));
+                        else if (customFileFieldAttribute.EndsWith != null && customFileFieldAttribute.Contains != null)
+                            lineIndex = lines.FindIndex(a => a.EndsWith(customFileFieldAttribute.EndsWith) && a.Contains(customFileFieldAttribute.Contains));
+                        // 1 args
+                        else if (customFileFieldAttribute.StartsWith != null)
+                            lineIndex = lines.FindIndex(a => a.StartsWith(customFileFieldAttribute.StartsWith));
+                        else if (customFileFieldAttribute.EndsWith != null)
+                            lineIndex = lines.FindIndex(a => a.EndsWith(customFileFieldAttribute.EndsWith));
+                        else if (customFileFieldAttribute.Contains != null)
+                            lineIndex = lines.FindIndex(a => a.Contains(customFileFieldAttribute.Contains));
+
+                        lineIndex += customFileFieldAttribute.Offset;
+                    }
+                }
+
+                if (attribute != null && lineIndex >= 0)
                 {
                     string valueString = lines[lineIndex];
 
                     int startIndex = attribute.StartIndex;
                     int length = attribute.Length;
-                    if (startIndex > 0 || length > 0) // Length = 0; means value is entire line
+                    if (startIndex > 0 || length != 0) // Length = 0; means value is entire line
                     {
                         if (valueString.Length < startIndex + length)
                         {
-                            throw new InvalidOperationException($"Property: Name={member.Name}, Value='{valueString}', Length={valueString.Length}" +
-                                                                $"not enough for Substring: Start={startIndex + 1}, Length={length})");
+                            var errormessage = $"Property: Name={member.Name}, Value='{valueString}', Length={valueString.Length}; " +
+                                               $"is not enough for Substring: Start={startIndex + 1}, Length={length}";
+                            if (ErrorLog == null)
+                            {
+                                throw new InvalidOperationException(errormessage);
+                            }
+                            else
+                            {
+                                ErrorLog.Add(errormessage);
+                                continue;
+                            }
                         }
-                        valueString = (length == 0) ? valueString.Substring(startIndex) : valueString.Substring(startIndex, length);
+
+                        if (length < 0)
+                        {
+                            length = -length;
+                            valueString = valueString.Substring(valueString.Length - length, length);
+                        }
+                        else
+                        {
+                            valueString = (length == 0) ? valueString.Substring(startIndex) : valueString.Substring(startIndex, length);
+                        }
                     }
 
-                    valueString = valueString.Trim();
+                    if (attribute.DoTrim)
+                    {
+                        valueString = valueString.Trim();
+                    }
+
+                    if (fieldType == FieldType.CustomFileField)
+                    {
+                        if(customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.RemoveStartsWith)
+                            valueString = valueString?.Replace(customFileFieldAttribute.StartsWith, "") ?? "";
+                        if (customFileFieldAttribute.EndsWith != null && customFileFieldAttribute.RemoveEndsWith)
+                            valueString = valueString?.Replace(customFileFieldAttribute.EndsWith, "") ?? "";
+                        if (customFileFieldAttribute.Contains != null && customFileFieldAttribute.RemoveContains)
+                            valueString = valueString?.Replace(customFileFieldAttribute.Contains, "") ?? "";
+
+                        if (customFileFieldAttribute.RemoveText != null)
+                        {
+                            valueString = valueString.Replace(customFileFieldAttribute.RemoveText, "");
+                        }
+                    }
 
                     object value = ParseStringValueToObject(valueString, member, attribute);
 
@@ -274,7 +350,11 @@ namespace FixedWidthParserWriter
             }
             catch
             {
-                throw new InvalidCastException($"Property: Name={member.Name}, Value ={valueString}, Format={format} cannot be parsed to Type={valueTypeName}");
+                var errormessage = $"Property: Name={member.Name}, Value ={valueString}, Format={format} cannot be parsed to Type={valueTypeName}";
+                if (ErrorLog == null)
+                    throw new InvalidCastException(errormessage);
+                else
+                    ErrorLog.Add(errormessage);
             }
 
             return value;
@@ -306,6 +386,14 @@ namespace FixedWidthParserWriter
             switch (typeName)
             {
                 case nameof(Decimal): // decimal
+                    // for case when comma ',' is decimal separator like "0,00" or "0.000,00" as is in some european languages
+                    if (format.Length <= 4 && format.Contains(","))
+                        valueString = valueString.Replace(",", ".");
+                    if (format.Length > 4 && format.Contains(",000."))
+                        valueString = valueString.Replace(",", "");
+                    if (format.Length > 4 && format.Contains(".000,"))
+                        valueString = valueString.Replace(".", "").Replace(",", ".");
+
                     value = signMultiplier * Decimal.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
                         value = (decimal)value / (decimal)Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)

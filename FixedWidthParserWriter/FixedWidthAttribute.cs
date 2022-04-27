@@ -11,6 +11,8 @@ namespace FixedWidthParserWriter
         public virtual char Pad { get; set; } = '\0';
         public virtual PadSide PadSide { get; set; }
 
+        public virtual bool DoTrim { get; set; } = true;
+
         public virtual int StartIndex => Start - 1;
 
         public int StructureTypeId { get; set; }
@@ -24,7 +26,6 @@ namespace FixedWidthParserWriter
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class FixedWidthLineFieldAttribute : FixedWidthAttribute
     {
-        public override object TypeId { get { return this; } } // overriding done because of AllowMultiple == true
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
@@ -32,10 +33,26 @@ namespace FixedWidthParserWriter
     {
         public override int Start { get; set; } = 1; // overriding to set initial value
 
-        public override object TypeId { get { return this; } }
-
         public int Line { get; set; } = 1;
 
         public int LineIndex => Line - 1;
+    }
+
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+    public class CustomFileFieldAttribute : FixedWidthAttribute
+    {
+        public virtual string StartsWith { get; set; }
+
+        public virtual string EndsWith { get; set; }
+
+        public virtual string Contains { get; set; }
+
+        public virtual int Offset { get; set; }
+
+        public virtual string RemoveText { get; set; }
+
+        public virtual bool RemoveStartsWith { get; set; } = true;
+        public virtual bool RemoveEndsWith { get; set; } = true;
+        public virtual bool RemoveContains { get; set; } = true;
     }
 }

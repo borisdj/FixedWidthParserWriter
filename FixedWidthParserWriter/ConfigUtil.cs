@@ -32,6 +32,7 @@
     public enum FieldType
     {
         LineField,
-        FileField
+        FileField,
+        CustomFileField
     }
 }
