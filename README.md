@@ -60,15 +60,15 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 }
 ```
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
-- *Start* (required for LineType so that order of lineFields does not depends on order of modelPropertis)
-- *Length* (when writing if Property has longer value then defined in Length it will be cut from the right to fit - valueTrim</br>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; negative values means from Right side)
-- *Format* (Defaults per data type or group)
-- *Pad* (Defaults per data category: { *PadNumeric* = ' ', *PadNonNumeric* = ' ' })
-- *PadSide* (Defaults per data category: { *PadSideNumeric = PadSide.Left, PadSideNonNumeric = PadSide.Right* })
-- *DoTrim* (Default is 'True' when text will be trimmed before casting)
-- *StructureTypeId* (Default = 0, used when having multiple files with different structure or format for same data)
-- *NullPattern* (Default = string.Empty, Pattern used to represent a null value)
+- *Start* - required for LineType so that order of lineFields does not depends on order of modelPropertis
+- *Length* - when writing if Property has longer value then defined in Length it will be cut from the right to fit - valueTrim</br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; negative values means from Right side
+- *Format* - Defaults per data type or group
+- *Pad* - Defaults per data category: { *PadNumeric* = ' ', *PadNonNumeric* = ' ' }
+- *PadSide* - Defaults per data category: { *PadSideNumeric = PadSide.Left, PadSideNonNumeric = PadSide.Right* }
+- *DoTrim* - Default is 'True' when text will be trimmed before casting
+- *StructureTypeId* - Default = 0, used when having multiple files with different structure or format for same data
+- *NullPattern* - Default = string.Empty, Pattern used to represent a null value
 
 *_*Format* types:<br>
   -`FormatIntegerNumber` Default = "**0**", \*groupFormat:`Int32`,`Int64`<br>
@@ -152,7 +152,7 @@ Date: 2018-10-31                                 Financial Manager
                                                           John Doe
 ```
 For parsing/writing `[FixedWidthFileField]` attributes are used, that have additional parameter:
-- *Line* in which we define line number where the value is (Negative values represent row number from bottom)
+- *Line* - in which we define line number where the value is (Negative values represent row number from bottom)
 
 For type FileField param. *Length* not required, if not set means value goes till end of row(trimmed), and *Start* has default = 1.
 ```C#
@@ -285,7 +285,7 @@ public class Report
 
 For parsing [CustomFileField] attributes are used, with additional params:
 
-- *StartsWith*, *EndsWith*, *Contains* finds lines with first occurance of search criteria
-- *Offset* moves found line up(is positive) or down(negative value) for defined number of rows
-- *RemoveText* to clear custom substring from text value before additional casting
-- *RemoveStartsWith*, *RemoveEndsWith*, *RemoveContains* defaults are 'True' meaning that search string is also cleared
+- *StartsWith*, *EndsWith*, *Contains* - finds lines with first occurance of search criteria
+- *Offset* - moves found line up(is positive) or down(negative value) for defined number of rows
+- *RemoveText* - to clear custom substring from text value before additional casting
+- *RemoveStartsWith*, *RemoveEndsWith*, *RemoveContains* - defaults are 'True' meaning that search string is also cleared
