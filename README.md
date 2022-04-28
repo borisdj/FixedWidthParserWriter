@@ -122,6 +122,14 @@ No |         Description         | Qty |   Price    |   Amount   |
 0001Laptop Dell xps13             0000010000000821.000000000821.00
 0002Monitor Asus 32''             0000020000000478.000000000956.00
 ```
+
+Calling the methods:
+```
+List<InvoiceItem> itemsA = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLinesA, (int)ConfigType.Alpha);
+List<InvoiceItem> itemsB = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLinesB, (int)ConfigType.Alpha);
+```
+`Parse` PARSE method for all use cases can also optionally have third parameter `List<string> errorLog` which when sent as Empty list(not null) will be loaded with list of Exceptions if any were to happen during parsing and casting operations. When method is called without this param, which remains null, in that case first error with throw Exception and procedure will be stopped.
+
 Full Examples are in Tests of the project.
 
 ## 2. Data in FileFields
@@ -236,6 +244,8 @@ If we need to changed DefaultConfig(Format) for multiple models then we could ov
 
 Combining both previous usages we can make complex file structures like [invoiceFull](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
 
+When there is some special situation where some Fields can not be configured with existing options, then we can make additional custom parsing prior or/and after calling the method - PRE & POST Processing.
+
 ## 3. Data in CustomFileFields
 Third use case is when one data field is relative to some text position.
 ```
@@ -275,7 +285,7 @@ public class Report
 
 For parsing [CustomFileField] attributes are used, with additional params:
 
-- *StartsWith*, *EndsWith*, *EndsWith* finds lines with first occurance of search criteria
+- *StartsWith*, *EndsWith*, *Contains* finds lines with first occurance of search criteria
 - *Offset* moves found line up(is positive) or down(negative value) for defined number of rows
 - *RemoveText* to clear custom substring from text value before additional casting
 - *RemoveStartsWith*, *RemoveEndsWith*, *RemoveContains* defaults are 'True' meaning that search string is also cleared
