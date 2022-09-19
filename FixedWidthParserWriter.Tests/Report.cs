@@ -4,7 +4,7 @@ namespace FixedWidthParserWriter.Tests
 {
     public class Report
     {
-        [CustomFileField(EndsWith = " company")]
+        [CustomFileField(EndsWith = "company")]
         public string CompanyName { get; set; }
 
         [CustomFileField(StartsWith = "Date generated: ", Format = "d.M.yyyy.")]

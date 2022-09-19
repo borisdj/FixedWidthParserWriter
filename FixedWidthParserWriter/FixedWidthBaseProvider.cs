@@ -149,11 +149,6 @@ namespace FixedWidthParserWriter
                         }
                     }
 
-                    if (attribute.DoTrim)
-                    {
-                        valueString = valueString.Trim();
-                    }
-
                     if (fieldType == FieldType.CustomFileField)
                     {
                         if(customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.RemoveStartsWith)
@@ -167,6 +162,11 @@ namespace FixedWidthParserWriter
                         {
                             valueString = valueString.Replace(customFileFieldAttribute.RemoveText, "");
                         }
+                    }
+
+                    if (attribute.DoTrim)
+                    {
+                        valueString = valueString.Trim();
                     }
 
                     object value = ParseStringValueToObject(valueString, member, attribute);
