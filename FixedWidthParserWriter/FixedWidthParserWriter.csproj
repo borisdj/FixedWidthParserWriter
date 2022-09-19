@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Title>FixedWidthParserWriter</Title>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Authors>borisdj</Authors>
     <Description>Fixed Width Parser Writer for reading and writing flat data (files) with defined field position in line or file (relative height).</Description>
     <PackageTags>Fixed Width Relative Height Parser Writer Line Flat File Data Field delimiter txt read reading write writing</PackageTags>
@@ -11,7 +11,7 @@
     <PackageIconUrl>https://raw.githubusercontent.com/borisdj/FixedWidthParserWriter/master/logo.png</PackageIconUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>CustomFileField support</PackageReleaseNotes>
-    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <AssemblyVersion>1.1.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
