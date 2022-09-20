@@ -119,6 +119,21 @@ namespace FixedWidthParserWriter
                 {
                     string valueString = lines[lineIndex];
 
+                    if (fieldType == FieldType.CustomFileField)
+                    {
+                        if (customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.RemoveStartsWith)
+                            valueString = valueString?.Replace(customFileFieldAttribute.StartsWith, "") ?? "";
+                        if (customFileFieldAttribute.EndsWith != null && customFileFieldAttribute.RemoveEndsWith)
+                            valueString = valueString?.Replace(customFileFieldAttribute.EndsWith, "") ?? "";
+                        if (customFileFieldAttribute.Contains != null && customFileFieldAttribute.RemoveContains)
+                            valueString = valueString?.Replace(customFileFieldAttribute.Contains, "") ?? "";
+
+                        if (customFileFieldAttribute.RemoveText != null)
+                        {
+                            valueString = valueString.Replace(customFileFieldAttribute.RemoveText, "");
+                        }
+                    }
+
                     int startIndex = attribute.StartIndex;
                     int length = attribute.Length;
                     if (startIndex > 0 || length != 0) // Length = 0; means value is entire line
@@ -146,21 +161,6 @@ namespace FixedWidthParserWriter
                         else
                         {
                             valueString = (length == 0) ? valueString.Substring(startIndex) : valueString.Substring(startIndex, length);
-                        }
-                    }
-
-                    if (fieldType == FieldType.CustomFileField)
-                    {
-                        if(customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.RemoveStartsWith)
-                            valueString = valueString?.Replace(customFileFieldAttribute.StartsWith, "") ?? "";
-                        if (customFileFieldAttribute.EndsWith != null && customFileFieldAttribute.RemoveEndsWith)
-                            valueString = valueString?.Replace(customFileFieldAttribute.EndsWith, "") ?? "";
-                        if (customFileFieldAttribute.Contains != null && customFileFieldAttribute.RemoveContains)
-                            valueString = valueString?.Replace(customFileFieldAttribute.Contains, "") ?? "";
-
-                        if (customFileFieldAttribute.RemoveText != null)
-                        {
-                            valueString = valueString.Replace(customFileFieldAttribute.RemoveText, "");
                         }
                     }
 
