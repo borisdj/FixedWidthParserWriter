@@ -41,6 +41,7 @@ namespace FixedWidthParserWriter
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class CustomFileFieldAttribute : FixedWidthAttribute
     {
+        public override int Start { get; set; } = 1; // overriding to set initial value
         public virtual string StartsWith { get; set; }
 
         public virtual string EndsWith { get; set; }
