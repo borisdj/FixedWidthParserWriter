@@ -1,0 +1,10 @@
+1|Client Name
+2|No |         Description         | Qty |   Price    |   Amount   |
+
+1John Mike                                                         
+2  1.Laptop Dell xps13                  1       821.00       821.00
+2  2.Monitor Asus 32''                  2       478.00       956.00
+2  3.Generic Keyboard                   1        19.00        19.00
+1Miranda Klein                                                     
+2  1.Laptop HP DM4                      1       372.00       372.00
+2  2.Monitor Asus 24''                  1       298.00       298.00
