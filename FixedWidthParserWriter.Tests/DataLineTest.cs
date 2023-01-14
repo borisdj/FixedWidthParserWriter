@@ -30,7 +30,84 @@ namespace FixedWidthParserWriter.Tests
         }
 
         [Fact]
-        public void LineWriterTest()
+        public void TypedLineParserTest()
+        {
+            var dataLines = GetTypedDataLines();
+
+            var actualClients = new Stack<Client>();
+            var clientProvider = new FixedWidthLinesProvider<Client>();
+            var invoceProvider = new FixedWidthLinesProvider<InvoiceItem>();
+
+            for (int i = 0; i < dataLines.Count; i++)
+            {
+                string line = dataLines[i];
+                char recordType = line[0];
+                switch (recordType)
+                {
+                    case '1':
+                        actualClients.Push(clientProvider.Parse(line));
+                        break;
+                    case '2':
+                        actualClients.Peek().Invoices.Add(invoceProvider.Parse(line, (int)ConfigType.Omega));
+                        break;
+                    default:
+                        throw new ArgumentException($"Invalid data type at line {i}");
+                }
+            }
+
+            var expectedClients = new List<Client>
+            {
+                new Client() { Name = "John Mike" },
+                new Client() { Name = "Miranda Klein" }
+            };
+
+            var invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m },
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m },
+                new InvoiceItem() { Number = 3, Description = "Generic Keyboard", Quantity = 1, Price = 19.00m }
+            };
+
+            expectedClients[0].Invoices = invoiceItems;
+
+            invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop HP DM4", Quantity = 1, Price = 372.00m },
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 24''", Quantity = 1, Price = 298.00m },
+            };
+
+            expectedClients[1].Invoices = invoiceItems;
+
+            for (int i = 0; i < 2; i++)
+            {
+                var actualClient = actualClients.ToArray()[1-i];
+                var actualInvoiceItems = actualClient.Invoices;
+
+                var expectedInvoiceItems = expectedClients[i].Invoices;
+
+                Assert.Equal(expectedClients[i].Name, actualClient.Name);
+
+                for (int j = 0; j < actualClient.Invoices.Count; j++)
+                {
+                    Assert.Equal(expectedInvoiceItems[j].Number, actualInvoiceItems[j].Number);
+                    Assert.Equal(expectedInvoiceItems[j].Description, actualInvoiceItems[j].Description);
+                    Assert.Equal(expectedInvoiceItems[j].Quantity, actualInvoiceItems[j].Quantity);
+                    Assert.Equal(expectedInvoiceItems[j].Price, actualInvoiceItems[j].Price);
+                    Assert.Equal(expectedInvoiceItems[j].Amount, actualInvoiceItems[j].Amount);   
+                }
+            }
+
+            Assert.Equal(expectedClients[0].Name, actualClients.ToArray()[1].Name);
+            Assert.True(actualClients.ToArray()[0].Invoices.Count == 2);
+
+            Assert.Equal(expectedClients[1].Name, actualClients.ToArray()[0].Name);
+            Assert.True(actualClients.ToArray()[1].Invoices.Count == 3);
+        }
+
+        [Theory]
+        [InlineData(ConfigType.Alpha)]
+        [InlineData(ConfigType.Beta)]
+        public void LineWriterTest(ConfigType configType)
         {
             var invoiceItems = new List<InvoiceItem>
             {
@@ -38,37 +115,71 @@ namespace FixedWidthParserWriter.Tests
                 new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m, StatusCode = 2, ProductCode = 125}
             };
 
-            List<string> resultLinesAlpha = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)ConfigType.Alpha);
-            List<string> resultLinesBeta = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)ConfigType.Beta);
+            List<string> resultLines = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)configType);
 
-            string resultAlpha = string.Empty;
-            foreach (var line in resultLinesAlpha)
+            string result = string.Empty;
+            foreach (var line in resultLines)
             {
-                resultAlpha += line + Environment.NewLine;
+                result += line + Environment.NewLine;
             }
 
-            string resultBeta = string.Empty;
-            foreach (var line in resultLinesBeta)
+            List<string> expectedLines = GetDataLines(configType);
+            string expected = string.Empty;
+            foreach (var line in expectedLines)
             {
-                resultBeta += line + Environment.NewLine;
+                expected += line + Environment.NewLine;
+            };
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void TypedLineWriterTest()
+        {
+            var clients = new List<Client>() {
+                new Client() {Name = "John Mike"},
+                new Client() {Name = "Miranda Klein"}
+            };
+
+            var invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m },
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m },
+                new InvoiceItem() { Number = 3, Description = "Generic Keyboard", Quantity = 1, Price = 19.00m }
+            };
+
+            clients[0].Invoices = invoiceItems;
+
+            invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop HP DM4", Quantity = 1, Price = 372.00m },
+                new InvoiceItem() { Number = 2, Description = "Monitor Asus 24''", Quantity = 1, Price = 298.00m },
+            };
+
+            clients[1].Invoices = invoiceItems;
+
+            List<string> resultLines = new List<string>();
+
+            foreach (var client in clients)
+            {
+                resultLines.Add(new FixedWidthLinesProvider<Client>().Write(client));
+                resultLines.AddRange(new FixedWidthLinesProvider<InvoiceItem>().Write(client.Invoices, (int)ConfigType.Omega));
             }
 
-            List<string> expectedLinesAlpha = GetDataLines(ConfigType.Alpha);
-            string expectedAlpha = string.Empty;
-            foreach (var line in expectedLinesAlpha)
+            string result = string.Empty;
+            foreach (var line in resultLines)
             {
-                expectedAlpha += line + Environment.NewLine;
+                result += line + Environment.NewLine;
+            }
+
+            List<string> expectedLines = GetTypedDataLines();
+            string expected = string.Empty;
+            foreach (var line in expectedLines)
+            {
+                expected += line + Environment.NewLine;
             };
 
-            List<string> expectedLinesBeta = GetDataLines(ConfigType.Beta);
-            string expectedBeta = string.Empty;
-            foreach (var line in expectedLinesBeta)
-            {
-                expectedBeta += line + Environment.NewLine;
-            };
-
-            Assert.Equal(expectedAlpha, resultAlpha);
-            Assert.Equal(expectedBeta, resultBeta);
+            Assert.Equal(expected, result);
         }
 
         [Fact]
@@ -107,9 +218,11 @@ namespace FixedWidthParserWriter.Tests
             }
         }
 
+        
+
         public List<string>  GetDataLines(ConfigType formatType)
         {
-          //var header ="No |         Description         | Qty |   Price    |   Amount   |";
+            //var header ="No |         Description         | Qty |   Price    |   Amount   |";
 
             List<string> dataLines = null;
             switch (formatType)
@@ -132,6 +245,24 @@ namespace FixedWidthParserWriter.Tests
             return dataLines;
         }
 
+        public List<string> GetTypedDataLines()
+        {
+            //var header ="No |         Description         | Qty |   Price    |   Amount   |";
+
+            List<string> dataLines = null;
+            dataLines = new List<string>
+                    {
+                        "1John Mike                                                         ",
+                        "2  1.Laptop Dell xps13                  1       821.00       821.00",
+                        "2  2.Monitor Asus 32''                  2       478.00       956.00",
+                        "2  3.Generic Keyboard                   1        19.00        19.00",
+                        "1Miranda Klein                                                     ",
+                        "2  1.Laptop HP DM4                      1       372.00       372.00",
+                        "2  2.Monitor Asus 24''                  1       298.00       298.00",
+                    };
+            return dataLines;
+        }
+
         public List<string> GetDataLinesNullable()
         {
             var dataLines = new List<string>
@@ -142,6 +273,26 @@ namespace FixedWidthParserWriter.Tests
             };
 
             return dataLines;
+        }
+
+        [Fact]
+        public void LineParserOverflowExceptionTest()
+        {
+            var invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m },
+                new InvoiceItem() { Number = 23456, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m }
+            };
+
+            Assert.Throws<OverflowException>(() => { new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)ConfigType.Gamma); });
+
+            invoiceItems = new List<InvoiceItem>
+            {
+                new InvoiceItem() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m },
+                new InvoiceItem() { Number = 23456, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m }
+            };
+
+            List<string> resultLines = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)ConfigType.Beta);
         }
     }
 }

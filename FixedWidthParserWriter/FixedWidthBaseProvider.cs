@@ -136,6 +136,8 @@ namespace FixedWidthParserWriter
 
                     int startIndex = attribute.StartIndex;
                     int length = attribute.Length;
+                    bool exceptionOverflow = attribute.ExceptionOnOverflow;
+
                     if (startIndex > 0 || length != 0) // Length = 0; means value is entire line
                     {
                         if (valueString.Length < startIndex + length)
@@ -152,6 +154,9 @@ namespace FixedWidthParserWriter
                                 continue;
                             }
                         }
+
+                        if (exceptionOverflow && valueString.Length > length)
+                            throw new OverflowException($"Property: Name={member.Name}, Value='{valueString}' is bigger than Length={valueString.Length} causing data loss");
 
                         if (length < 0)
                         {
@@ -250,6 +255,9 @@ namespace FixedWidthParserWriter
 
             if (result.Length > attribute.Length && attribute.Length > 0) // if too long cut it
             {
+                if (attribute.ExceptionOnOverflow && attribute.Length < result.Length)
+                    throw new OverflowException($"Property: Name={memberName}, Value='{result}' is bigger than Length={attribute.Length} causing data loss");
+
                 result = result.Substring(0, attribute.Length);
             }
             else if (result.Length < attribute.Length) // if too short pad from one side
@@ -404,7 +412,7 @@ namespace FixedWidthParserWriter
                         value = (float)value / (float)Math.Pow(10, format.Length - 2);
                     break;
                 case nameof(Double):  // double
-                    value = signMultiplier *  Double.Parse(valueString, CultureInfo.InvariantCulture);
+                    value = signMultiplier * Double.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";"))
                         value = (double)value / (double)Math.Pow(10, format.Length - 2);
                     break;
