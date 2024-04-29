@@ -1,18 +1,19 @@
 ## FixedWidthParserWriter
-Library (C# .NET) for Parsing(Reading) & Writing fixed-width/flat data files (.txt, others). Uses [FastMember](https://github.com/mgravell/fast-member) instead of slower Reflection.<br>
+Library (C# .NET) for Parsing(Reading) & Writing fixed-width/flat data files (.txt, others).  
+Uses [FastMember](https://github.com/mgravell/fast-member) instead of slower Reflection.  
 It is targeting NetStandard 2.0 so it can be used on project targeting NetCore(2.0+) or NetFramework(4.6.1+).
 
-Available on [![NuGet](https://img.shields.io/nuget/v/FixedWidthParserWriter.svg)](https://www.nuget.org/packages/FixedWidthParserWriter/) latest version.<br>
+Available on [![NuGet](https://img.shields.io/nuget/v/FixedWidthParserWriter.svg)](https://www.nuget.org/packages/FixedWidthParserWriter/) latest version.  
 Package manager console command for installation: *Install-Package FixedWidthParserWriter*
 
-There are 2 main types of usage that are explained in the following segments: **1. LineFields** & **2. FileFields**<br>
+There are 2 main types of usage that are explained in the following segments: **1. LineFields** & **2. FileFields**  
 Both are simple to use and easily configured with Attributes.
 
 ## Contributing
-If you find this project useful you can mark it by leaving a Github **\*Star**.</br>
+If you find this project useful you can mark it by leaving a Github **\*Star**.  
 
-Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and the process for submitting pull requests.<br>
-[![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)<br>
+Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and the process for submitting pull requests.  
+[![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)  
 Want to **Contact** us for Hire (Development & Consulting): [www.codis.tech](http://www.codis.tech)
 
 ## 1. Data in LineFields
