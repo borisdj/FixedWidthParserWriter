@@ -6,7 +6,9 @@ It is targeting NetStandard 2.0 so it can be used on project targeting NetCore(2
 Available on [![NuGet](https://img.shields.io/nuget/v/FixedWidthParserWriter.svg)](https://www.nuget.org/packages/FixedWidthParserWriter/) latest version.  
 Package manager console command for installation: *Install-Package FixedWidthParserWriter*
 
-There are 2 main types of usage that are explained in the following segments: **1. LineFields** & **2. FileFields**  
+There are 2 main types of usage that are explained in the following segments:  
+**1. LineFields**  
+**2. FileFields**  
 Both are simple to use and easily configured with Attributes.
 
 ## Contributing
