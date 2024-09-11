@@ -87,8 +87,8 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 - *NullPattern* - Default = string.Empty, Pattern used to represent a null value
 
 *_*Format* types:<br>
-  -`FormatIntegerNumber` Default = "**0**", \*groupFormat:`Int32`,`Int64`<br>
-  -`FormatDecimalNumber` Default = "**0.00**", \*groupFormat:`Decimal`,`Single`,`Double`<br>
+  -`FormatNumberInteger` Default = "**0**", \*groupFormat:`Int32`,`Int64`<br>
+  -`FormatNumberDecimal` Default = "**0.00**", \*groupFormat:`Decimal`,`Single`,`Double`<br>
    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
   			 ("*0;00*" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
   -`FormatBoolean` . . . . . . Default = "**1; ;0**" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
