@@ -10,31 +10,39 @@ namespace FixedWidthParserWriter.Tests
         Dynamic = 1,
     }
 
-
     public class DataLineTest
     {
         [Theory]
         [InlineData(FixedWidthSettingsType.Regular)]
-        //[InlineData(FixedWidthSettingsType.Dynamic)]
+        [InlineData(FixedWidthSettingsType.Dynamic)]
         public void LineParserTest(FixedWidthSettingsType settings)
         {
             var dynamicSettings = new Dictionary<string, FixedWidthAttribute>();
             var attDescription = new FixedWidthLineFieldAttribute() { StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 12 };
             dynamicSettings.Add(nameof(InvoiceItem.Description), attDescription);
+            dynamicSettings.Add(nameof(InvoiceItem.StatusCode), null); // when null sett then attribute is ignored and field skipped
 
             var dataLines = GetDataLines(ConfigType.Alpha);
 
             var provider = new FixedWidthLinesProvider<InvoiceItem>();
 
-            List<InvoiceItem> invoiceItems =
-                settings == FixedWidthSettingsType.Regular ? provider.Parse(dataLines) // StructureTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
-                                                           : provider.Parse(dataLines, dynamicSettings: dynamicSettings);
+            bool hasRegularSettings = settings == FixedWidthSettingsType.Regular;
+            List<InvoiceItem> invoiceItems = hasRegularSettings  ? provider.Parse(dataLines) // StructureTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
+                                                                 : provider.Parse(dataLines, dynamicSettings: dynamicSettings);
 
-            var expectedInvoiceItems = new List<InvoiceItem>
-            {
+            List<InvoiceItem> expectedInvoiceItems =
+            [
                 new() { Number = 1, Description = "Laptop Dell xps13", Quantity = 1, Price = 821.00m, StatusCode = 1, ProductCode = 123},
                 new() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m, StatusCode = 2, ProductCode = 125}
-            };
+            ];
+            if (!hasRegularSettings) // Dynamic Settings with Custom Description length of 12 characters
+            {
+                foreach (var expectedInvoiceItem in expectedInvoiceItems)
+                {
+                    expectedInvoiceItem.Description = expectedInvoiceItem.Description[..12].Trim();
+                    expectedInvoiceItem.StatusCode = 0;
+                }
+            }
 
             for (int i = 0; i < 2; i++)
             {
@@ -105,7 +113,7 @@ namespace FixedWidthParserWriter.Tests
                     DateTime = new DateTime(2019, 1, 1),
                     Int32 = 1000,
                     Int64 = 1000,
-                    Decimal = (Decimal)1000.1,
+                    Decimal = (decimal)1000.1,
                     Double = (double)1000.1,
                     Single = (Single)1000.1
                 },

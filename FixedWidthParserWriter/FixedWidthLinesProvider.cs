@@ -7,9 +7,17 @@ namespace FixedWidthParserWriter
 {
     public class FixedWidthLinesProvider<T> : FixedWidthBaseProvider where T : class, new()
     {
-        public List<T> Parse(List<string> lines, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null)
+        public T Parse(string line, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null, List<string> errorLog = null)
+        {
+            var result = Parse(new List<string> { line }, structureTypeId, dynamicSettings, errorLog);
+            return result[0];
+        }
+
+        public List<T> Parse(List<string> lines, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null, List<string> errorLog = null)
         {
             StructureTypeId = structureTypeId;
+            ErrorLog = errorLog;
+
             List<T> result = new List<T>();
             foreach (var line in lines)
             {
@@ -18,23 +26,34 @@ namespace FixedWidthParserWriter
             return result;
         }
 
-        public List<string> Write(List<T> data, int structureTypeId = 0)
+        public List<string> Write(List<T> data, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null, List<string> errorLog = null)
         {
             StructureTypeId = structureTypeId;
+            ErrorLog = errorLog;
             LoadNewDefaultConfig(new T());
 
             var accessor = TypeAccessor.Create(typeof(T), true);
             var memberSet = accessor.GetMembers().Where(a => a.IsDefined(typeof(FixedWidthLineFieldAttribute)));
             var membersDict = new Dictionary<int, Member>();
-            var attributesDict = new Dictionary<string, FixedWidthLineFieldAttribute>();
             var memberNameTypeNameDict = new Dictionary<string, string>();
+            var attributesDict = new Dictionary<string, FixedWidthAttribute>();
+
             foreach (var member in memberSet)
             {
-                var attribute = member.GetMemberAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
-                if (attribute != null)
+                FixedWidthAttribute attributeData = null;
+                if (dynamicSettings != null && dynamicSettings.ContainsKey(member.Name))
                 {
-                    membersDict.Add(attribute.Start, member);
-                    attributesDict.Add(member.Name, attribute);
+                    attributeData = dynamicSettings[member.Name];
+                }
+                else
+                {
+                    attributeData = member.GetMemberAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+                }
+
+                if (attributeData != null)
+                {
+                    membersDict.Add(attributeData.Start, member);
+                    attributesDict.Add(member.Name, attributeData);
                     memberNameTypeNameDict.Add(member.Name, member.Type.Name);
                 }
             }
@@ -43,7 +62,7 @@ namespace FixedWidthParserWriter
             List<string> resultLines = new List<string>();
             foreach (T element in data)
             {
-                string line = String.Empty;
+                string line = string.Empty;
 
                 int startPrev = 1;
                 int lengthPrev = 0;
@@ -51,8 +70,19 @@ namespace FixedWidthParserWriter
                 {
                     var attribute = attributesDict[propertyMember.Name];
                     if (startPrev + lengthPrev != attribute.Start)
-                        throw new InvalidOperationException($"Invalid Start or Length parameter, {attribute.Start} !=  {startPrev + lengthPrev}" +
-                                                            $", on FixedLineFieldAttribute (property {propertyMember.Name}) for StructureTypeId {StructureTypeId}");
+                    {
+                        var errormessage = $"Invalid Start or Length parameter, {attribute.Start} !=  {startPrev + lengthPrev}" +
+                                           $", on FixedLineFieldAttribute (property {propertyMember.Name}) for StructureTypeId {StructureTypeId}";
+                        if (ErrorLog == null)
+                        {
+                            throw new InvalidOperationException(errormessage);
+                        }
+                        else
+                        {
+                            ErrorLog.Add(errormessage);
+                            continue;
+                        }
+                    }
                     startPrev = attribute.Start;
                     lengthPrev = attribute.Length;
 
