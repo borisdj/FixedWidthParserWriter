@@ -253,6 +253,9 @@ namespace FixedWidthParserWriter
                         format = format ?? DefaultConfig.FormatDateTime;
                         pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
                         break;
+                    default:
+                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
+                        break;
                 }
                 value = value ?? "";
                 result = format != null ? String.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value) : value.ToString();
