@@ -4,13 +4,31 @@ using Xunit;
 
 namespace FixedWidthParserWriter.Tests
 {
+    public enum FixedWidthSettingsType
+    {
+        Regular = 0,
+        Dynamic = 1,
+    }
+
+
     public class DataLineTest
     {
-        [Fact]
-        public void LineParserTest()
+        [Theory]
+        [InlineData(FixedWidthSettingsType.Regular)]
+        //[InlineData(FixedWidthSettingsType.Dynamic)]
+        public void LineParserTest(FixedWidthSettingsType settings)
         {
+            var dynamicSettings = new Dictionary<string, FixedWidthAttribute>();
+            var attDescription = new FixedWidthLineFieldAttribute() { StructureTypeId = (int)ConfigType.Alpha, Start = 5, Length = 12 };
+            dynamicSettings.Add(nameof(InvoiceItem.Description), attDescription);
+
             var dataLines = GetDataLines(ConfigType.Alpha);
-            List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines); // StructureTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
+
+            var provider = new FixedWidthLinesProvider<InvoiceItem>();
+
+            List<InvoiceItem> invoiceItems =
+                settings == FixedWidthSettingsType.Regular ? provider.Parse(dataLines) // StructureTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
+                                                           : provider.Parse(dataLines, dynamicSettings: dynamicSettings);
 
             var expectedInvoiceItems = new List<InvoiceItem>
             {

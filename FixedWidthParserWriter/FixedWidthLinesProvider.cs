@@ -7,13 +7,13 @@ namespace FixedWidthParserWriter
 {
     public class FixedWidthLinesProvider<T> : FixedWidthBaseProvider where T : class, new()
     {
-        public List<T> Parse(List<string> lines, int structureTypeId = 0)
+        public List<T> Parse(List<string> lines, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null)
         {
             StructureTypeId = structureTypeId;
             List<T> result = new List<T>();
             foreach (var line in lines)
             {
-                result.Add(ParseData<T>(new List<string> { line }, FieldType.LineField));
+                result.Add(ParseData<T>(new List<string> { line }, FieldType.LineField, dynamicSettings));
             }
             return result;
         }

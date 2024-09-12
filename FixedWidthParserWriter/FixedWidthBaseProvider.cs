@@ -38,7 +38,7 @@ namespace FixedWidthParserWriter
             }
         }
 
-        protected virtual T ParseData<T>(List<string> lines, FieldType fieldType) where T : class, new()
+        protected virtual T ParseData<T>(List<string> lines, FieldType fieldType, Dictionary<string, FixedWidthAttribute> dynamicSettings = null) where T : class, new()
         {
             var data = new T();
             LoadNewDefaultConfig(data);
@@ -60,11 +60,19 @@ namespace FixedWidthParserWriter
                 int lineIndex = 0;
                 if (fieldType == FieldType.LineField)
                 {
-                    attribute = member.GetMemberAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+                    if (dynamicSettings != null && dynamicSettings.ContainsKey(member.Name))
+                    {
+                        attribute = dynamicSettings[member.Name];
+                    }
+                    else
+                        attribute = member.GetMemberAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
                 }
                 else if (fieldType == FieldType.FileField)
                 {
-                    attribute = member.GetMemberAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+                    if (dynamicSettings != null && dynamicSettings.ContainsKey(member.Name))
+                        attribute = dynamicSettings[member.Name];
+                    else
+                        attribute = member.GetMemberAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
 
                     fixedWidthFileFieldAttribute = (FixedWidthFileFieldAttribute)attribute;
                     if (fixedWidthFileFieldAttribute.Line == 0)
