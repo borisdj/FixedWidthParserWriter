@@ -95,7 +95,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
   -`FormatDateTime`. . . . . .Default = "**yyyyMMdd**"<br>
  Custom format strings for [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings) and [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
-Special feature is **DynamicSettings** with which Attributes values can be defined at runtime.  
+Special feature is **DynamicSettings** with which Attributes values can be defined at runtime, for all usage types.  
 Data is forwarded using Dict with PropertyName and Attribute: `Dictionary<string, FixedWidthAttribute> dynamicSettings`.  
 It can be sett for all needed Properties when having no Attributes, or just add/override some specific. And if need to exclude ones that has regular Atribute then set it with Null.  
 Sample in Test: `[Theory] [InlineData(FixedWidthSettingsType.Dynamic)] public void LineParserTest(FixedWidthSettingsType settings)`
