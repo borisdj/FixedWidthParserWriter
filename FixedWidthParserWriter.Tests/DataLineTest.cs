@@ -134,12 +134,12 @@ namespace FixedWidthParserWriter.Tests
 
         public static List<string> GetDataLinesNullable()
         {
-            var dataLines = new List<string>
-            {
+            List<string> dataLines =
+            [
                 "char     1000      1000                1000.10             1000.10   1000.10   2019-01-011",
                 "                                                                                          ",
                 "ooooooooo00000000001111111111111111111100000.0000000000000000000000.00000000.000000-00-003",
-            };
+            ];
 
             return dataLines;
         }
