@@ -98,9 +98,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 Special feature is * **DYNAMIC Settings** * with which Attributes values can be defined at runtime, for all usage types.  
 Data is forwarded using Dict with PropertyName and Attribute: `Dictionary<string, FixedWidthAttribute> dynamicSettings`.  
 It can be sett for all needed Properties when having no Attributes, or just add/override some specific. And if need to exclude ones that has regular Atribute then set it with Null.  
-Sample in Test:  
-`[InlineData(FixedWidthSettingsType.Dynamic)]`  
-`public void LineParserTest(FixedWidthSettingsType settings)`
+Sample in test [LineParserTest](https://github.com/borisdj/FixedWidthParserWriter/blob/39da95cef3d8d1f4a4f8ffb72466bdaf528b500d/FixedWidthParserWriter.Tests/DataLineTest.cs).
 
 When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
 Next example shows 2 structures, second has one less Property and different PadNumeric: '0' instead of ' '(space).<br>
