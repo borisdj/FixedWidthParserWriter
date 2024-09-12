@@ -95,6 +95,11 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
   -`FormatDateTime`. . . . . .Default = "**yyyyMMdd**"<br>
  Custom format strings for [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings) and [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
+Special feature is **DynamicSettings** with which Attributes values can be defined at runtime.  
+Data is forwarded using Dict with PropertyName and Attribute: `Dictionary<string, FixedWidthAttribute> dynamicSettings`.  
+It can be sett for all needed Properties when having no Attributes, or just add/override some specific. And if need to exclude ones that has regular Atribute then set it with Null.  
+Sample in Test: `[Theory] [InlineData(FixedWidthSettingsType.Dynamic)] public void LineParserTest(FixedWidthSettingsType settings)`
+
 When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
 Next example shows 2 structures, second has one less Property and different PadNumeric: '0' instead of ' '(space).<br>
 To change `DefaultConfig` per StructureType, model should implement `IFixedWidth` interface with `SetDefaultConfig()` func.
@@ -144,7 +149,7 @@ Calling the methods:
 List<InvoiceItem> itemsA = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLinesA, (int)ConfigType.Alpha);
 List<InvoiceItem> itemsB = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLinesB, (int)ConfigType.Alpha);
 ```
-`Parse` PARSE method for all use cases can also optionally have third parameter `List<string> errorLog` which when sent as Empty list(not null) will be loaded with list of Exceptions if any were to happen during parsing and casting operations. When method is called without this param, which remains null, in that case first error with throw Exception and procedure will be stopped.
+PARSE method for all use cases can also optionally have third parameter `List<string> errorLog` which when sent as Empty list(not null) will be loaded with list of Exceptions if any were to happen during parsing and casting operations. When method is called without this param, which remains null, in that case first error with throw Exception and procedure will be stopped.
 
 Full Examples are in Tests of the project.
 
