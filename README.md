@@ -205,7 +205,8 @@ public class Invoice
     [FixedWidthFileField(Line = -2, Start = 17, Length = 50, PadSide = PadSide.Left)]
     public string SignatoryTitle { get; set; }
 
-    [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)] // Line Negative - counted from bottom 
+    // Line Negative - counted from bottom 
+    [FixedWidthFileField(Line = -1, Length = 66, PadSide = PadSide.Left)]
     public string SignatureName { get; set; }
 }
 ```
@@ -259,7 +260,7 @@ public class Invoice : IFixedWidth
     [FixedWidthFileField(Line = 1)]
     public string CompanyName { get; set; }
 
-    // Format set on class with FormatDateTime so not required on each Attribute of DateTime Property
+    // Format set on class with FormatDateTime - not required on each Attribute of DateTime Property
     [FixedWidthFileField(Line = 4, Start = 15, Length = 19/*, Format = "yyyy-MM-dd"*/)]
     public DateTime Date { get; set; }
 
