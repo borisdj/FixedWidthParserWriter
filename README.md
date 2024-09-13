@@ -30,6 +30,20 @@ Also take a look into others packages:
 | 5  | [CsCodeGenerator](https://github.com/borisdj/CsCodeGenerator) | C# code generation based on Classes and elements |
 | 6  | [CsCodeExample](https://github.com/borisdj/CsCodeExample) | Examples of C# code in form of a simple tutorial |
 
+## CONFIG
+**FixedWidthConfig options (provides configuration for the Provider): defaultValue**
+```C#
+int StructureTypeId : 0	............................... // for multiple Attributes structure
+Dictionary<string, FixedWidthAttribute> DynamicSettings	// Attributes defined at runtime
+bool LogAndSkipErrors: false .......................... // when True parsing exception skipped
+List<string> ErrorsLog : new List<string>(); .......... // output field, logs ErrorMessages
+List<string> WarningsLog : new List<string>(); .........// output field, when Writing string cut to fit
+```
+*_Special feature is '**DYNAMIC Settings**' with which Attributes values can be defined at runtime, for all usage types.  
+Data is forwarded using Dict with PropertyName and new independent Attribute with parameter values: `Dictionary<string, FixedWidthAttribute> dynamicSettings`.  
+It can be sett for all needed Properties when having no Attributes, or just add/override some specific. And if need to exclude ones that has regular Atribute then set it with Null.  
+Sample in test [LineParserTest](https://github.com/borisdj/FixedWidthParserWriter/blob/39da95cef3d8d1f4a4f8ffb72466bdaf528b500d/FixedWidthParserWriter.Tests/DataLineTest.cs).
+
 ## 1. Data in LineFields
 First is regular flat data file;  
 **Record per Line (Fixed-Width)**, for [example](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceItems.txt):
@@ -95,20 +109,6 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
   -`FormatBoolean` . . . . . . Default = "**1; ;0**" ("ValueForTrue; ValueForNull; ValueForFalse")  
   -`FormatDateTime`. . . . . .Default = "**yyyyMMdd**"  
  Custom format strings for [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings) and [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
-
-**FixedWidthConfig options (provides configuration for the Provider): defaultValue**
-```C#
-int StructureTypeId : 0	............................... // for multiple Attributes structure
-Dictionary<string, FixedWidthAttribute> DynamicSettings	// Attributes defined at runtime
-bool LogAndSkipErrors: false .......................... // If set True no parsing exception skipped, instead ErrorMessage logged
-List<string> ErrorsLog : new List<string>(); .......... // output field, logs ErrorMessages
-List<string> WarningsLog : new List<string>(); .........// output field, logged value when Writing string is cut to fit
-```
-
-*_Special feature is '**DYNAMIC Settings**' with which Attributes values can be defined at runtime, for all usage types.  
-Data is forwarded using Dict with PropertyName and new independent Attribute with parameter values: `Dictionary<string, FixedWidthAttribute> dynamicSettings`.  
-It can be sett for all needed Properties when having no Attributes, or just add/override some specific. And if need to exclude ones that has regular Atribute then set it with Null.  
-Sample in test [LineParserTest](https://github.com/borisdj/FixedWidthParserWriter/blob/39da95cef3d8d1f4a4f8ffb72466bdaf528b500d/FixedWidthParserWriter.Tests/DataLineTest.cs).
 
 When need more then 1 file structure/format we can put multiple Attributes per Property with different ***StructureTypeId***.  
 Next example shows 2 structures, second has one less Property and different PadNumeric: '0' instead of ' '(space).  
