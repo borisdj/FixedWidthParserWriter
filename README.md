@@ -36,8 +36,8 @@ Also take a look into others packages:
 int StructureTypeId : 0	............................... // for multiple Attributes structure
 Dictionary<string, FixedWidthAttribute> DynamicSettings	// Attributes defined at runtime
 bool LogAndSkipErrors: false .......................... // when True parsing exception skipped
-List<string> ErrorsLog : new List<string>(); .......... // output field, logs ErrorMessages
-List<string> WarningsLog : new List<string>(); ........ // output field, List for Warnings
+List<string> ErrorsLog : new List<string>() ........... // output field, logs ErrorMessages
+List<string> WarningsLog : new List<string>() ......... // output field, List for Warnings
 ```
 *_Special feature is '**DYNAMIC Settings**' with which Attributes values can be defined at runtime, for all usage types.  
 Data is forwarded using Dict with PropertyName and new independent Attribute with parameter values: `Dictionary<string, FixedWidthAttribute> dynamicSettings`.  
