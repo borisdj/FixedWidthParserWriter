@@ -79,7 +79,7 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 `[FixedWidthLineField]` has following parameters that can be configured for each Property:
 - *Start* - required for LineType so that order of lineFields does not depends on order of modelPropertis
 - *Length* - when writing if Property value longer then defined in Length it is cut from the right to fit - valueTrim;  
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; zero 0 value means entire line and negative values means start from Right side
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; zero 0 value means entire line and negative values means start from Right side
 - *Format* - Defaults per data type or group
 - *Pad* - Defaults per data category: { *PadNumeric* = ' ', *PadNonNumeric* = ' ' }
 - *PadSide* - Defaults per data category: { *PadSideNumeric = PadSide.Left, PadSideNonNumeric = PadSide.Right* }
