@@ -203,63 +203,63 @@ namespace FixedWidthParserWriter
             {
                 attribute.PadSide = IsNumericType(valueTypeName) ? DefaultConfig.PadSideNumeric : DefaultConfig.PadSideNonNumeric; // Initial default Pad: PadNumeric-Left, PadNonNumeric-Right
             }
-            char pad = ' ';
 
-            string result = String.Empty;
-            if (valueTypeName == nameof(String) || valueTypeName == nameof(Char))
+            char pad = ' ';
+            string result = string.Empty;
+            string format = attribute.Format;
+            //format = format ?? DefaultFormat.GetFormat(valueTypeName);
+            switch (valueTypeName)
             {
-                result = value?.ToString() ?? "";
-            }
-            else
-            {
-                string format = attribute.Format;
-                //format = format ?? DefaultFormat.GetFormat(valueTypeName);
-                switch (valueTypeName)
-                {
-                    case nameof(Int16):
-                    case nameof(Int32):
-                    case nameof(Int64):
-                        format = format ?? DefaultConfig.FormatNumberInteger;
-                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNumeric;
-                        break;
-                    case nameof(Decimal):
-                    case nameof(Single):
-                    case nameof(Double):
-                        format = format ?? DefaultConfig.FormatNumberDecimal;
-                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNumeric;
-                        if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
+                case nameof(Byte):
+                case nameof(Int16):
+                case nameof(Int32):
+                case nameof(Int64):
+                    format = format ?? DefaultConfig.FormatNumberInteger;
+                    pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNumeric;
+                    break;
+                case nameof(Decimal):
+                case nameof(Single):
+                case nameof(Double):
+                    format = format ?? DefaultConfig.FormatNumberDecimal;
+                    pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNumeric;
+                    if (format.Contains(";")) //';' - Special custom Format that removes decimal separator ("0;00": 123.45 -> 12345)
+                    {
+                        double decimalFactor = Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
+                        switch (valueTypeName)
                         {
-                            double decimalFactor = Math.Pow(10, format.Length - 2); // "0;00".Length == 4 - 2 = 2 (10^2 = 100)
-                            switch (valueTypeName)
-                            {
-                                case nameof(Decimal):
-                                    value = (decimal)value * (decimal)decimalFactor;
-                                    break;
-                                case nameof(Single):
-                                    value = (float)value * (float)decimalFactor;
-                                    break;
-                                case nameof(Double):
-                                    value = (double)value * decimalFactor;
-                                    break;
-                            }
+                            case nameof(Decimal):
+                                value = (decimal)value * (decimal)decimalFactor;
+                                break;
+                            case nameof(Single):
+                                value = (float)value * (float)decimalFactor;
+                                break;
+                            case nameof(Double):
+                                value = (double)value * decimalFactor;
+                                break;
                         }
-                        break;
-                    case nameof(Boolean):
-                        format = format ?? DefaultConfig.FormatBoolean;
-                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
-                        value = value.GetHashCode();
-                        break;
-                    case nameof(DateTime):
-                        format = format ?? DefaultConfig.FormatDateTime;
-                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
-                        break;
-                    default:
-                        pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
-                        break;
-                }
-                value = value ?? "";
-                result = format != null ? String.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value) : value.ToString();
+                    }
+                    break;
+                case nameof(Boolean):
+                    format = format ?? DefaultConfig.FormatBoolean;
+                    pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
+                    value = value.GetHashCode();
+                    break;
+
+                case nameof(String):
+                case nameof(Char):
+                    result = value?.ToString() ?? "";
+                    pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
+                    break;
+                case nameof(DateTime):
+                    format = format ?? DefaultConfig.FormatDateTime;
+                    pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
+                    break;
+                default:
+                    pad = attribute.Pad != '\0' ? attribute.Pad : DefaultConfig.PadNonNumeric;
+                    break;
             }
+            value = value ?? "";
+            result = format != null ? String.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value) : value.ToString();
 
             if (result.Length > attribute.Length && attribute.Length > 0) // if too long cut it
             {
