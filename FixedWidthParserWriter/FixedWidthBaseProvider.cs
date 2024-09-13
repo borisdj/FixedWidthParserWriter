@@ -56,7 +56,7 @@ namespace FixedWidthParserWriter
                 CustomFileFieldAttribute customFileFieldAttribute = null;
 
                 int lineIndex = 0;
-                if (fieldType == FieldType.LineField)
+                if (fieldType == FieldType.LineField || fieldType == FieldType.FileField)
                 {
                     if (dynamicSettings != null && dynamicSettings.ContainsKey(member.Name))
                     {
@@ -64,16 +64,21 @@ namespace FixedWidthParserWriter
                     }
                     else
                     {
-                        attribute = member.GetMemberAttributes<FixedWidthLineFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
+                        IEnumerable<FixedWidthAttribute> memberAttributes = null;
+                        bool isLineType = fieldType == FieldType.LineField;
+                        if (isLineType)
+                        {
+                            memberAttributes = member.GetMemberAttributes<FixedWidthLineFieldAttribute>();
+                        }
+                        else
+                        {
+                            memberAttributes = member.GetMemberAttributes<FixedWidthFileFieldAttribute>();
+                        }
+                        attribute = memberAttributes.SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
                     }
                 }
-                else if (fieldType == FieldType.FileField)
+                if (fieldType == FieldType.FileField)
                 {
-                    if (dynamicSettings != null && dynamicSettings.ContainsKey(member.Name))
-                        attribute = dynamicSettings[member.Name];
-                    else
-                        attribute = member.GetMemberAttributes<FixedWidthFileFieldAttribute>().SingleOrDefault(a => a.StructureTypeId == StructureTypeId);
-
                     fixedWidthFileFieldAttribute = (FixedWidthFileFieldAttribute)attribute;
                     if (fixedWidthFileFieldAttribute.Line == 0)
                     {
@@ -414,7 +419,7 @@ namespace FixedWidthParserWriter
                         value = (float)value / (float)Math.Pow(10, format.Length - 2);
                     break;
                 case nameof(Double):  // double
-                    value = signMultiplier *  Double.Parse(valueString, CultureInfo.InvariantCulture);
+                    value = signMultiplier * Double.Parse(valueString, CultureInfo.InvariantCulture);
                     if (format.Contains(";"))
                         value = (double)value / (double)Math.Pow(10, format.Length - 2);
                     break;
