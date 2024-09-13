@@ -105,7 +105,6 @@ When need more then 1 file structure/format we can put multiple Attributes per P
 Next example shows 2 structures, second has one less Property and different PadNumeric: '0' instead of ' '(space).  
 To change `DefaultConfig` per StructureType, model should implement `IFixedWidth` interface with `SetDefaultConfig()` func.
 
-For single line call an extension method can be made to pack string into list and forward the call.
 ```C#
 public enum ConfigType { Alpha, Beta }
 
