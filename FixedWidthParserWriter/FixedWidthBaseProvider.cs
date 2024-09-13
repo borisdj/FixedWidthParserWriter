@@ -22,8 +22,8 @@ namespace FixedWidthParserWriter
     public class FixedWidthBaseProvider
     {
         public int StructureTypeId { get; set; }
+
         public List<string> Content { get; set; }
-        public List<string> ErrorLog { get; set; }
 
         public virtual DefaultConfig DefaultConfig { get; set; } = new DefaultConfig();
 
@@ -38,13 +38,14 @@ namespace FixedWidthParserWriter
             }
         }
 
-        protected virtual T ParseData<T>(List<string> lines, FieldType fieldType, Dictionary<string, FixedWidthAttribute> dynamicSettings) where T : class, new()
+        protected virtual T ParseData<T>(List<string> lines, FieldType fieldType, FixedWidthConfig fixedWidthConfig) where T : class, new()
         {
             var data = new T();
             LoadNewDefaultConfig(data);
 
             var accessor = TypeAccessor.Create(typeof(T), true);
             var membersData = accessor.GetMembers().Where(a => a.IsDefined(typeof(FixedWidthAttribute))).ToList();
+            var dynamicSettings = fixedWidthConfig.DynamicSettings;
 
             foreach (var member in membersData)
             {
@@ -82,15 +83,15 @@ namespace FixedWidthParserWriter
                     fixedWidthFileFieldAttribute = (FixedWidthFileFieldAttribute)attribute;
                     if (fixedWidthFileFieldAttribute.Line == 0)
                     {
-                        var errormessage = "'Line' parameter of [FixedWidthFileFieldAttribute] can not be zero.";
-                        if (ErrorLog == null)
+                        var errorMessage = "'Line' parameter of [FixedWidthFileFieldAttribute] can not be zero.";
+                        if (fixedWidthConfig.LogAndSkipErrors)
                         {
-                            throw new InvalidOperationException(errormessage);
+                            fixedWidthConfig.ErrorsLog.Add(errorMessage);
+                            continue;
                         }
                         else
                         {
-                            ErrorLog.Add(errormessage);
-                            continue;
+                            throw new InvalidOperationException(errorMessage);
                         }
                     }
                     lineIndex = fixedWidthFileFieldAttribute.LineIndex;
@@ -106,17 +107,17 @@ namespace FixedWidthParserWriter
                     {
                         customFileFieldAttribute = (CustomFileFieldAttribute)attribute;
 
-                        // 3 args
+                        // 3 params
                         if (customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.EndsWith != null && customFileFieldAttribute.Contains != null)
                             lineIndex = lines.FindIndex(a => a.StartsWith(customFileFieldAttribute.StartsWith) && a.EndsWith(customFileFieldAttribute.EndsWith) && a.Contains(customFileFieldAttribute.Contains));
-                        // 2 args
+                        // 2 params
                         else if (customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.EndsWith != null)
                             lineIndex = lines.FindIndex(a => a.StartsWith(customFileFieldAttribute.StartsWith) && a.EndsWith(customFileFieldAttribute.EndsWith));
                         else if (customFileFieldAttribute.StartsWith != null && customFileFieldAttribute.Contains != null)
                             lineIndex = lines.FindIndex(a => a.StartsWith(customFileFieldAttribute.StartsWith) && a.Contains(customFileFieldAttribute.Contains));
                         else if (customFileFieldAttribute.EndsWith != null && customFileFieldAttribute.Contains != null)
                             lineIndex = lines.FindIndex(a => a.EndsWith(customFileFieldAttribute.EndsWith) && a.Contains(customFileFieldAttribute.Contains));
-                        // 1 args
+                        // 1 param
                         else if (customFileFieldAttribute.StartsWith != null)
                             lineIndex = lines.FindIndex(a => a.StartsWith(customFileFieldAttribute.StartsWith));
                         else if (customFileFieldAttribute.EndsWith != null)
@@ -153,16 +154,16 @@ namespace FixedWidthParserWriter
                     {
                         if (valueString.Length < startIndex + length)
                         {
-                            var errormessage = $"Property: Name={member.Name}, Value='{valueString}', Length={valueString.Length}; " +
+                            var errorMessage = $"Property: Name={member.Name}, Value='{valueString}', Length={valueString.Length}; " +
                                                $"is not enough for Substring: Start={startIndex + 1}, Length={length}";
-                            if (ErrorLog == null)
+                            if (fixedWidthConfig.LogAndSkipErrors)
                             {
-                                throw new InvalidOperationException(errormessage);
+                                fixedWidthConfig.ErrorsLog.Add(errorMessage);
+                                continue;
                             }
                             else
                             {
-                                ErrorLog.Add(errormessage);
-                                continue;
+                                throw new InvalidOperationException(errorMessage);
                             }
                         }
 
@@ -182,7 +183,7 @@ namespace FixedWidthParserWriter
                         valueString = valueString.Trim();
                     }
 
-                    object value = ParseStringValueToObject(valueString, member, attribute);
+                    object value = ParseStringValueToObject(valueString, member, attribute, fixedWidthConfig);
 
                     accessor[data, member.Name] = value;
                 }
@@ -190,7 +191,7 @@ namespace FixedWidthParserWriter
             return data;
         }
 
-        protected string WriteData<T>(T element, FastMemberData memberData, FieldType fieldType)
+        protected string WriteData<T>(T element, FastMemberData memberData, FieldType fieldType, FixedWidthConfig fixedWidthConfig)
         {
             string memberName = memberData.Member.Name;
             var attribute = (FixedWidthAttribute)memberData.Attribute;
@@ -201,9 +202,9 @@ namespace FixedWidthParserWriter
 
             if (attribute.PadSide == PadSide.Default)
             {
-                attribute.PadSide = IsNumericType(valueTypeName) // Initial default Pad: PadNumeric-Left, PadNonNumeric-Right
-                                        ? DefaultConfig.PadSideNumeric
-                                        : DefaultConfig.PadSideNonNumeric;
+                // Initial default Pad - PadNumeric:Left, PadNonNumeric:Right
+                attribute.PadSide = IsNumericType(valueTypeName) ? DefaultConfig.PadSideNumeric
+                                                                 : DefaultConfig.PadSideNonNumeric;
             }
 
             char pad = ' ';
@@ -212,6 +213,18 @@ namespace FixedWidthParserWriter
             bool isChangedPad = attribute.Pad != '\0';
             switch (valueTypeName)
             {
+                case nameof(Char):
+                case nameof(String):
+                    result = value?.ToString() ?? "";
+                    pad = isChangedPad ? attribute.Pad : DefaultConfig.PadNonNumeric;
+                    break;
+
+                case nameof(Boolean):
+                    format = format ?? DefaultConfig.FormatBoolean;
+                    pad = isChangedPad ? attribute.Pad : DefaultConfig.PadNonNumeric;
+                    value = value.GetHashCode();
+                    break;
+
                 case nameof(Byte):
                 case nameof(Int16):
                 case nameof(Int32):
@@ -219,6 +232,7 @@ namespace FixedWidthParserWriter
                     format = format ?? DefaultConfig.FormatNumberInteger;
                     pad = isChangedPad ? attribute.Pad : DefaultConfig.PadNumeric;
                     break;
+
                 case nameof(Decimal):
                 case nameof(Single):
                 case nameof(Double):
@@ -241,31 +255,25 @@ namespace FixedWidthParserWriter
                         }
                     }
                     break;
-                case nameof(Boolean):
-                    format = format ?? DefaultConfig.FormatBoolean;
-                    pad = isChangedPad ? attribute.Pad : DefaultConfig.PadNonNumeric;
-                    value = value.GetHashCode();
-                    break;
 
-                case nameof(String):
-                case nameof(Char):
-                    result = value?.ToString() ?? "";
-                    pad = isChangedPad ? attribute.Pad : DefaultConfig.PadNonNumeric;
-                    break;
                 case nameof(DateTime):
                     format = format ?? DefaultConfig.FormatDateTime;
                     pad = isChangedPad ? attribute.Pad : DefaultConfig.PadNonNumeric;
                     break;
+
                 default:
                     pad = isChangedPad ? attribute.Pad : DefaultConfig.PadNonNumeric;
                     break;
             }
             value = value ?? "";
-            result = format != null ? String.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value) : value.ToString();
+            result = format != null ? string.Format(CultureInfo.InvariantCulture, $"{{0:{format}}}", value) : value.ToString();
 
             if (result.Length > attribute.Length && attribute.Length > 0) // if too long cut it
             {
+                string fullValue = result;
                 result = result.Substring(0, attribute.Length);
+                var warningMessage = $"Property: Name={memberName} with Value='{fullValue}' is cut to Length={attribute.Length} into '{result}'";
+                fixedWidthConfig.WarningsLog.Add(warningMessage);
             }
             else if (result.Length < attribute.Length) // if too short pad from one side
             {
@@ -277,26 +285,26 @@ namespace FixedWidthParserWriter
                 if (IsNumericType(valueTypeName) && result.Contains("-") && result.Substring(0, 1) == "0") // is negative Number with leading Zero
                 {
                     result = result.Replace("-", "");
-                    result = "-" + result;// move sign '-'(minus) before pad
+                    result = "-" + result; // move sign '-'(minus) before pad
                 }
             }
 
             if (fieldType == FieldType.FileField)
             {
                 int lineIndex = ((FixedWidthFileFieldAttribute)attribute).LineIndex;
-                var content = this.Content;
+                var content = Content;
                 if (lineIndex < 0)
                 {
                     lineIndex += content.Count + 1;
                 }
-                string clearString = String.Empty;
+                string clearString = string.Empty;
                 clearString = attribute.Length > 0 ? content[lineIndex].Remove(attribute.StartIndex, attribute.Length) : content[lineIndex].Remove(attribute.StartIndex);
                 content[lineIndex] = clearString.Insert(attribute.StartIndex, result);
             }
             return result;
         }
 
-        protected object ParseStringValueToObject(string valueString, Member member, FixedWidthAttribute attribute)
+        protected object ParseStringValueToObject(string valueString, Member member, FixedWidthAttribute attribute, FixedWidthConfig fixedWidthConfig)
         {
             var underlyingType = Nullable.GetUnderlyingType(member.Type);
             string valueTypeName = underlyingType != null ? underlyingType.Name : member.Type.Name;
@@ -323,40 +331,34 @@ namespace FixedWidthParserWriter
 
             switch (valueTypeName)
             {
-                case nameof(String):
-                    Parser = ParserString;
-                    break;
-
                 case nameof(Char):
                     Parser = ParserChar;
                     break;
 
-                case nameof(Decimal):
-                case nameof(Single):
-                case nameof(Double):
+                case nameof(String):
+                    Parser = ParserString;
+                    break;
+
+                case nameof(Boolean):
+                    format = format ?? DefaultConfig.FormatBoolean;
+                    Parser = ParserBoolean;
+                    break;
+
+                case nameof(Byte):
                 case nameof(Int16):
                 case nameof(Int32):
                 case nameof(Int64):
-                case nameof(Byte):
-                    {
-                        format = format ?? DefaultConfig.FormatNumberDecimal;
-                        Parser = ParserNumber;
-                        break;
-                    }
-
-                case nameof(Boolean):
-                    {
-                        format = format ?? DefaultConfig.FormatBoolean;
-                        Parser = ParserBoolean;
-                        break;
-                    }
+                case nameof(Decimal):
+                case nameof(Single):
+                case nameof(Double):
+                    format = format ?? DefaultConfig.FormatNumberDecimal;
+                    Parser = ParserNumber;
+                    break;
 
                 case nameof(DateTime):
-                    {
-                        format = format ?? DefaultConfig.FormatDateTime;
-                        Parser = ParserDateTime;
-                        break;
-                    }
+                    format = format ?? DefaultConfig.FormatDateTime;
+                    Parser = ParserDateTime;
+                    break;
             }
 
             try
@@ -365,11 +367,15 @@ namespace FixedWidthParserWriter
             }
             catch
             {
-                var errormessage = $"Property: Name={member.Name}, Value ={valueString}, Format={format} cannot be parsed to Type={valueTypeName}";
-                if (ErrorLog == null)
-                    throw new InvalidCastException(errormessage);
+                var errorMessage = $"Property: Name={member.Name}, Value ={valueString}, Format={format} cannot be parsed to Type={valueTypeName}";
+                if (fixedWidthConfig.LogAndSkipErrors)
+                {
+                    fixedWidthConfig.ErrorsLog.Add(errorMessage);
+                }
                 else
-                    ErrorLog.Add(errormessage);
+                {
+                    throw new InvalidOperationException(errorMessage);
+                }
             }
 
             return value;
@@ -384,7 +390,7 @@ namespace FixedWidthParserWriter
 
         private object ParserChar(string valueString, string typeName, string format)
         {
-            return (char)valueString[0];
+            return valueString[0];
         }
 
         private object ParserNumber(string valueString, string typeName, string format)
@@ -460,9 +466,8 @@ namespace FixedWidthParserWriter
         private bool IsNumericType(string typeName) =>
             new List<string>
                 {
-                    nameof(Byte), // byte
-                    nameof(Int16), nameof(Int32), nameof(Int64), // Integer numbers
-                    nameof(Decimal), nameof(Single), nameof(Double) // Decimal numbers
+                    nameof(Byte), nameof(Int16), nameof(Int32), nameof(Int64), // Integer numbers
+                    nameof(Decimal), nameof(Single), nameof(Double)            // Decimal numbers
                 }
                 .Contains(typeName);
     }

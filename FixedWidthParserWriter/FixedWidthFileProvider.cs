@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FastMember;
 
@@ -6,17 +7,22 @@ namespace FixedWidthParserWriter
 {
     public class FixedWidthFileProvider<T> : FixedWidthBaseProvider where T : class, new()
     {
-        public T Parse(List<string> lines, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null, List<string> errorLog = null)
+        public T Parse(List<string> lines, FixedWidthConfig fixedWidthConfig = null)
         {
-            StructureTypeId = structureTypeId;
-            ErrorLog = errorLog;
-            return ParseData<T>(lines, FieldType.FileField, dynamicSettings);
+            fixedWidthConfig = fixedWidthConfig ?? new FixedWidthConfig();
+
+            StructureTypeId = fixedWidthConfig.StructureTypeId;
+
+            return ParseData<T>(lines, FieldType.FileField, fixedWidthConfig);
         }
 
-        public void UpdateContent(T data, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null, List<string> errorLog = null)
+        public void UpdateContent(T data, FixedWidthConfig fixedWidthConfig = null)
         {
-            StructureTypeId = structureTypeId;
-            ErrorLog = errorLog;
+            fixedWidthConfig = fixedWidthConfig ?? new FixedWidthConfig();
+
+            StructureTypeId = fixedWidthConfig.StructureTypeId;
+
+            var dynamicSettings = fixedWidthConfig.DynamicSettings;
             LoadNewDefaultConfig(data);
 
             var accessor = TypeAccessor.Create(typeof(T), true);
@@ -53,8 +59,23 @@ namespace FixedWidthParserWriter
                     Attribute = attribute,
                     MemberNameTypeNameDict = memberNameTypeNameDict
                 };
-                WriteData(data, memberData, FieldType.FileField);
+                WriteData(data, memberData, FieldType.FileField, fixedWidthConfig);
             }
         }
+
+        // DEPRECATED -- // From v1.2.0 Settings args wrapped into object FixedWidthConfig as 2. argument (kept to reduce breakingChange)
+        [Obsolete("Use instead Parse(List<string> lines, FixedWidthConfig fixedWidthConfig)")]
+        public T Parse(List<string> lines, int structureTypeId)
+        {
+            return Parse(lines, new FixedWidthConfig() { StructureTypeId = structureTypeId });
+        }
+
+        [Obsolete("Use instead Parse(List<string> lines, FixedWidthConfig fixedWidthConfig)")]
+        public void UpdateContent(T data, int structureTypeId)
+        {
+            var fixedWidthConfig = new FixedWidthConfig() { StructureTypeId = structureTypeId };
+            UpdateContent(data, fixedWidthConfig);
+        }
+        // DEPRECATED SEGMENT END --
     }
 }

@@ -7,23 +7,27 @@ namespace FixedWidthParserWriter
 {
     public class FixedWidthLinesProvider<T> : FixedWidthBaseProvider where T : class, new()
     {
-        public List<T> Parse(List<string> lines, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null, List<string> errorLog = null)
+        public List<T> Parse(List<string> lines, FixedWidthConfig fixedWidthConfig = null)
         {
-            StructureTypeId = structureTypeId;
-            ErrorLog = errorLog;
+            fixedWidthConfig = fixedWidthConfig ?? new FixedWidthConfig();
+
+            StructureTypeId = fixedWidthConfig.StructureTypeId;
 
             List<T> result = new List<T>();
             foreach (var line in lines)
             {
-                result.Add(ParseData<T>(new List<string> { line }, FieldType.LineField, dynamicSettings));
+                result.Add(ParseData<T>(new List<string> { line }, FieldType.LineField, fixedWidthConfig));
             }
             return result;
         }
 
-        public List<string> Write(List<T> data, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null, List<string> errorLog = null)
+        public List<string> Write(List<T> data, FixedWidthConfig fixedWidthConfig = null)
         {
-            StructureTypeId = structureTypeId;
-            ErrorLog = errorLog;
+            fixedWidthConfig = fixedWidthConfig ?? new FixedWidthConfig();
+
+            StructureTypeId = fixedWidthConfig.StructureTypeId;
+
+            var dynamicSettings = fixedWidthConfig.DynamicSettings;
             LoadNewDefaultConfig(new T());
 
             var accessor = TypeAccessor.Create(typeof(T), true);
@@ -65,16 +69,16 @@ namespace FixedWidthParserWriter
                     var attribute = attributesDict[propertyMember.Name];
                     if (startPrev + lengthPrev != attribute.Start)
                     {
-                        var errormessage = $"Invalid Start or Length parameter, {attribute.Start} !=  {startPrev + lengthPrev}" +
-                                           $", on FixedLineFieldAttribute (property {propertyMember.Name}) for StructureTypeId {StructureTypeId}";
-                        if (ErrorLog == null)
+                        var errorMessage = $"Invalid Start or Length parameter, {attribute.Start} !=  {startPrev + lengthPrev}, " +
+                                           $"on FixedLineFieldAttribute (property {propertyMember.Name}) for StructureTypeId {StructureTypeId}";
+                        if (fixedWidthConfig.LogAndSkipErrors)
                         {
-                            throw new InvalidOperationException(errormessage);
+                            fixedWidthConfig.ErrorsLog.Add(errorMessage);
+                            continue;
                         }
                         else
                         {
-                            ErrorLog.Add(errormessage);
-                            continue;
+                            throw new InvalidOperationException(errorMessage);
                         }
                     }
                     startPrev = attribute.Start;
@@ -87,11 +91,26 @@ namespace FixedWidthParserWriter
                         Attribute = attribute,
                         MemberNameTypeNameDict = memberNameTypeNameDict
                     };
-                    line += WriteData(element, memberData, FieldType.LineField);
+                    line += WriteData(element, memberData, FieldType.LineField, fixedWidthConfig);
                 }
                 resultLines.Add(line);
             }
             return resultLines;
         }
+
+        // DEPRECATED -- // From v1.2.0 Settings args wrapped into object FixedWidthConfig as 2. argument (kept to reduce breakingChange)
+        [Obsolete("Use instead Parse(List<string> lines, FixedWidthConfig fixedWidthConfig)")]
+        public List<T> Parse(List<string> lines, int structureTypeId)
+        {
+            return Parse(lines, new FixedWidthConfig() { StructureTypeId = structureTypeId });
+        }
+
+        [Obsolete("Use instead Parse(List<string> lines, FixedWidthConfig fixedWidthConfig)")]
+        public List<string> Write(List<T> data, int structureTypeId)
+        {
+            FixedWidthConfig fixedWidthConfig = new FixedWidthConfig() { StructureTypeId = structureTypeId };
+            return Write(data, fixedWidthConfig);
+        }
+        // DEPRECATED SEGMENT END --
     }
 }

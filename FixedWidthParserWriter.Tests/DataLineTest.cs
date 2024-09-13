@@ -23,12 +23,15 @@ namespace FixedWidthParserWriter.Tests
             dynamicSettings.Add(nameof(InvoiceItem.StatusCode), null); // when null sett then attribute is ignored and field skipped
 
             var dataLines = GetDataLines(ConfigType.Alpha);
-
             var provider = new FixedWidthLinesProvider<InvoiceItem>();
+            var fixedWidthConfig = new FixedWidthConfig // StructureTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
+            {
+                DynamicSettings = dynamicSettings
+            };
 
             bool hasRegularSettings = settings == FixedWidthSettingsType.Regular;
-            List<InvoiceItem> invoiceItems = hasRegularSettings  ? provider.Parse(dataLines) // StructureTypeId argument not explicity set, default = 0 (ConfigType.Alpha)
-                                                                 : provider.Parse(dataLines, dynamicSettings: dynamicSettings);
+            List<InvoiceItem> invoiceItems = hasRegularSettings ? provider.Parse(dataLines)
+                                                                : provider.Parse(dataLines, fixedWidthConfig);
 
             List<InvoiceItem> expectedInvoiceItems =
             [
@@ -64,8 +67,10 @@ namespace FixedWidthParserWriter.Tests
                 new() { Number = 2, Description = "Monitor Asus 32''", Quantity = 2, Price = 478.00m, StatusCode = 2, ProductCode = 125}
             };
 
-            List<string> resultLinesAlpha = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)ConfigType.Alpha);
-            List<string> resultLinesBeta = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, (int)ConfigType.Beta);
+            var fixedWidthConfigAlpha = new FixedWidthConfig { StructureTypeId = (int)ConfigType.Alpha };
+            var fixedWidthConfigBeta = new FixedWidthConfig { StructureTypeId = (int)ConfigType.Beta };
+            List<string> resultLinesAlpha = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, fixedWidthConfigAlpha);
+            List<string> resultLinesBeta = new FixedWidthLinesProvider<InvoiceItem>().Write(invoiceItems, fixedWidthConfigBeta);
 
             string resultAlpha = string.Empty;
             foreach (var line in resultLinesAlpha)

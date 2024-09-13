@@ -1,5 +1,41 @@
-﻿namespace FixedWidthParserWriter
+﻿using System.Collections.Generic;
+
+namespace FixedWidthParserWriter
 {
+    /// <summary>
+    ///     Provides configuration for FixedWidth Provider
+    /// </summary>
+    public class FixedWidthConfig
+    {
+        /// <summary>
+        ///     When need more then 1 file structure/format we can put multiple Attributes per Property with different StructureTypeId.
+        /// </summary>
+        /// <value>
+        ///     Default value is 0, and other types can be set with incremental integer numbers.
+        /// </value>
+        public int StructureTypeId { get; set; }
+
+        /// <summary>
+        ///     Enables Attributes to be defined at runtime, for all usage types. Dict with PropertyName and independent Attribute with parameter values.
+        /// </summary>
+        public Dictionary<string, FixedWidthAttribute> DynamicSettings { get; set; }
+
+        /// <summary>
+        ///     When set parsing error are skipped, no exception, and ErrorMessage logged into list ErrorsLog.
+        /// </summary>
+        public bool LogAndSkipErrors { get; set; }
+
+        /// <summary>
+        ///     List for Error Messages when being logged.
+        /// </summary>
+        internal List<string> ErrorsLog { get; set; } = new List<string>();
+
+        /// <summary>
+        ///     List for Warnings, like when Writing string is cut to fit into defined position.
+        /// </summary>
+        internal List<string> WarningsLog { get; set; } = new List<string>();
+    };
+
     public class DefaultConfig
     {
         // Formats

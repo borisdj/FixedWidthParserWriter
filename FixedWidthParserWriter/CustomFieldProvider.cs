@@ -1,14 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace FixedWidthParserWriter
 {
     public class CustomFileProvider<T> : FixedWidthBaseProvider where T : class, new()
     {
-        public T Parse(List<string> lines, int structureTypeId = 0, Dictionary<string, FixedWidthAttribute> dynamicSettings = null, List<string> errorLog = null)
+        public T Parse(List<string> lines, FixedWidthConfig fixedWidthConfig = null)
         {
-            StructureTypeId = structureTypeId;
-            ErrorLog = errorLog;
-            return ParseData<T>(lines, FieldType.CustomFileField, dynamicSettings);
+            fixedWidthConfig = fixedWidthConfig ?? new FixedWidthConfig();
+            StructureTypeId = fixedWidthConfig.StructureTypeId;
+
+            return ParseData<T>(lines, FieldType.CustomFileField, fixedWidthConfig);
         }
+
+        // DEPRECATED: From v1.2.0 Settings args wrapped into object FixedWidthConfig as second argument (kept to reduce breakingChange)
+        [Obsolete("Use instead Parse(List<string> lines, FixedWidthConfig fixedWidthConfig)")]
+        public T Parse(List<string> lines, int structureTypeId)
+        {
+            return Parse(lines, new FixedWidthConfig() { StructureTypeId = structureTypeId });
+        }
+        // DEPRECATED SEGMENT END --
     }
 }
