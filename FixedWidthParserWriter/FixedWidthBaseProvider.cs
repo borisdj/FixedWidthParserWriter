@@ -462,7 +462,6 @@ namespace FixedWidthParserWriter
             return value;
         }
 
-
         private bool IsNumericType(string typeName) =>
             new List<string>
                 {
