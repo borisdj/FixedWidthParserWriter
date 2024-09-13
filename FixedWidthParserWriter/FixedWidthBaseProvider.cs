@@ -46,8 +46,6 @@ namespace FixedWidthParserWriter
             var accessor = TypeAccessor.Create(typeof(T), true);
             var membersData = accessor.GetMembers().Where(a => a.IsDefined(typeof(FixedWidthAttribute))).ToList();
 
-            //var properties = data.GetType().GetProperties().Where(a => Attribute.IsDefined(a, typeof(FixedWidthAttribute))).ToList(); // Reflection - DEPRECATED
-            //foreach (var property in properties)
             foreach (var member in membersData)
             {
                 if (!member.CanWrite)
@@ -182,8 +180,6 @@ namespace FixedWidthParserWriter
                     object value = ParseStringValueToObject(valueString, member, attribute);
 
                     accessor[data, member.Name] = value;
-
-                    //property.SetValue(data, value); // With Reflection - DEPRECATED
                 }
             }
             return data;
@@ -194,20 +190,20 @@ namespace FixedWidthParserWriter
             string memberName = memberData.Member.Name;
             var attribute = (FixedWidthAttribute)memberData.Attribute;
 
-            //var value = property.GetValue(element); // With Reflection - DEPRECATED
             var value = memberData.Accessor[element, memberName];
 
             string valueTypeName = memberData.MemberNameTypeNameDict[memberName];
 
             if (attribute.PadSide == PadSide.Default)
             {
-                attribute.PadSide = IsNumericType(valueTypeName) ? DefaultConfig.PadSideNumeric : DefaultConfig.PadSideNonNumeric; // Initial default Pad: PadNumeric-Left, PadNonNumeric-Right
+                attribute.PadSide = IsNumericType(valueTypeName) // Initial default Pad: PadNumeric-Left, PadNonNumeric-Right
+                                        ? DefaultConfig.PadSideNumeric
+                                        : DefaultConfig.PadSideNonNumeric;
             }
 
             char pad = ' ';
             string result = string.Empty;
             string format = attribute.Format;
-            //format = format ?? DefaultFormat.GetFormat(valueTypeName);
             bool isChangedPad = attribute.Pad != '\0';
             switch (valueTypeName)
             {
