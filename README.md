@@ -149,8 +149,9 @@ No |         Description         | Qty |   Price    |   Amount   |
 
 Calling the methods:
 ```
-List<InvoiceItem> itemsA = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLinesA, (int)ConfigType.Alpha);
-List<InvoiceItem> itemsB = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLinesB, (int)ConfigType.Alpha);
+var linesProvider = new FixedWidthLinesProvider<InvoiceItem>();
+List<InvoiceItem> itemsA = linesProvider.Parse(dataLinesA, (int)ConfigType.Alpha);
+List<InvoiceItem> itemsB = linesProvider.Parse(dataLinesB, (int)ConfigType.Alpha);
 ```
 PARSE method for all use cases can also optionally have third parameter `List<string> errorLog` which when sent as Empty list(not null) will be loaded with list of Exceptions if any were to happen during parsing and casting operations. When method is called without this param, which remains null, in that case first error with throw Exception and procedure will be stopped.
 
