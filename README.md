@@ -63,7 +63,8 @@ public class InvoiceItem
 ```
 Then we can call it like this:
 ```C#
-public List<Invoiceitem> ParseFieldsFromLines(new List<string> dataLines) // dataLines stripped of header
+// dataLines stripped of header
+public List<Invoiceitem> ParseFieldsFromLines(new List<string> dataLines)
 {
     List<InvoiceItem> invoiceItems = new FixedWidthLinesProvider<InvoiceItem>().Parse(dataLines);
     return invoiceItems;
