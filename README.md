@@ -327,11 +327,11 @@ For parsing [CustomFileField] attributes are used, with additional params:
 - *RemoveText* - to clear custom substring from text value before additional casting
 - *RemoveStartsWith*, *RemoveEndsWith*, *RemoveContains* - defaults are 'True' meaning that search string is also cleared
 
-## Package Structure:
+## Code Structure:
 ```
 FixedWidthBaseProvider { ParseData(); WriteData() }
 |
-|---FixedWidthLinesProvider { Parse(); Write() }
-|---FixedWidthFileProvider { Parse(); UpdateContent() }
-|---CustomFileProvider { Parse(); Write() }
+|--FixedWidthLinesProvider : Base { Parse(); Write() }
+|---FixedWidthFileProvider : Base { Parse(); UpdateContent() }
+|---CustomFileProvider     : Base { Parse(); Write() }
 ```
