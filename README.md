@@ -326,3 +326,12 @@ For parsing [CustomFileField] attributes are used, with additional params:
 - *Offset* - moves found line up(is positive) or down(negative value) for defined number of rows
 - *RemoveText* - to clear custom substring from text value before additional casting
 - *RemoveStartsWith*, *RemoveEndsWith*, *RemoveContains* - defaults are 'True' meaning that search string is also cleared
+
+## Package Structure:
+```
+FixedWidthBaseProvider { ParseData(); WriteData() }
+|
+|---FixedWidthLinesProvider { Parse(); Write() }
+|---FixedWidthFileProvider { Parse(); UpdateContent() }
+|---CustomFileProvider { Parse(); Write() }
+```
