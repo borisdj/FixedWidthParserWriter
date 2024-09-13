@@ -19,7 +19,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and 
 [![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)  
 Want to **Contact** us for Development & Consulting: [www.codis.tech](http://www.codis.tech)
 
-Also take a look into others packages:</br>
+Also take a look into others packages:  
 -Open source (MIT or cFOSS) authored [.Net libraries](https://infopedia.io/dot-net-libraries/) (@**Infopedia.io** personal blog post)
 | №  | .Net library             | Description                                              |
 | -  | ------------------------ | -------------------------------------------------------- |
@@ -87,13 +87,13 @@ public List<string> WriteFieldsToLines(List<InvoiceItem> invoiceItems)
 - *StructureTypeId* - Default = 0, used when having multiple files with different structure or format for same data
 - *NullPattern* - Default = string.Empty, Pattern used to represent a null value
 
-*_*Format* types:<br>
-  -`FormatNumberInteger` Default = "**0**", \*groupFormat:`Int32`,`Int64`<br>
-  -`FormatNumberDecimal` Default = "**0.00**", \*groupFormat:`Decimal`,`Single`,`Double`<br>
+*_*Format* types:  
+  -`FormatNumberInteger` Default = "**0**", \*groupFormat:`Int32`,`Int64`  
+  -`FormatNumberDecimal` Default = "**0.00**", \*groupFormat:`Decimal`,`Single`,`Double`  
    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-  			 ("*0;00*" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre><br>
-  -`FormatBoolean` . . . . . . Default = "**1; ;0**" ("ValueForTrue;ValueForNull;ValueForFalse")<br>
-  -`FormatDateTime`. . . . . .Default = "**yyyyMMdd**"<br>
+  			 ("*0;00*" - Special custom Format that removes decimal separator: 123.45 -> 12345)</pre>  
+  -`FormatBoolean` . . . . . . Default = "**1; ;0**" ("ValueForTrue; ValueForNull; ValueForFalse")  
+  -`FormatDateTime`. . . . . .Default = "**yyyyMMdd**"  
  Custom format strings for [Numeric](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings) and [DateTime](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
 *_Special feature is '**DYNAMIC Settings**' with which Attributes values can be defined at runtime, for all usage types.  
@@ -101,8 +101,8 @@ Data is forwarded using Dict with PropertyName and Attribute: `Dictionary<string
 It can be sett for all needed Properties when having no Attributes, or just add/override some specific. And if need to exclude ones that has regular Atribute then set it with Null.  
 Sample in test [LineParserTest](https://github.com/borisdj/FixedWidthParserWriter/blob/39da95cef3d8d1f4a4f8ffb72466bdaf528b500d/FixedWidthParserWriter.Tests/DataLineTest.cs).
 
-When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.<br>
-Next example shows 2 structures, second has one less Property and different PadNumeric: '0' instead of ' '(space).<br>
+When need more then 1 file structure/format we can put multiple Attributes per Property with different *StructureTypeId*.  
+Next example shows 2 structures, second has one less Property and different PadNumeric: '0' instead of ' '(space).  
 To change `DefaultConfig` per StructureType, model should implement `IFixedWidth` interface with `SetDefaultConfig()` func.
 
 For single line call an extension method can be made to pack string into list and forward the call.
