@@ -37,12 +37,14 @@ int StructureTypeId : 0	............................... // for multiple Attribut
 Dictionary<string, FixedWidthAttribute> DynamicSettings	// Attributes defined at runtime
 bool LogAndSkipErrors: false .......................... // when True parsing exception skipped
 List<string> ErrorsLog : new List<string>(); .......... // output field, logs ErrorMessages
-List<string> WarningsLog : new List<string>(); .........// output field, when Writing string cut to fit
+List<string> WarningsLog : new List<string>(); ........ // output field, List for Warnings
 ```
 *_Special feature is '**DYNAMIC Settings**' with which Attributes values can be defined at runtime, for all usage types.  
 Data is forwarded using Dict with PropertyName and new independent Attribute with parameter values: `Dictionary<string, FixedWidthAttribute> dynamicSettings`.  
 It can be sett for all needed Properties when having no Attributes, or just add/override some specific. And if need to exclude ones that has regular Atribute then set it with Null.  
 Sample in test [LineParserTest](https://github.com/borisdj/FixedWidthParserWriter/blob/39da95cef3d8d1f4a4f8ffb72466bdaf528b500d/FixedWidthParserWriter.Tests/DataLineTest.cs).
+
+***WarningsLog*** filled when Writing string is cut to fit into defined position.
 
 ## 1. Data in LineFields
 First is regular flat data file;  
