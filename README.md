@@ -9,8 +9,8 @@ Package manager console command for installation: *Install-Package FixedWidthPar
 There are 2 main types of usage that are explained in the following segments:  
 **1. LineFields**  
 **2. FileFields** and  
-3. *CustomFileFields*  
-Both are simple to use and easily configured with Attributes.
+3. *CustomFileFields* (additional third type)
+All are simple to use and easily configured with Attributes.
 
 ## Contributing
 If you find this project useful you can mark it by leaving a Github **\*Star**.  
