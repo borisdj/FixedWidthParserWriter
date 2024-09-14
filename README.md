@@ -280,7 +280,7 @@ public class Invoice : IFixedWidth
 If we need to changed DefaultConfig(Format) for multiple models then we could override entire Provider to keep it [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
 
 Combining both previous usages we can make complex file structures like [invoiceFull](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
-In adddition we could also have grouped line as segment headers in which case we can use multiple Line Models and then filter lines based on category, example [invoiceFullGrouped](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceFull.txt).
+In adddition we could also have grouped line as segment headers in which case we can use multiple Line Models and then filter lines based on category, example [invoiceGrouped](https://github.com/borisdj/FixedWidthParserWriter/blob/master/FileExamples/invoiceGrouped.txt).
 
 When there is some special situation where some Fields can not be configured with existing options, then we can make additional custom parsing prior or/and after calling the method - PRE & POST Processing.
 
