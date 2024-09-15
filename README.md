@@ -285,7 +285,7 @@ If we need to changed DefaultConfig(Format) for multiple models then we could ov
 When there is some special situation where some Fields can not be configured with existing options, then we can make additional custom parsing prior or/and after calling the method - PRE & POST Processing.
 
 ## 3. Data in CustomFileFields
-Third use case is when one data field is relative to some text position.
+Third use case (Parsing only) is when one data field is relative to some text position.
 ```
 SoftysTech LCC company
 __________________________________________________________________
