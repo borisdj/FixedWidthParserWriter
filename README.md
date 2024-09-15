@@ -332,7 +332,7 @@ For parsing [CustomFileField] attributes are used, with additional params:
 ```
 FixedWidthBaseProvider { ParseData(); WriteData() }
 |
-|--FixedWidthLinesProvider : Base { Parse(); Write() }
-|---FixedWidthFileProvider : Base { Parse(); UpdateContent() }
-|---CustomFileProvider     : Base { Parse(); Write() }
+|---FixedWidthLinesProvider : FWBaseProvider { Parse(); Write() }
+|---FixedWidthFileProvider  : FWBaseProvider { Parse(); UpdateContent() }
+|---CustomFileProvider      : FWBaseProvider { Parse() }
 ```
