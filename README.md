@@ -7,7 +7,7 @@ Config base on POCO class/object model with Attributes.
 There are 2 main types of usage that are explained in the following segments:  
 **1. LineFields**  
 **2. FileFields** and  
-3. *CustomFileFields* (additional third type)
+3. *CustomFileFields* (additional third type or 2.b)  
 All are simple to use and easily configured with Attributes.
 
 Available on [![NuGet](https://img.shields.io/nuget/v/FixedWidthParserWriter.svg)](https://www.nuget.org/packages/FixedWidthParserWriter/) latest version. Logo: <img src="logo.png" height=30>   
