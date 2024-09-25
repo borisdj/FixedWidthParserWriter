@@ -32,7 +32,7 @@ Also take a look into others packages:
 | 6  | [CsCodeExample](https://github.com/borisdj/CsCodeExample) | Examples of C# code in form of a simple tutorial |
 
 ## CONFIG
-**FixedWidthConfig options (provides configuration for the Provider): defaultValue**
+**FixedWidthConfig options** (provides configuration for the Provider): defaultValue
 ```C#
 int StructureTypeId : 0	............................... // for multiple Attributes structure
 Dictionary<string, FixedWidthAttribute> DynamicSettings	// Attributes defined at runtime
