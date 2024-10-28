@@ -10,18 +10,28 @@ There are 2 main types of usage that are explained in the following segments:
 3. *CustomFileFields* (additional third type or 2.b)  
 All are simple to use and easily configured with Attributes.
 
-Available on [![NuGet](https://img.shields.io/nuget/v/FixedWidthParserWriter.svg)](https://www.nuget.org/packages/FixedWidthParserWriter/) _ Logo: <img src="logo.png" height=30>   
-Package manager console command for installation: *Install-Package FixedWidthParserWriter*
+Logo: <img src="logo.png" height=30>   
 
-## Contributing
-If you find this project useful you can mark it by leaving a Github **\*Star**.  
-
-Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and the process for submitting pull requests.  
 [![NuGet](https://img.shields.io/npm/l/express.svg)](https://github.com/borisdj/FixedWidthParserWriter/blob/master/LICENSE)  
+
+## Installation
+Available on [![NuGet](https://img.shields.io/nuget/v/FixedWidthParserWriter.svg)](https://www.nuget.org/packages/FixedWidthParserWriter/) latest version.  
+Package manager console command for installation: *Install-Package FixedWidthParserWriter*  
+
+## Support
+If you find this project useful you can mark it by leaving a Github **Star** :star:  
+And even with community license, if you want help development, you can make a DONATION:  
+[<img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee" height=28>](https://www.buymeacoffee.com/boris.dj) _ or _ 
+[![Button](https://img.shields.io/badge/donate-Bitcoin-orange.svg?logo=bitcoin):zap:](https://borisdj.net/donation/donate-btc.html)  
 Want to **Contact** for Development & Consulting: [www.codis.tech](http://www.codis.tech) (*Quality Delivery*)  
 
-Also take a look into others packages:  
--Open source (MIT or cFOSS) authored [.Net libraries](https://infopedia.io/dot-net-libraries/) (@**Infopedia.io** personal blog post)
+## Contributing
+Please read [CONTRIBUTING](CONTRIBUTING.md) for details on code of conduct, and the process for submitting pull requests.  
+When opening issues do write detailed explanation of the problem or feature with reproducible example.  
+Want to **Contact** for Development & Consulting: [www.codis.tech](http://www.codis.tech) (*Quality Delivery*)  
+
+**Also take a look into others packages:  
+Open source (MIT or cFOSS) authored [.Net libraries](https://infopedia.io/dot-net-libraries/) (@**Infopedia.io** personal blog post)
 | №  | .Net library             | Description                                              |
 | -  | ------------------------ | -------------------------------------------------------- |
 | 1  | [EFCore.BulkExtensions](https://github.com/borisdj/EFCore.BulkExtensions) | EF Core Bulk CRUD Ops (**Flagship** Lib) |
